@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "home": "Home",
+    "temples": "Temples",
+    "pujas": "Pujas",
+    "donate": "Donate",
+    "products": "Products",
+    "aarti": "Aarti / Katha",
+    "donors": "Our Donors",
+    "language": "Language",
+    "login": "Login",
+    "logout": "Logout",
+    "myAccount": "My Account"
+  },
+
+  "footer": {
+    "spiritualLine1": "Experience a divine spiritual journey ✨",
+    "spiritualLine2": "Bringing devotion closer to your home through temples, pujas, donations, and spiritual content.",
+    "quickLinks": "Quick Links",
+    "home": "Home",
+    "temples": "Temples",
+    "pujas": "Pujas",
+    "donate": "Donate",
+    "products": "Products",
+    "aarti": "Aarti / Katha",
+    "donors": "Our Donors",
+    "about": "About",
+    "contact": "Contact",
+    "followUs": "Follow Us",
+    "contactUs": "Contact Us",
+    "location": "📍 Nashik, Maharashtra, India",
+    "availability": "Available on WhatsApp 9 AM – 7 PM",
+    "rights": "All rights reserved © 2025 Devalayaum"
+  }
+}
