@@ -4,18 +4,20 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
+interface PujaPackage {
+  key: string;
+  title: Record<string, string>;
+  price?: number;
+  discountPrice?: number;
+  seatsIncluded?: number;
+}
+
 interface Puja {
   _id: string;
   name: Record<string, string>;
   category: string;
   image?: string;
-  packages?: {
-    key: string;
-    title: Record<string, string>;
-    price?: number;
-    discountPrice?: number;
-    seatsIncluded?: number;
-  }[];
+  packages?: PujaPackage[];
 }
 
 interface Member {
@@ -27,14 +29,26 @@ interface Member {
   specificWish?: string;
 }
 
+function getErrorMessage(err: unknown): string {
+  if (!err) return "Unknown error";
+  if (typeof err === "string") return err;
+  if (typeof err === "object" && err !== null) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const anyErr = err as any;
+    if (anyErr.message) return String(anyErr.message);
+    if (anyErr.response?.data?.message) return String(anyErr.response.data.message);
+  }
+  return "Something went wrong";
+}
+
 export default function PujaBooking() {
   const { id, pkgKey } = useParams<{ id: string; pkgKey: string }>();
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
   const navigate = useNavigate();
 
   const [puja, setPuja] = useState<Puja | null>(null);
-  const [pkg, setPkg] = useState<any>(null);
+  const [pkg, setPkg] = useState<PujaPackage | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [members, setMembers] = useState<Member[]>([]);
@@ -46,21 +60,21 @@ export default function PujaBooking() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await axios.get(`${backendURL}/api/pujas/${id}`);
+        const res = await axios.get<Puja>(`${backendURL}/api/pujas/${id}`);
         setPuja(res.data);
-        const found = (res.data.packages || []).find((p: any) => p.key === pkgKey);
+
+        const found = (res.data.packages || []).find((p: PujaPackage) => p.key === pkgKey);
         setPkg(found);
 
-        // ✅ Fix: Initialize members correctly based on package type
-        let initialMembers: number = 1;
+        // Initialize members based on package type
+        let initialMembers = 1;
         if (found?.key === "partner") initialMembers = 2;
         else if (found?.key === "family") initialMembers = 4;
-        else initialMembers = 1;
 
         setMembers(Array.from({ length: initialMembers }).map(() => ({ fullName: "" })));
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Failed to load puja:", err);
-        setError("Failed to load puja details.");
+        setError(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
@@ -112,7 +126,7 @@ export default function PujaBooking() {
     try {
       const payload = {
         pujaId: id,
-        packageKey: pkg.key,
+        packageKey: pkg!.key,
         members,
         notes,
       };
@@ -121,9 +135,9 @@ export default function PujaBooking() {
       });
       alert("🙏 Booking saved successfully. We will contact you soon.");
       navigate("/my-account");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Booking failed:", err);
-      setError(err?.response?.data?.message || "Failed to create booking");
+      setError(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -200,9 +214,7 @@ export default function PujaBooking() {
                   <input
                     type="date"
                     value={m.dateOfBirth || ""}
-                    onChange={(e) =>
-                      updateMember(idx, "dateOfBirth", e.target.value)
-                    }
+                    onChange={(e) => updateMember(idx, "dateOfBirth", e.target.value)}
                     className="w-full border p-2 rounded"
                   />
                 </div>
@@ -235,14 +247,10 @@ export default function PujaBooking() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium">
-                    Specific Wish (optional)
-                  </label>
+                  <label className="block text-sm font-medium">Specific Wish (optional)</label>
                   <input
                     value={m.specificWish || ""}
-                    onChange={(e) =>
-                      updateMember(idx, "specificWish", e.target.value)
-                    }
+                    onChange={(e) => updateMember(idx, "specificWish", e.target.value)}
                     className="w-full border p-2 rounded"
                   />
                 </div>
@@ -267,9 +275,7 @@ export default function PujaBooking() {
           )}
 
           <div>
-            <label className="block text-sm font-medium">
-              Notes / Additional info
-            </label>
+            <label className="block text-sm font-medium">Notes / Additional info</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -288,10 +294,7 @@ export default function PujaBooking() {
             >
               {submitting ? "Booking..." : "Book Now"}
             </button>
-            <Link
-              to={`/pujas/${id}`}
-              className="px-4 py-2 rounded border text-gray-700"
-            >
+            <Link to={`/pujas/${id}`} className="px-4 py-2 rounded border text-gray-700">
               Cancel
             </Link>
           </div>

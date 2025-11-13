@@ -9,12 +9,14 @@ interface Puja {
   category: string;
   image?: string;
   description?: Record<string, string>;
+  published?: boolean; // ✅ Fix added
 }
+
 
 export default function PujasList() {
   const [pujas, setPujas] = useState<Puja[]>([]);
   const [loading, setLoading] = useState(true);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
   const lang = i18n.language || "en";
 
   useEffect(() => {

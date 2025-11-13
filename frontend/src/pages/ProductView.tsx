@@ -6,9 +6,38 @@ import i18n from "../i18n";
 
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
   }
 }
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name?: string;
+  description?: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => void;
+  prefill?: {
+    name?: string;
+    contact?: string;
+    email?: string;
+  };
+  theme?: {
+    color?: string;
+  };
+}
+
+interface RazorpayResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayInstance {
+  open: () => void;
+}
+
 
 // 🔹 Helper to load Razorpay SDK dynamically
 const loadRazorpayScript = (): Promise<boolean> => {
@@ -49,7 +78,7 @@ export default function ProductView() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
   const lang = i18n.language || "en";
   const navigate = useNavigate();
 
@@ -111,7 +140,7 @@ export default function ProductView() {
         name: "Devalayaum",
         description: `Purchase: ${title}`,
         order_id: orderId,
-        handler: async function (response: any) {
+handler: async function (response: RazorpayResponse) {
           try {
             await axios.post(`${backendURL}/api/product-payments/verify`, {
               orderId: response.razorpay_order_id,

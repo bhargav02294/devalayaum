@@ -6,7 +6,7 @@ export default function VerifyOTP() {
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
   const navigate = useNavigate();
 
   useEffect(() => {

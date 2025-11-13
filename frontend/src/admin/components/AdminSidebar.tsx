@@ -1,3 +1,4 @@
+// E:\devalayaum\frontend\src\admin\components\AdminSidebar.tsx
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -5,7 +6,7 @@ export default function AdminSidebar() {
   const navigate = useNavigate();
 
   const handleLogout = (): void => {
-    localStorage.removeItem("ADMIN_TOKEN");
+    localStorage.removeItem("adminToken"); // ✅ Correct key
     navigate("/admin/login");
   };
 
@@ -20,7 +21,6 @@ export default function AdminSidebar() {
         <Link to="/admin/temples" className="hover:text-blue-600">Temples</Link>
         <Link to="/admin/pujas" className="hover:text-blue-600">Pujas</Link>
 
-        {/* ✅ Added Aartis section */}
         <Link to="/admin/aartis" className="hover:text-blue-600">
           Aartis / Kathas / Stories
         </Link>

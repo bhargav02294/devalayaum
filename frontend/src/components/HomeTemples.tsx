@@ -11,11 +11,10 @@ interface Temple {
 }
 
 export default function HomeTemples() {
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL;  // ✅ FIXED
   const navigate = useNavigate();
   const [temples, setTemples] = useState<Temple[]>([]);
   const [loading, setLoading] = useState(true);
-
   const lang = i18n.language || "en";
   const trans = (obj: Record<string, string> | undefined) =>
     obj?.[lang] || obj?.en || "";

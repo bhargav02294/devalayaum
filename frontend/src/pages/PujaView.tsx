@@ -35,7 +35,7 @@ export default function PujaView() {
   const { id } = useParams<{ id: string }>();
   const [puja, setPuja] = useState<Puja | null>(null);
   const [loading, setLoading] = useState(true);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
   const lang = i18n.language || "en";
 
   const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";

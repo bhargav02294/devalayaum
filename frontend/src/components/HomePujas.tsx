@@ -11,12 +11,13 @@ interface Puja {
   images?: string[];
 }
 
+
 export default function HomePujas() {
   const [pujas, setPujas] = useState<Puja[]>([]);
   const [loading, setLoading] = useState(true);
-  const backendURL = import.meta.env.VITE_BACKEND_URL;
-  const lang = i18n.language || "en";
 
+  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
+  const lang = i18n.language || "en";
   useEffect(() => {
     axios
       .get(`${backendURL}/api/pujas/home-list`)

@@ -55,7 +55,7 @@ export default function TempleView() {
   const { id } = useParams<{ id: string }>();
   const [temple, setTemple] = useState<Temple | null>(null);
   const [loading, setLoading] = useState(true);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
   const lang = i18n.language || "en";
 
   const getText = (field?: Record<string, string>) =>

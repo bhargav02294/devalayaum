@@ -21,7 +21,7 @@ export default function HomeProducts() {
   const [loading, setLoading] = useState(true);
 
   const lang = i18n.language || "en";
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const backendURL = import.meta.env.VITE_API_URL; // FIXED
 
   useEffect(() => {
     axios

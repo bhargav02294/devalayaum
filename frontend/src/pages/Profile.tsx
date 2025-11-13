@@ -2,8 +2,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+
+type ProfileForm = {
+  fullName: string;
+  phone: string;
+  gender: string;
+  dateOfBirth: string;
+  address: string;
+  pincode: string;
+};
+
 export default function Profile() {
-  const [form, setForm] = useState({
+const [form, setForm] = useState<ProfileForm>({
     fullName: "",
     phone: "",
     gender: "",
@@ -12,7 +22,7 @@ export default function Profile() {
     pincode: "",
   });
   const [loading, setLoading] = useState(false);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
 
   useEffect(() => {
     const token = localStorage.getItem("USER_TOKEN");
@@ -78,7 +88,7 @@ export default function Profile() {
               <input
                 type={f.type}
                 name={f.name}
-                value={(form as any)[f.name] || ""}
+value={form[f.name as keyof ProfileForm] || ""}
                 onChange={handleChange}
                 className="w-full border p-2 rounded"
               />

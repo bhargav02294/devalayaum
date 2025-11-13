@@ -1,3 +1,4 @@
+// E:\devalayaum\frontend\src\admin\ProtectedRoute.tsx
 import React from "react";
 import { Navigate } from "react-router-dom";
 
@@ -6,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const token = localStorage.getItem("adminToken");
+  const token = localStorage.getItem("adminToken"); // ✅ Correct key
 
   if (!token) {
     return <Navigate to="/admin/login" replace />;

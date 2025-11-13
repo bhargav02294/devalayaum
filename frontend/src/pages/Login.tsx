@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+    const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
+
   const navigate = useNavigate();
 
   const handleSend = async (e: React.FormEvent) => {
