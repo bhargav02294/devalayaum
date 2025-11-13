@@ -38,6 +38,8 @@ export default function Footer() {
                 ["Contact", "/contact"],
                 ["Terms & Conditions", "/terms"],
                 ["Privacy Policy", "/privacy"],
+                ["Shipping Policy", "/shipping"],
+
               ].map(([name, link]) => (
                 <li key={name}>
                   <Link
