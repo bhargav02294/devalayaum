@@ -1,3 +1,4 @@
+// E:\devalayaum\frontend\src\admin\pages\AdminLogin.tsx
 import { useState } from "react";
 import axios from "axios";
 
@@ -10,7 +11,7 @@ export default function AdminLogin() {
     e.preventDefault();
     try {
       const res = await axios.post(
-`${import.meta.env.VITE_API_URL}/api/admin/login`,
+        `${import.meta.env.VITE_API_URL}/api/admin/login`,
         { email, password }
       );
       localStorage.setItem("adminToken", res.data.token);
