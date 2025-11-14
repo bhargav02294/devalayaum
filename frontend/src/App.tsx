@@ -7,6 +7,8 @@ import Contact from "./pages/Contact";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
+import CancellationRefundPolicy from "./pages/CancellationRefundPolicy";
+
 
 import Donate from "./pages/Donate";
 import TemplesList from "./pages/TemplesList";
@@ -87,6 +89,11 @@ export default function App() {
         <Route path="/terms" element={<><Navbar /><TermsAndConditions /><Footer /></>} />
 <Route path="/privacy" element={<><Navbar /><PrivacyPolicy /><Footer /></>} />
 <Route path="/shipping" element={<><Navbar /><ShippingPolicy /><Footer /></>} />
+<Route
+  path="/cancellation-refund"
+  element={<><Navbar /><CancellationRefundPolicy /><Footer /></>}
+/>
+
 
 
         <Route path="/donate" element={<><Navbar /><Donate /><Footer /></>} />

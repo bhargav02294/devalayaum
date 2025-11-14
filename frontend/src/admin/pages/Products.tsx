@@ -18,7 +18,7 @@ interface Product {
 export default function ProductsAdmin() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
 
   useEffect(() => {

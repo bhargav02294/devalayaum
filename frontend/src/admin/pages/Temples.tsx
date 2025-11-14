@@ -9,7 +9,7 @@ import type { Temple } from "../../types/Temple";
 export default function Temples() {
   const [temples, setTemples] = useState<Temple[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n?.language || "en";
 
   useEffect(() => {

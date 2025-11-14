@@ -12,7 +12,8 @@ const LANGS = [
   { code: "bn", label: "ব" },
 ];
 
-type Multilingual = Partial<Record<"en" | "hi" | "mr" | "ta" | "te" | "bn", string>>;
+type LangCode = "en" | "hi" | "mr" | "ta" | "te" | "bn";
+type Multilingual = Partial<Record<LangCode, string>>;
 type AartiType = "aarti" | "katha" | "mantra";
 
 interface FormState {
@@ -40,14 +41,20 @@ export default function AartiForm() {
     published: true,
   });
 
-  const [activeLang, setActiveLang] = useState(i18n.language || "en");
+  const [activeLang, setActiveLang] = useState<LangCode>(
+    (i18n.language as LangCode) || "en"
+  );
   const [loading, setLoading] = useState(false);
 
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL;
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-  const setMulti = (field: keyof FormState, lang: string, value: string) => {
+  // 🔹 Helper: Safe multilingual getter
+  const getText = (field: Multilingual) => field?.[activeLang] ?? "";
+
+  // 🔹 Update multilingual field
+  const setMulti = (field: keyof FormState, lang: LangCode, value: string) => {
     setForm((prev) => ({
       ...prev,
       [field]: { ...(prev[field] as Multilingual), [lang]: value },
@@ -55,34 +62,42 @@ export default function AartiForm() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setForm((prev) => ({ ...prev, imageFile: file }));
+    setForm((prev) => ({
+      ...prev,
+      imageFile: e.target.files?.[0] || null,
+    }));
   };
 
   const uploadToCloudinary = async (file: File): Promise<string> => {
-    if (!cloudName || !uploadPreset) {
-      throw new Error("Cloudinary not configured");
-    }
+    if (!cloudName || !uploadPreset)
+      throw new Error("❌ Cloudinary not configured");
+
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
+
     const fd = new FormData();
     fd.append("file", file);
     fd.append("upload_preset", uploadPreset);
+
     const res = await fetch(url, { method: "POST", body: fd });
     const data = await res.json();
+
     if (!res.ok) throw new Error(data?.error?.message || "Upload failed");
     return data.secure_url;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title?.en) {
+
+    if (!form.title.en) {
       alert("Please provide English title");
       return;
     }
 
     setLoading(true);
+
     try {
       let imageUrl = form.image;
+
       if (form.imageFile) {
         imageUrl = await uploadToCloudinary(form.imageFile);
       }
@@ -99,12 +114,16 @@ export default function AartiForm() {
       };
 
       const token = localStorage.getItem("ADMIN_TOKEN");
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
       if (token) headers.Authorization = `Bearer ${token}`;
 
       await axios.post(`${backendURL}/api/aartis`, payload, { headers });
+
       alert("✅ Aarti saved successfully!");
 
+      // Reset form
       setForm({
         title: { en: "" },
         description: { en: "" },
@@ -118,13 +137,11 @@ export default function AartiForm() {
       });
     } catch (err) {
       console.error("Save failed:", err);
-      alert("Save failed. Check console for details.");
+      alert("❌ Save failed. Check console.");
     } finally {
       setLoading(false);
     }
   };
-
-  const lang = activeLang;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -136,7 +153,7 @@ export default function AartiForm() {
           <button
             key={l.code}
             type="button"
-            onClick={() => setActiveLang(l.code)}
+            onClick={() => setActiveLang(l.code as LangCode)}
             className={`px-3 py-1 rounded ${
               activeLang === l.code ? "bg-blue-600 text-white" : "bg-gray-100"
             }`}
@@ -149,12 +166,16 @@ export default function AartiForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Title */}
         <div>
-          <label className="block font-semibold">Title ({lang.toUpperCase()})</label>
+          <label className="block font-semibold">
+            Title ({activeLang.toUpperCase()})
+          </label>
           <input
-            value={form.title?.[lang] || ""}
-            onChange={(e) => setMulti("title", lang, e.target.value)}
+            value={getText(form.title)}
+            onChange={(e) =>
+              setMulti("title", activeLang, e.target.value)
+            }
             className="w-full border p-2 rounded"
-            required={lang === "en"}
+            required={activeLang === "en"}
           />
         </div>
 
@@ -164,7 +185,10 @@ export default function AartiForm() {
           <select
             value={form.type}
             onChange={(e) =>
-              setForm((prev) => ({ ...prev, type: e.target.value as AartiType }))
+              setForm((prev) => ({
+                ...prev,
+                type: e.target.value as AartiType,
+              }))
             }
             className="w-full border p-2 rounded"
           >
@@ -176,20 +200,28 @@ export default function AartiForm() {
 
         {/* Description */}
         <div>
-          <label className="block font-semibold">Short Description ({lang.toUpperCase()})</label>
+          <label className="block font-semibold">
+            Short Description ({activeLang.toUpperCase()})
+          </label>
           <textarea
-            value={form.description?.[lang] || ""}
-            onChange={(e) => setMulti("description", lang, e.target.value)}
+            value={getText(form.description)}
+            onChange={(e) =>
+              setMulti("description", activeLang, e.target.value)
+            }
             className="w-full border p-2 rounded h-24"
           />
         </div>
 
         {/* Content */}
         <div>
-          <label className="block font-semibold">Main Content ({lang.toUpperCase()})</label>
+          <label className="block font-semibold">
+            Main Content ({activeLang.toUpperCase()})
+          </label>
           <textarea
-            value={form.content?.[lang] || ""}
-            onChange={(e) => setMulti("content", lang, e.target.value)}
+            value={getText(form.content)}
+            onChange={(e) =>
+              setMulti("content", activeLang, e.target.value)
+            }
             className="w-full border p-2 rounded h-40"
           />
         </div>
@@ -197,10 +229,14 @@ export default function AartiForm() {
         {/* Meaning (only for mantra) */}
         {form.type === "mantra" && (
           <div>
-            <label className="block font-semibold">Meaning ({lang.toUpperCase()})</label>
+            <label className="block font-semibold">
+              Meaning ({activeLang.toUpperCase()})
+            </label>
             <textarea
-              value={form.meaning?.[lang] || ""}
-              onChange={(e) => setMulti("meaning", lang, e.target.value)}
+              value={getText(form.meaning)}
+              onChange={(e) =>
+                setMulti("meaning", activeLang, e.target.value)
+              }
               className="w-full border p-2 rounded h-32"
             />
           </div>
@@ -219,12 +255,14 @@ export default function AartiForm() {
           )}
         </div>
 
-        {/* Temple */}
+        {/* Temple ID */}
         <div>
           <label className="block font-semibold">Temple ID (optional)</label>
           <input
             value={form.temple}
-            onChange={(e) => setForm((p) => ({ ...p, temple: e.target.value }))}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, temple: e.target.value }))
+            }
             className="w-full border p-2 rounded"
           />
         </div>

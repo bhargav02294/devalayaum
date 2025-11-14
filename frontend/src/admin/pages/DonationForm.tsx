@@ -1,21 +1,43 @@
+// E:\devalayaum\frontend\src\admin\pages\DonationForm.tsx
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import i18n from "../../i18n";
 
-const languages = ["en", "hi", "mr", "ta", "te", "bn"];
+// Supported languages
+type LangCode = "en" | "hi" | "mr" | "ta" | "te" | "bn";
+const languages: LangCode[] = ["en", "hi", "mr", "ta", "te", "bn"];
+
+// Multilingual field type
+type MultiLang = Partial<Record<LangCode, string>>;
+
+// Donation form structure
+interface DonationFormState {
+  thumbnail: string;
+  templeName: MultiLang;
+  address: MultiLang;
+  templeDetails: MultiLang;
+  shortDetails: MultiLang;
+  donationName: MultiLang;
+  description: MultiLang;
+  summary: MultiLang;
+  benefits: MultiLang;
+}
 
 export default function DonationForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL;
 
-  // ✅ Local state for currently active language
-  const [activeLang, setActiveLang] = useState(i18n.language || "en");
+  // Active language typed properly
+  const [activeLang, setActiveLang] = useState<LangCode>(
+    (i18n.language as LangCode) || "en"
+  );
 
   const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
+  // Strongly typed form
+  const [form, setForm] = useState<DonationFormState>({
     thumbnail: "",
     templeName: { en: "" },
     address: { en: "" },
@@ -27,66 +49,87 @@ export default function DonationForm() {
     benefits: { en: "" },
   });
 
-  // 🔹 Load existing donation
+  // Load existing donation for Edit mode
   useEffect(() => {
-    if (id) {
-      (async () => {
-        try {
-          const res = await axios.get(`${backendURL}/api/donations/${id}`);
-          setForm(res.data);
-        } catch (err) {
-          console.error("Failed to load donation:", err);
-        }
-      })();
-    }
+    if (!id) return;
+
+    (async () => {
+      try {
+        const res = await axios.get(`${backendURL}/api/donations/${id}`);
+        setForm(res.data);
+      } catch (err) {
+        console.error("Failed to load donation:", err);
+      }
+    })();
   }, [id, backendURL]);
 
-  // 🔹 Multilingual field change
-  const handleMultiChange = (field: string, langKey: string, value: string) => {
-    setForm({
-      ...form,
-      [field]: { ...form[field as keyof typeof form], [langKey]: value },
-    });
+  // ⭐ Safe multilingual setter
+  const handleMultiChange = (field: keyof DonationFormState, lang: LangCode, value: string) => {
+    const current = form[field] as MultiLang;
+
+    setForm((prev) => ({
+      ...prev,
+      [field]: {
+        ...current,
+        [lang]: value,
+      },
+    }));
   };
 
-  // 🔹 Image upload to Cloudinary
+  // ⭐ Safe multilingual getter
+  const getMultiText = (field: keyof DonationFormState): string => {
+    const value = form[field] as MultiLang;
+    return value?.[activeLang] ?? "";
+  };
+
+  // Cloudinary Image Upload
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append(
+      "upload_preset",
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
 
     try {
       const res = await axios.post(
-        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/image/upload`,
         formData
       );
-      setForm({ ...form, thumbnail: res.data.secure_url });
+
+      setForm((prev) => ({ ...prev, thumbnail: res.data.secure_url }));
       alert("✅ Image uploaded successfully!");
     } catch (err) {
       console.error("Image upload failed:", err);
-      alert("❌ Image upload failed.");
+      alert("❌ Failed to upload image.");
     }
   };
 
-  // 🔹 Submit handler
+  // Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const token = localStorage.getItem("ADMIN_TOKEN");
+
       if (id) {
         await axios.put(`${backendURL}/api/donations/${id}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        alert("✅ Donation updated successfully!");
+        alert("✅ Donation updated!");
       } else {
         await axios.post(`${backendURL}/api/donations`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        alert("✅ Donation added successfully!");
+        alert("✅ Donation added!");
       }
+
       navigate("/admin/donations");
     } catch (err) {
       console.error("Save failed:", err);
@@ -103,30 +146,31 @@ export default function DonationForm() {
           {id ? "✏️ Edit Donation" : "🪔 Add Donation"}
         </h2>
 
-        {/* 🌐 Language Switch */}
+        {/* Language Switch */}
         <div className="flex flex-wrap gap-2 justify-center mb-6">
-          {languages.map((l) => (
+          {languages.map((lang) => (
             <button
-              key={l}
+              key={lang}
               type="button"
-              onClick={() => setActiveLang(l)}
+              onClick={() => setActiveLang(lang)}
               className={`px-3 py-1 rounded-full text-sm font-semibold transition ${
-                activeLang === l
+                activeLang === lang
                   ? "bg-orange-600 text-white shadow-md"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              {l.toUpperCase()}
+              {lang.toUpperCase()}
             </button>
           ))}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 🖼 Thumbnail */}
+          {/* Thumbnail */}
           <div>
             <label className="block font-semibold mb-2 text-orange-800">
               Temple Image / Thumbnail
             </label>
+
             {form.thumbnail && (
               <img
                 src={form.thumbnail}
@@ -134,6 +178,7 @@ export default function DonationForm() {
                 className="w-40 h-40 object-cover rounded-lg mb-3 border"
               />
             )}
+
             <input
               type="file"
               accept="image/*"
@@ -142,37 +187,61 @@ export default function DonationForm() {
             />
           </div>
 
-          {/* 🛕 Temple Details */}
+          {/* Temple Fields */}
           <h3 className="text-xl font-semibold text-orange-700 border-b pb-1">
             Temple Details
           </h3>
-          {["templeName", "address", "templeDetails", "shortDetails"].map((field) => (
-            <div key={field}>
-              <label className="capitalize block font-medium mb-1">{field}</label>
-              <input
-                type="text"
-                value={form[field as keyof typeof form]?.[activeLang] || ""}
-                onChange={(e) => handleMultiChange(field, activeLang, e.target.value)}
-                className="border p-2 rounded w-full"
-              />
-            </div>
-          ))}
 
-          {/* 💰 Donation Details */}
+          {["templeName", "address", "templeDetails", "shortDetails"].map(
+            (field) => (
+              <div key={field}>
+                <label className="capitalize block font-medium mb-1">
+                  {field}
+                </label>
+
+                <input
+                  type="text"
+                  value={getMultiText(field as keyof DonationFormState)}
+                  onChange={(e) =>
+                    handleMultiChange(
+                      field as keyof DonationFormState,
+                      activeLang,
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded w-full"
+                />
+              </div>
+            )
+          )}
+
+          {/* Donation Fields */}
           <h3 className="text-xl font-semibold text-orange-700 border-b pb-1 mt-4">
             Donation Details
           </h3>
-          {["donationName", "description", "summary", "benefits"].map((field) => (
-            <div key={field}>
-              <label className="capitalize block font-medium mb-1">{field}</label>
-              <textarea
-                value={form[field as keyof typeof form]?.[activeLang] || ""}
-                onChange={(e) => handleMultiChange(field, activeLang, e.target.value)}
-                className="border p-2 rounded w-full"
-                rows={field === "description" ? 3 : 2}
-              />
-            </div>
-          ))}
+
+          {["donationName", "description", "summary", "benefits"].map(
+            (field) => (
+              <div key={field}>
+                <label className="capitalize block font-medium mb-1">
+                  {field}
+                </label>
+
+                <textarea
+                  value={getMultiText(field as keyof DonationFormState)}
+                  onChange={(e) =>
+                    handleMultiChange(
+                      field as keyof DonationFormState,
+                      activeLang,
+                      e.target.value
+                    )
+                  }
+                  className="border p-2 rounded w-full"
+                  rows={field === "description" ? 3 : 2}
+                />
+              </div>
+            )
+          )}
 
           <button
             type="submit"

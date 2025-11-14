@@ -16,7 +16,7 @@ interface Donation {
 export default function Donations() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function Donations() {
       try {
         const res = await axios.get(`${backendURL}/api/donations`);
         setDonations(res.data);
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Failed to load donations:", err);
       } finally {
         setLoading(false);
@@ -35,14 +35,17 @@ export default function Donations() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this donation?")) return;
+
     try {
       const token = localStorage.getItem("ADMIN_TOKEN");
       await axios.delete(`${backendURL}/api/donations/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       setDonations((prev) => prev.filter((d) => d._id !== id));
       alert("✅ Donation deleted successfully!");
-    } catch (err) {
+    } catch (err: unknown) {
+      console.error("Delete failed:", err);
       alert("❌ Failed to delete donation.");
     }
   };
@@ -66,9 +69,12 @@ export default function Donations() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {donations.map((d) => {
-            const title = d.donationName?.[lang] || d.donationName?.en || "Untitled Donation";
-            const temple = d.templeName?.[lang] || d.templeName?.en || "Unknown Temple";
+            const title =
+              d.donationName?.[lang] || d.donationName?.en || "Untitled Donation";
+            const temple =
+              d.templeName?.[lang] || d.templeName?.en || "Unknown Temple";
             const short = d.shortDetails?.[lang] || d.shortDetails?.en || "";
+
             return (
               <div
                 key={d._id}
@@ -79,10 +85,12 @@ export default function Donations() {
                   alt={title}
                   className="h-48 w-full object-cover"
                 />
+
                 <div className="p-4">
                   <h3 className="text-lg font-semibold text-orange-700">{title}</h3>
                   <p className="text-sm text-gray-600 mb-1">{temple}</p>
                   <p className="text-gray-700 text-sm mb-2 line-clamp-2">{short}</p>
+
                   <div className="flex justify-between mt-3">
                     <Link
                       to={`/admin/donations/edit/${d._id}`}
@@ -90,6 +98,7 @@ export default function Donations() {
                     >
                       ✏️ Edit
                     </Link>
+
                     <button
                       onClick={() => handleDelete(d._id)}
                       className="text-red-600 hover:underline"

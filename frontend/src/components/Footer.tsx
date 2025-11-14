@@ -39,6 +39,8 @@ export default function Footer() {
                 ["Terms & Conditions", "/terms"],
                 ["Privacy Policy", "/privacy"],
                 ["Shipping Policy", "/shipping"],
+                ["Cancellation & Refunds", "/cancellation-refund"],
+
 
               ].map(([name, link]) => (
                 <li key={name}>

@@ -64,7 +64,7 @@ export default function ProductForm() {
   const [activeLang, setActiveLang] = useState<string>(i18n.language || "en");
   const [loading, setLoading] = useState(false);
 
-  const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const backendURL = import.meta.env.VITE_API_URL;
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
