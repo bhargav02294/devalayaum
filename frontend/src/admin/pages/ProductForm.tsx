@@ -1,4 +1,3 @@
-// E:\devalayaum\frontend\src\admin\pages\ProductForm.tsx
 import React, { useState } from "react";
 import axios from "axios";
 import i18n from "../../i18n";
@@ -12,7 +11,8 @@ const LANGS = [
   { code: "bn", label: "ব" },
 ];
 
-type Multilingual = Partial<Record<"en" | "hi" | "mr" | "ta" | "te" | "bn", string>>;
+type LangCode = "en" | "hi" | "mr" | "ta" | "te" | "bn";
+type Multilingual = Partial<Record<LangCode, string>>;
 
 interface FormState {
   name: Multilingual;
@@ -39,15 +39,15 @@ interface FormState {
 
 export default function ProductForm() {
   const [form, setForm] = useState<FormState>({
-    name: {},
+    name: { en: "" },
     category: "",
     subCategory: "",
-    description: {},
+    description: { en: "" },
     material: "",
-    spiritualBenefit: {},
-    usageInstruction: {},
-    deityAssociated: {},
-    mantra: {},
+    spiritualBenefit: { en: "" },
+    usageInstruction: { en: "" },
+    deityAssociated: { en: "" },
+    mantra: { en: "" },
     price: "",
     discountPrice: "",
     stock: "",
@@ -61,22 +61,25 @@ export default function ProductForm() {
     published: true,
   });
 
-  const [activeLang, setActiveLang] = useState<string>(i18n.language || "en");
+  const [activeLang, setActiveLang] = useState<LangCode>(
+    (i18n.language as LangCode) || "en"
+  );
+
   const [loading, setLoading] = useState(false);
 
-const backendURL = import.meta.env.VITE_API_URL;
+  const backendURL = import.meta.env.VITE_API_URL;
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-  // 🌍 Helper: multilingual field setter
-  const setMulti = (field: keyof FormState, lang: string, value: string) => {
+  // 🌍 Multilingual setter
+  const setMulti = (field: keyof FormState, lang: LangCode, value: string) => {
     setForm((prev) => ({
       ...prev,
       [field]: { ...(prev[field] as Multilingual), [lang]: value },
     }));
   };
 
-  // ☁️ Upload image to Cloudinary
+  // ☁️ Cloudinary uploader
   const uploadToCloudinary = async (file: File): Promise<string> => {
     if (!cloudName || !uploadPreset) {
       throw new Error("Cloudinary not configured");
@@ -85,31 +88,31 @@ const backendURL = import.meta.env.VITE_API_URL;
     const fd = new FormData();
     fd.append("file", file);
     fd.append("upload_preset", uploadPreset);
+
     const res = await fetch(url, { method: "POST", body: fd });
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error?.message || "Upload failed");
     return data.secure_url;
   };
 
-  // 🎯 Handle image uploads
   const handleImageChange = (index: number, file: File | null) => {
     const updated = [...form.imageFiles];
     updated[index] = file;
     setForm({ ...form, imageFiles: updated });
   };
 
-  // 🎯 Handle thumbnail file
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setForm({ ...form, thumbnailFile: file });
   };
 
-  // 💾 Submit Form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      let uploadedImages = [...form.images];
+const uploadedImages: string[] = [...(form.images ?? [])];
+
       for (const f of form.imageFiles) {
         if (f) {
           const url = await uploadToCloudinary(f);
@@ -148,19 +151,20 @@ const backendURL = import.meta.env.VITE_API_URL;
       if (token) headers.Authorization = `Bearer ${token}`;
 
       await axios.post(`${backendURL}/api/products`, payload, { headers });
+
       alert("✅ Product saved successfully!");
 
       // Reset form
       setForm({
-        name: {},
+        name: { en: "" },
         category: "",
         subCategory: "",
-        description: {},
+        description: { en: "" },
         material: "",
-        spiritualBenefit: {},
-        usageInstruction: {},
-        deityAssociated: {},
-        mantra: {},
+        spiritualBenefit: { en: "" },
+        usageInstruction: { en: "" },
+        deityAssociated: { en: "" },
+        mantra: { en: "" },
         price: "",
         discountPrice: "",
         stock: "",
@@ -193,7 +197,7 @@ const backendURL = import.meta.env.VITE_API_URL;
           <button
             key={l.code}
             type="button"
-            onClick={() => setActiveLang(l.code)}
+            onClick={() => setActiveLang(l.code as LangCode)}
             className={`px-3 py-1 rounded ${
               activeLang === l.code ? "bg-blue-600 text-white" : "bg-gray-100"
             }`}
@@ -215,6 +219,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               required
             />
           </div>
+
           <div>
             <label>Category</label>
             <input
@@ -224,6 +229,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               placeholder="e.g., Mala, Ring, Pendant"
             />
           </div>
+
           <div>
             <label>Subcategory</label>
             <input
@@ -232,6 +238,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Material</label>
             <input
@@ -252,6 +259,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Usage Instruction ({lang})</label>
             <textarea
@@ -260,6 +268,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Deity Associated ({lang})</label>
             <input
@@ -268,6 +277,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Mantra ({lang})</label>
             <textarea
@@ -276,6 +286,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div className="col-span-2">
             <label>Description ({lang})</label>
             <textarea
@@ -297,6 +308,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Discount Price (₹)</label>
             <input
@@ -306,6 +318,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Stock</label>
             <input
@@ -331,10 +344,11 @@ const backendURL = import.meta.env.VITE_API_URL;
           ))}
         </div>
 
-        {/* 🖼️ Thumbnail */}
+        {/* 🖼 Thumbnail */}
         <div className="border p-4 rounded-lg">
           <label className="block font-semibold mb-2">Thumbnail Image</label>
           <input type="file" accept="image/*" onChange={handleThumbnailChange} />
+
           {form.thumbnail && (
             <img
               src={form.thumbnail}
@@ -355,6 +369,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               placeholder="https://youtube.com/..."
             />
           </div>
+
           <div>
             <label>Dimensions (optional)</label>
             <input
@@ -363,6 +378,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Size (optional)</label>
             <input
@@ -373,7 +389,7 @@ const backendURL = import.meta.env.VITE_API_URL;
           </div>
         </div>
 
-        {/* ✅ Published */}
+        {/* Published */}
         <label className="flex items-center space-x-2">
           <input
             type="checkbox"
@@ -383,7 +399,6 @@ const backendURL = import.meta.env.VITE_API_URL;
           <span>Published</span>
         </label>
 
-        {/* Submit */}
         <button
           disabled={loading}
           type="submit"

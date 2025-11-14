@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import i18n from "../../i18n";
 import extractMessage from "../../utils/extractMessage";
-import type { Temple } from "../../types/Temple";
 
 const LANGS = [
   { code: "en", label: "EN" },
@@ -13,9 +12,16 @@ const LANGS = [
   { code: "ta", label: "த" },
   { code: "te", label: "తె" },
   { code: "bn", label: "ব" },
-];
+] as const;
 
-type Multilingual = Partial<Record<"en" | "hi" | "mr" | "ta" | "te" | "bn", string>>;
+type LangCode = typeof LANGS[number]["code"];
+
+type Multilingual = Partial<Record<LangCode, string>>;
+
+type NearbyPlace = {
+  name: Multilingual;
+  description: Multilingual;
+};
 
 type FormState = {
   name: Multilingual;
@@ -43,7 +49,7 @@ type FormState = {
   roadConnectivity: Multilingual;
   mapLat: string;
   mapLng: string;
-  nearbyPlaces: { name: Multilingual; description: Multilingual }[];
+  nearbyPlaces: NearbyPlace[];
   published: boolean;
 };
 
@@ -80,40 +86,64 @@ const createEmpty = (): FormState => ({
 export default function TempleForm() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
   const [form, setForm] = useState<FormState>(createEmpty());
-  const [activeLang, setActiveLang] = useState<string>(i18n.language || "en");
+  const [activeLang, setActiveLang] = useState<LangCode>(
+    (i18n.language as LangCode) ?? "en"
+  );
   const [loading, setLoading] = useState(false);
-const backendURL = import.meta.env.VITE_API_URL;
+
+  const backendURL = import.meta.env.VITE_API_URL;
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+  const lang = activeLang;
+
+  // SAFE multilingual getter
+  const getMultiValue = (field: keyof FormState, langKey: LangCode) => {
+    const value = form[field];
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      // value is Multilingual-like
+      return (value as Multilingual)[langKey] ?? "";
+    }
+    return "";
+  };
+
+  // SAFE multilingual setter
+  const setMulti = (field: keyof FormState, langKey: LangCode, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: { ...(prev[field] as Multilingual), [langKey]: value },
+    }));
+  };
 
   // Fetch existing temple for editing
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    axios
-      .get<Temple>(`${backendURL}/api/temples/${id}`)
-      .then((res) => {
-        const d = res.data as any;
-        setForm((prev) => ({ ...prev, ...d }));
-      })
-      .catch((err) => {
+
+    (async () => {
+      try {
+        // we expect the API returns a structure compatible to our FormState (or at least subset)
+        const res = await axios.get<Partial<FormState>>(
+          `${backendURL}/api/temples/${id}`
+        );
+        const payload = res.data ?? {};
+        // merge safely into current state (only fields present will override)
+        setForm((prev) => ({ ...prev, ...payload }));
+      } catch (err) {
         console.error("Load temple:", extractMessage(err));
         alert("Failed to load temple: " + extractMessage(err));
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [id, backendURL]);
 
-  const setMulti = (field: keyof FormState, lang: string, value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: { ...(prev[field] as Multilingual), [lang]: value },
-    }));
-  };
-
   const uploadToCloudinary = async (file: File): Promise<string> => {
-    if (!cloudName || !uploadPreset)
+    if (!cloudName || !uploadPreset) {
       throw new Error("Cloudinary not configured. Check VITE_CLOUDINARY_* vars");
+    }
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
     const fd = new FormData();
     fd.append("file", file);
@@ -134,7 +164,10 @@ const backendURL = import.meta.env.VITE_API_URL;
     e.preventDefault();
     setLoading(true);
     try {
-      let uploadedUrls = [...form.images];
+      // copy existing images first
+      const uploadedUrls = [...form.images];
+
+      // upload new files (if any)
       for (const f of form.imageFiles) {
         if (f) {
           const url = await uploadToCloudinary(f);
@@ -142,7 +175,8 @@ const backendURL = import.meta.env.VITE_API_URL;
         }
       }
 
-      const payload = { ...form, images: uploadedUrls };
+      const payload: Partial<FormState> = { ...form, images: uploadedUrls };
+
       const token = localStorage.getItem("ADMIN_TOKEN");
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (token) headers.Authorization = `Bearer ${token}`;
@@ -154,17 +188,14 @@ const backendURL = import.meta.env.VITE_API_URL;
         await axios.post(`${backendURL}/api/temples`, payload, { headers });
         alert("Temple created successfully");
       }
-
       navigate("/admin/temples");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Save temple error:", err);
       alert("Save failed: " + extractMessage(err));
     } finally {
       setLoading(false);
     }
   };
-
-  const lang = activeLang;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -176,7 +207,7 @@ const backendURL = import.meta.env.VITE_API_URL;
           <button
             key={l.code}
             type="button"
-            onClick={() => setActiveLang(l.code)}
+            onClick={() => setActiveLang(l.code as LangCode)}
             className={`px-3 py-1 rounded ${
               activeLang === l.code ? "bg-blue-600 text-white" : "bg-gray-100"
             }`}
@@ -192,23 +223,25 @@ const backendURL = import.meta.env.VITE_API_URL;
           <div>
             <label>Name ({lang})</label>
             <input
-              value={form.name?.[lang] || ""}
+              value={getMultiValue("name", lang)}
               onChange={(e) => setMulti("name", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Location ({lang})</label>
             <input
-              value={form.location?.[lang] || ""}
+              value={getMultiValue("location", lang)}
               onChange={(e) => setMulti("location", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div className="col-span-2">
             <label>About ({lang})</label>
             <textarea
-              value={form.about?.[lang] || ""}
+              value={getMultiValue("about", lang)}
               onChange={(e) => setMulti("about", lang, e.target.value)}
               className="w-full border p-2 rounded h-28"
             />
@@ -223,9 +256,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               key={i}
               type="file"
               accept="image/*"
-              onChange={(e) =>
-                handleImageChange(i, e.target.files ? e.target.files[0] : null)
-              }
+              onChange={(e) => handleImageChange(i, e.target.files ? e.target.files[0] : null)}
               className="block mb-2"
             />
           ))}
@@ -236,51 +267,57 @@ const backendURL = import.meta.env.VITE_API_URL;
           <div>
             <label>Main Deity ({lang})</label>
             <input
-              value={form.mainDeity?.[lang] || ""}
+              value={getMultiValue("mainDeity", lang)}
               onChange={(e) => setMulti("mainDeity", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Deity Description ({lang})</label>
             <textarea
-              value={form.deityDescription?.[lang] || ""}
+              value={getMultiValue("deityDescription", lang)}
               onChange={(e) => setMulti("deityDescription", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Significance ({lang})</label>
             <textarea
-              value={form.significance?.[lang] || ""}
+              value={getMultiValue("significance", lang)}
               onChange={(e) => setMulti("significance", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>History ({lang})</label>
             <textarea
-              value={form.history?.[lang] || ""}
+              value={getMultiValue("history", lang)}
               onChange={(e) => setMulti("history", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Architecture ({lang})</label>
             <input
-              value={form.architecture?.[lang] || ""}
+              value={getMultiValue("architecture", lang)}
               onChange={(e) => setMulti("architecture", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Builder / Trust ({lang})</label>
             <input
-              value={form.builderOrTrust?.[lang] || ""}
+              value={getMultiValue("builderOrTrust", lang)}
               onChange={(e) => setMulti("builderOrTrust", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Consecration Date</label>
             <input
@@ -297,54 +334,49 @@ const backendURL = import.meta.env.VITE_API_URL;
           <div>
             <label>Darshan Timings ({lang})</label>
             <input
-              value={form.darshanTiming?.[lang] || ""}
+              value={getMultiValue("darshanTiming", lang)}
               onChange={(e) => setMulti("darshanTiming", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Morning Aarti</label>
             <input
               value={form.aartiTimings.morning}
               onChange={(e) =>
-                setForm({
-                  ...form,
-                  aartiTimings: { ...form.aartiTimings, morning: e.target.value },
-                })
+                setForm({ ...form, aartiTimings: { ...form.aartiTimings, morning: e.target.value } })
               }
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Shringar Aarti</label>
             <input
               value={form.aartiTimings.shringar}
               onChange={(e) =>
-                setForm({
-                  ...form,
-                  aartiTimings: { ...form.aartiTimings, shringar: e.target.value },
-                })
+                setForm({ ...form, aartiTimings: { ...form.aartiTimings, shringar: e.target.value } })
               }
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Shayan Aarti</label>
             <input
               value={form.aartiTimings.shayan}
               onChange={(e) =>
-                setForm({
-                  ...form,
-                  aartiTimings: { ...form.aartiTimings, shayan: e.target.value },
-                })
+                setForm({ ...form, aartiTimings: { ...form.aartiTimings, shayan: e.target.value } })
               }
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div className="col-span-2">
             <label>Special Pooja Info ({lang})</label>
             <textarea
-              value={form.specialPoojaInfo?.[lang] || ""}
+              value={getMultiValue("specialPoojaInfo", lang)}
               onChange={(e) => setMulti("specialPoojaInfo", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
@@ -356,19 +388,21 @@ const backendURL = import.meta.env.VITE_API_URL;
           <div>
             <label>Dress Code ({lang})</label>
             <input
-              value={form.dressCode?.[lang] || ""}
+              value={getMultiValue("dressCode", lang)}
               onChange={(e) => setMulti("dressCode", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Entry Rules ({lang})</label>
             <textarea
-              value={form.entryRules?.[lang] || ""}
+              value={getMultiValue("entryRules", lang)}
               onChange={(e) => setMulti("entryRules", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Prohibited Items (comma separated)</label>
             <input
@@ -377,6 +411,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div className="flex items-center">
             <label className="mr-3">Locker Facility</label>
             <input
@@ -392,35 +427,39 @@ const backendURL = import.meta.env.VITE_API_URL;
           <div>
             <label>How to Reach ({lang})</label>
             <textarea
-              value={form.howToReach?.[lang] || ""}
+              value={getMultiValue("howToReach", lang)}
               onChange={(e) => setMulti("howToReach", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Nearest Airport ({lang})</label>
             <input
-              value={form.nearestAirport?.[lang] || ""}
+              value={getMultiValue("nearestAirport", lang)}
               onChange={(e) => setMulti("nearestAirport", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Nearest Railway ({lang})</label>
             <input
-              value={form.nearestRailway?.[lang] || ""}
+              value={getMultiValue("nearestRailway", lang)}
               onChange={(e) => setMulti("nearestRailway", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Road Connectivity ({lang})</label>
             <input
-              value={form.roadConnectivity?.[lang] || ""}
+              value={getMultiValue("roadConnectivity", lang)}
               onChange={(e) => setMulti("roadConnectivity", lang, e.target.value)}
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Latitude</label>
             <input
@@ -429,6 +468,7 @@ const backendURL = import.meta.env.VITE_API_URL;
               className="w-full border p-2 rounded"
             />
           </div>
+
           <div>
             <label>Longitude</label>
             <input
@@ -449,7 +489,7 @@ const backendURL = import.meta.env.VITE_API_URL;
                 value={p.name?.[lang] || ""}
                 onChange={(e) => {
                   const updated = [...form.nearbyPlaces];
-                  updated[i].name = { ...(p.name || {}), [lang]: e.target.value };
+                  updated[i] = { ...updated[i], name: { ...(p.name || {}), [lang]: e.target.value } };
                   setForm({ ...form, nearbyPlaces: updated });
                 }}
                 className="border p-2 rounded"
@@ -459,10 +499,7 @@ const backendURL = import.meta.env.VITE_API_URL;
                 value={p.description?.[lang] || ""}
                 onChange={(e) => {
                   const updated = [...form.nearbyPlaces];
-                  updated[i].description = {
-                    ...(p.description || {}),
-                    [lang]: e.target.value,
-                  };
+                  updated[i] = { ...updated[i], description: { ...(p.description || {}), [lang]: e.target.value } };
                   setForm({ ...form, nearbyPlaces: updated });
                 }}
                 className="border p-2 rounded"
@@ -473,18 +510,10 @@ const backendURL = import.meta.env.VITE_API_URL;
 
         {/* Submit Buttons */}
         <div className="flex gap-3 justify-end">
-          <button
-            disabled={loading}
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
+          <button disabled={loading} type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
             {loading ? "Saving..." : id ? "Update Temple" : "Save Temple"}
           </button>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="bg-gray-200 px-4 py-2 rounded"
-          >
+          <button type="button" onClick={() => navigate(-1)} className="bg-gray-200 px-4 py-2 rounded">
             Cancel
           </button>
         </div>
