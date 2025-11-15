@@ -22,10 +22,10 @@ function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
         style={{
           backgroundImage: "url('/temple-border.png')",
           backgroundRepeat: "repeat-x",
-          backgroundSize: "110px auto",
-          height: "22px",
+          backgroundSize: "330px auto",   // 3X BIGGER
+          height: "60px",                 // 3X HEIGHT
           width: "300%",
-          opacity: 0.95,
+          opacity: 1,
         }}
       />
     </div>
@@ -63,8 +63,9 @@ export default function TemplesList() {
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
       }}
     >
-      {/* 🔱 Top border (original) */}
-      <ScrollingBorder />
+     {/* TOP border (normal) */}
+<ScrollingBorder />
+
 
       {/* Title Section */}
       <div className="text-center max-w-3xl mx-auto px-6 mb-6">
@@ -78,8 +79,8 @@ export default function TemplesList() {
         </p>
       </div>
 
-      {/* 🔱 Middle border (VERTICALLY MIRRORED - M → W) */}
-      <ScrollingBorder flipVertical />
+      {/* AFTER DESCRIPTION (FLIPPED) */}
+<ScrollingBorder flipVertical />
 
       {/* Temple Cards */}
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">

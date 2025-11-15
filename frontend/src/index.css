@@ -16,10 +16,10 @@
 }
 
 .animate-border-left {
-  animation: border-scroll-left 58s linear infinite;
+  animation: border-scroll-left 70s linear infinite;
 }
 
-/* 🔥 VERTICAL FLIP (M → W) */
+/* TRUE vertical flip (works after scale enlargement) */
 .border-flip-vertical {
   transform: scaleY(-1);
   transform-origin: center;
