@@ -13,6 +13,7 @@ interface Temple {
 }
 
 // 🔱 Border Component
+// 🔱 Border Component
 function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
   return (
     <div className="overflow-hidden py-1">
@@ -30,6 +31,7 @@ function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
     </div>
   );
 }
+
 
 export default function TemplesList() {
   const [temples, setTemples] = useState<Temple[]>([]);
