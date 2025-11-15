@@ -136,8 +136,7 @@ export default function TemplesList() {
         )}
       </div>
 
-      {/* 🔱 Final Bottom Border (original) */}
-      <ScrollingBorder />
+    
     </div>
   );
 }
