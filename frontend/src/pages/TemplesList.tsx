@@ -13,16 +13,20 @@ interface Temple {
 }
 
 // 🔱 Scrolling Border Component
-function ScrollingBorder({ reverse = false }: { reverse?: boolean }) {
+function ScrollingBorder({
+  mirrored = false,
+}: {
+  mirrored?: boolean;
+}) {
   return (
     <div className="overflow-hidden py-1">
       <div
-        className={reverse ? "animate-border-right" : "animate-border-left"}
+        className={`animate-border-left ${mirrored ? "border-mirror" : ""}`}
         style={{
           backgroundImage: "url('/temple-border.png')",
           backgroundRepeat: "repeat-x",
           backgroundSize: "110px auto",
-          height: "22px",
+          height: "30px",
           width: "300%",
           opacity: 0.95,
         }}
@@ -75,8 +79,8 @@ export default function TemplesList() {
         </p>
       </div>
 
-      {/* 🔱 Border AFTER Description */}
-      <ScrollingBorder reverse />
+      {/* 🔱 Border AFTER Description — MIRRORED PNG but SAME direction */}
+      <ScrollingBorder mirrored />
 
       {/* Temple Cards */}
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -100,7 +104,6 @@ export default function TemplesList() {
                 key={temple._id}
                 className="group rounded-2xl overflow-hidden"
               >
-                {/* Image Box */}
                 <div
                   className="relative h-72 bg-white rounded-2xl shadow-lg 
                   border border-yellow-300 transition-all duration-500 
@@ -121,7 +124,6 @@ export default function TemplesList() {
                   )}
                 </div>
 
-                {/* Details */}
                 <div className="pt-4 px-2 text-center">
                   <h2 className="text-2xl font-semibold text-orange-800 font-[Playfair]">
                     {name}

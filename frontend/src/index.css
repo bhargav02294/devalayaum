@@ -1,34 +1,22 @@
 @import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-gray-50 text-gray-900 font-sans;
-  }
-}
-
-/* Smooth devotional slow scroll */
+/* Slow smooth devotional scroll (RIGHT → LEFT) */
 @keyframes border-scroll-left {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-33.33%);
+    transform: translateX(-50%);
   }
 }
 
-@keyframes border-scroll-right {
-  from {
-    transform: translateX(-33.33%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
+/* All borders scroll left */
 .animate-border-left {
   animation: border-scroll-left 28s linear infinite;
 }
 
-.animate-border-right {
-  animation: border-scroll-right 28s linear infinite;
+/* Mirrored border (horizontal flip) */
+.border-mirror {
+  transform: scaleX(-1);
+  transform-origin: center;
 }
