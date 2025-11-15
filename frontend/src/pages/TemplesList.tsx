@@ -13,7 +13,6 @@ interface Temple {
 }
 
 // 🔱 Border Component
-// 🔱 Border Component
 function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   return (
     <div className="overflow-hidden py-1">
@@ -33,9 +32,6 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
     </div>
   );
 }
-
-
-
 
 export default function TemplesList() {
   const [temples, setTemples] = useState<Temple[]>([]);
@@ -67,31 +63,43 @@ export default function TemplesList() {
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
       }}
     >
-    {/* TOP border - NORMAL */}
-<ScrollingBorder />
+      {/* 🌟 TOP BORDER */}
+      <ScrollingBorder />
 
+      {/* 🌟 TITLE + IMAGE ROW */}
+      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
-      {/* Title Section */}
-      <div className="text-center max-w-3xl mx-auto px-6 mb-6">
-        <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md">
-          🛕 Sacred Temples of India
-        </h1>
+        {/* LEFT SIDE — TITLE + POINTS */}
+        <div>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
+            🛕 Sacred Temples of India
+          </h1>
 
-        <p className="mt-4 text-lg text-gray-700 leading-relaxed font-[Poppins]">
-          India, the land of timeless spirituality, is home to sacred temples
-          that resonate with divine energy and ancient heritage...
-        </p>
+          <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+            <li>Land of timeless spirituality and divine heritage.</li>
+            <li>Temples that reflect ancient culture & sacred traditions.</li>
+            <li>Pilgrimage sites filled with devotion and divine energy.</li>
+            <li>Architectural wonders built with spiritual precision.</li>
+          </ul>
+        </div>
+
+        {/* RIGHT SIDE — TEMPLE IMAGE */}
+        <div className="flex justify-center lg:justify-end">
+          <img
+            src="/temple.png"
+            alt="Temple Decorative Artwork"
+            className="w-80 lg:w-[420px] drop-shadow-xl"
+          />
+        </div>
       </div>
 
-   {/* MIDDLE border - FLIPPED */}
-<ScrollingBorder flipped />
+      {/* 🌟 MIDDLE BORDER (FLIPPED) */}
+      <ScrollingBorder flipped />
 
-      {/* Temple Cards */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      {/* 🌟 TEMPLE CARDS */}
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
         {temples.length === 0 ? (
-          <p className="text-center text-gray-500 col-span-3">
-            No temples found.
-          </p>
+          <p className="text-center text-gray-500 col-span-3">No temples found.</p>
         ) : (
           temples.map((temple) => {
             const name = temple.name?.[lang] || temple.name?.en || "Untitled";
@@ -142,8 +150,6 @@ export default function TemplesList() {
           })
         )}
       </div>
-
-    
     </div>
   );
 }
