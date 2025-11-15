@@ -17,3 +17,18 @@
 .animate-scroll-slow {
   animation: scrollSlow 90s linear infinite;
 }
+
+
+@keyframes scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll-left 12s linear infinite;
+}
+
