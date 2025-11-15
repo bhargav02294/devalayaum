@@ -118,7 +118,7 @@ export default function TemplesList() {
                 </div>
 
                 {/* 📿 Spiritual Border Bottom */}
-                <div className="absolute bottom-0 left-0 w-full h-3 bg-[url('https://chatgpt.com/backend-api/estuary/content?id=file_0000000031cc71fa9df15119265a337e&ts=489774&p=fs&cid=1&sig=73459337c2c94fa327380a931bcfdfb78fbb0234b30b4c847a88ada49d58384b&v=0')] bg-repeat-x opacity-80"></div>
+                <div className="absolute bottom-0 left-0 w-full h-3 bg-[url('https://www.freepik.com/free-vector/cute-artistic-diwali-diya-border-frame-with-text-space_351443448.htm#fromView=keyword&page=1&position=4&uuid=fcf873f3-73d3-4241-b733-9bf180cfdbf0&query=Spiritual+border')] bg-repeat-x opacity-80"></div>
               </Link>
             );
           })}
