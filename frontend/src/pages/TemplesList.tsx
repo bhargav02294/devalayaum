@@ -136,7 +136,7 @@ export default function TemplesList() {
         )}
       </div>
 
-      
+    
     </div>
   );
 }
