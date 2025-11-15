@@ -5,46 +5,30 @@
     @apply bg-gray-50 text-gray-900 font-sans;
   }
 }
-@keyframes scrollSlow {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
 
-.animate-scroll-slow {
-  animation: scrollSlow 90s linear infinite;
-}
-
-
-
-
-
-@keyframes scroll-left-slow {
+/* Smooth devotional slow scroll */
+@keyframes border-scroll-left {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(-33.33%);
   }
 }
 
-@keyframes scroll-right-slow {
+@keyframes border-scroll-right {
   from {
-    transform: translateX(-50%);
+    transform: translateX(-33.33%);
   }
   to {
     transform: translateX(0);
   }
 }
 
-.animate-scroll {
-  animation: scroll-left-slow 25s linear infinite;
+.animate-border-left {
+  animation: border-scroll-left 28s linear infinite;
 }
 
-.animate-reverse {
-  animation: scroll-right-slow 25s linear infinite;
+.animate-border-right {
+  animation: border-scroll-right 28s linear infinite;
 }
-

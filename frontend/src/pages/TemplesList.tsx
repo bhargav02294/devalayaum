@@ -12,18 +12,19 @@ interface Temple {
   images?: string[];
 }
 
-// Animated scrolling border component
+// 🔱 Scrolling Border Component
 function ScrollingBorder({ reverse = false }: { reverse?: boolean }) {
   return (
-    <div className="overflow-hidden py-2">
+    <div className="overflow-hidden py-1">
       <div
-        className={`animate-scroll ${reverse ? "animate-reverse" : ""}`}
+        className={reverse ? "animate-border-right" : "animate-border-left"}
         style={{
           backgroundImage: "url('/temple-border.png')",
           backgroundRepeat: "repeat-x",
-          backgroundSize: "120px auto",
-          height: "28px",
+          backgroundSize: "110px auto",
+          height: "22px",
           width: "300%",
+          opacity: 0.95,
         }}
       />
     </div>
@@ -59,12 +60,12 @@ export default function TemplesList() {
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
       }}
     >
-      {/* Border BEFORE Title */}
+      {/* 🔱 Border BEFORE Title */}
       <ScrollingBorder />
 
       {/* Title Section */}
       <div className="text-center max-w-3xl mx-auto px-6 mb-6">
-        <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair]">
+        <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md">
           🛕 Sacred Temples of India
         </h1>
 
@@ -74,7 +75,7 @@ export default function TemplesList() {
         </p>
       </div>
 
-      {/* Border AFTER Description (reversed direction) */}
+      {/* 🔱 Border AFTER Description */}
       <ScrollingBorder reverse />
 
       {/* Temple Cards */}
@@ -126,7 +127,7 @@ export default function TemplesList() {
                     {name}
                   </h2>
 
-                  <p className="text-gray-700 text-sm mt-1"> {location}</p>
+                  <p className="text-gray-700 text-sm mt-1">{location}</p>
 
                   <p className="text-gray-600 text-sm mt-2 font-[Poppins] leading-relaxed">
                     {about}...
@@ -138,7 +139,7 @@ export default function TemplesList() {
         )}
       </div>
 
-      {/* Final decorative border */}
+      {/* Final Decorative Border */}
       <ScrollingBorder />
     </div>
   );
