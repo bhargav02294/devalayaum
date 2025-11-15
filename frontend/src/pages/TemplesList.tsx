@@ -3,10 +3,6 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import i18n from "../i18n";
 
-// Mandala Border Image URL (online)
-const BORDER_URL =
-  "url('/temple-border.png')";
-
 interface Temple {
   _id: string;
   name: Record<string, string>;
@@ -17,23 +13,22 @@ interface Temple {
 }
 
 // Animated scrolling border component
-function ScrollingBorder() {
+function ScrollingBorder({ reverse = false }: { reverse?: boolean }) {
   return (
-    <div className="overflow-hidden py-3">
+    <div className="overflow-hidden py-2">
       <div
-        className="animate-scroll border-strip"
+        className={`animate-scroll ${reverse ? "animate-reverse" : ""}`}
         style={{
           backgroundImage: "url('/temple-border.png')",
           backgroundRepeat: "repeat-x",
-          backgroundSize: "200px auto",
-          height: "30px",
-          width: "200%",
+          backgroundSize: "120px auto",
+          height: "28px",
+          width: "300%",
         }}
       />
     </div>
   );
 }
-
 
 export default function TemplesList() {
   const [temples, setTemples] = useState<Temple[]>([]);
@@ -58,31 +53,29 @@ export default function TemplesList() {
 
   return (
     <div
-  className="pt-24 pb-20"
-  style={{
-    background: "linear-gradient(to bottom, #fef3c7 0%, #fff8e7 20%, #ffffff 60%)",
-  }}
->
+      className="pt-24 pb-20"
+      style={{
+        background:
+          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
+      }}
+    >
+      {/* Border BEFORE Title */}
+      <ScrollingBorder />
 
-  {/* Moving Border BEFORE Title */}
-  <ScrollingBorder />
+      {/* Title Section */}
+      <div className="text-center max-w-3xl mx-auto px-6 mb-6">
+        <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair]">
+          🛕 Sacred Temples of India
+        </h1>
 
-  {/* Title Section */}
-  <div className="text-center max-w-3xl mx-auto px-6 mb-6">
-    <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair]">
-      🛕 Sacred Temples of India
-    </h1>
+        <p className="mt-4 text-lg text-gray-700 leading-relaxed font-[Poppins]">
+          India, the land of timeless spirituality, is home to sacred temples
+          that resonate with divine energy and ancient heritage...
+        </p>
+      </div>
 
-    <p className="mt-4 text-lg text-gray-700 leading-relaxed font-[Poppins]">
-      India, the land of timeless spirituality, is home to divine temples...
-    </p>
-  </div>
-
-  {/* Moving Border AFTER Description */}
-  <ScrollingBorder />
-
-  {/* Cards… */}
-
+      {/* Border AFTER Description (reversed direction) */}
+      <ScrollingBorder reverse />
 
       {/* Temple Cards */}
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -107,17 +100,18 @@ export default function TemplesList() {
                 className="group rounded-2xl overflow-hidden"
               >
                 {/* Image Box */}
-                <div className="relative h-72 bg-white rounded-2xl shadow-lg 
-                  border border-yellow-200 transition-all duration-500 
-                  group-hover:shadow-[0_0_25px_rgba(255,165,0,0.5)] 
-                  group-hover:-translate-y-2">
-
+                <div
+                  className="relative h-72 bg-white rounded-2xl shadow-lg 
+                  border border-yellow-300 transition-all duration-500 
+                  group-hover:shadow-[0_0_30px_rgba(255,150,0,0.6)] 
+                  group-hover:-translate-y-2"
+                >
                   {temple.images?.[0] ? (
                     <img
                       src={temple.images[0]}
                       alt={name}
                       className="w-full h-full object-contain p-4 
-                      transition-transform duration-500 group-hover:scale-110"
+                      transition-transform duration-700 group-hover:scale-110"
                     />
                   ) : (
                     <div className="h-full flex items-center justify-center text-gray-500 italic">
@@ -132,13 +126,11 @@ export default function TemplesList() {
                     {name}
                   </h2>
 
-                  <p className="text-gray-700 text-sm mt-1">📍 {location}</p>
+                  <p className="text-gray-700 text-sm mt-1"> {location}</p>
 
                   <p className="text-gray-600 text-sm mt-2 font-[Poppins] leading-relaxed">
                     {about}...
                   </p>
-
-                  
                 </div>
               </Link>
             );
@@ -146,15 +138,8 @@ export default function TemplesList() {
         )}
       </div>
 
-      {/* Decorative Final Border */}
-      <div className="w-full flex justify-center mt-16">
-        <img
-  src={BORDER_URL}
-  alt="Decorative Temple Border"
-  className="w-full max-w-4xl opacity-90"
-/>
-
-      </div>
+      {/* Final decorative border */}
+      <ScrollingBorder />
     </div>
   );
 }
