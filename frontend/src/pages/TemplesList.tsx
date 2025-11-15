@@ -20,19 +20,22 @@ function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
       <div
         className="animate-border-left"
         style={{
-          backgroundImage: "url('/temple-border.png')",
+          backgroundImage: "url('/temple-border-flip.png?rev=3')", // cache-busting
           backgroundRepeat: "repeat-x",
-          backgroundSize: "330px auto", // bigger
-          height: "60px",               // bigger
+          backgroundSize: "330px auto",
+          height: "60px",
           width: "300%",
           opacity: 1,
-          transform: flipVertical ? "scaleY(-1)" : "none", // ⭐ REAL FIX
+
+          // REAL MIRROR FIX
+          transform: flipVertical ? "scaleY(-1)" : "none",
           transformOrigin: "center",
         }}
       />
     </div>
   );
 }
+
 
 
 
