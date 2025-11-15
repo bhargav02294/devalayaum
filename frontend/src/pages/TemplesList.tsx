@@ -18,19 +18,22 @@ function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
   return (
     <div className="overflow-hidden py-1">
       <div
-        className={`animate-border-left ${flipVertical ? "border-flip-vertical" : ""}`}
+        className="animate-border-left"
         style={{
           backgroundImage: "url('/temple-border.png')",
           backgroundRepeat: "repeat-x",
-          backgroundSize: "330px auto",   // 3X BIGGER
-          height: "60px",                 // 3X HEIGHT
+          backgroundSize: "330px auto", // bigger
+          height: "60px",               // bigger
           width: "300%",
           opacity: 1,
+          transform: flipVertical ? "scaleY(-1)" : "none", // ⭐ REAL FIX
+          transformOrigin: "center",
         }}
       />
     </div>
   );
 }
+
 
 
 export default function TemplesList() {
