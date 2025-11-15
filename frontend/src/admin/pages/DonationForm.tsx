@@ -84,31 +84,39 @@ export default function DonationForm() {
 
   // Cloudinary Image Upload
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+  if (!cloudName || !uploadPreset) {
+    alert("❌ Cloudinary environment variables are missing!");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+
+  try {
+    const res = await axios.post(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
     );
 
-    try {
-      const res = await axios.post(
-        `https://api.cloudinary.com/v1_1/${
-          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-        }/image/upload`,
-        formData
-      );
+    setForm((prev) => ({ ...prev, thumbnail: res.data.secure_url }));
+    alert("✅ Image uploaded successfully!");
 
-      setForm((prev) => ({ ...prev, thumbnail: res.data.secure_url }));
-      alert("✅ Image uploaded successfully!");
-    } catch (err) {
-      console.error("Image upload failed:", err);
-      alert("❌ Failed to upload image.");
-    }
-  };
+  } catch (err) {
+    console.error("Image upload failed:", err);
+    alert("❌ Failed to upload image.");
+  }
+};
+
 
   // Submit
   const handleSubmit = async (e: React.FormEvent) => {
