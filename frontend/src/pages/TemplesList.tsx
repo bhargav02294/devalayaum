@@ -14,22 +14,20 @@ interface Temple {
 
 // 🔱 Border Component
 // 🔱 Border Component
-function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
+function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   return (
     <div className="overflow-hidden py-1">
       <div
         className="animate-border-left"
         style={{
-          backgroundImage: "url('/temple-border-flip.png?rev=3')", // cache-busting
+          backgroundImage: flipped
+            ? "url('/temple-border-flip.png?rev=4')" // MIRRORED PNG
+            : "url('/temple-border.png?rev=4')",      // NORMAL PNG
           backgroundRepeat: "repeat-x",
           backgroundSize: "330px auto",
           height: "60px",
           width: "300%",
           opacity: 1,
-
-          // REAL MIRROR FIX
-          transform: flipVertical ? "scaleY(-1)" : "none",
-          transformOrigin: "center",
         }}
       />
     </div>
@@ -69,7 +67,7 @@ export default function TemplesList() {
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
       }}
     >
-     {/* TOP border (normal) */}
+    {/* TOP border - NORMAL */}
 <ScrollingBorder />
 
 
@@ -85,8 +83,8 @@ export default function TemplesList() {
         </p>
       </div>
 
-      {/* AFTER DESCRIPTION (FLIPPED) */}
-<ScrollingBorder flipVertical />
+   {/* MIDDLE border - FLIPPED */}
+<ScrollingBorder flipped />
 
       {/* Temple Cards */}
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
