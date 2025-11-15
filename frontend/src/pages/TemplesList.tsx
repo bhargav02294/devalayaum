@@ -26,9 +26,9 @@ function ScrollingBorder({
           backgroundImage: "url('/temple-border.png')",
           backgroundRepeat: "repeat-x",
           backgroundSize: "110px auto",
-          height: "30px",
-          width: "300%",
-          opacity: 0.95,
+          height: "40px",
+          width: "400%",
+          opacity: 1,
         }}
       />
     </div>
@@ -80,7 +80,7 @@ export default function TemplesList() {
       </div>
 
       {/* 🔱 Border AFTER Description — MIRRORED PNG but SAME direction */}
-      <ScrollingBorder mirrored />
+      <ScrollingBorder />
 
       {/* Temple Cards */}
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -142,7 +142,6 @@ export default function TemplesList() {
       </div>
 
       {/* Final Decorative Border */}
-      <ScrollingBorder />
     </div>
   );
 }
