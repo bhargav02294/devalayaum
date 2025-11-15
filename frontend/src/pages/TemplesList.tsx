@@ -12,23 +12,19 @@ interface Temple {
   images?: string[];
 }
 
-// 🔱 Scrolling Border Component
-function ScrollingBorder({
-  mirrored = false,
-}: {
-  mirrored?: boolean;
-}) {
+// 🔱 Border Component
+function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
   return (
     <div className="overflow-hidden py-1">
       <div
-        className={`animate-border-left ${mirrored ? "border-mirror" : ""}`}
+        className={`animate-border-left ${flipVertical ? "border-flip-vertical" : ""}`}
         style={{
           backgroundImage: "url('/temple-border.png')",
           backgroundRepeat: "repeat-x",
           backgroundSize: "110px auto",
-          height: "40px",
-          width: "400%",
-          opacity: 1,
+          height: "22px",
+          width: "300%",
+          opacity: 0.95,
         }}
       />
     </div>
@@ -38,6 +34,7 @@ function ScrollingBorder({
 export default function TemplesList() {
   const [temples, setTemples] = useState<Temple[]>([]);
   const [loading, setLoading] = useState(true);
+
   const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
 
@@ -64,7 +61,7 @@ export default function TemplesList() {
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
       }}
     >
-      {/* 🔱 Border BEFORE Title */}
+      {/* 🔱 Top border (original) */}
       <ScrollingBorder />
 
       {/* Title Section */}
@@ -79,8 +76,8 @@ export default function TemplesList() {
         </p>
       </div>
 
-      {/* 🔱 Border AFTER Description — MIRRORED PNG but SAME direction */}
-      <ScrollingBorder />
+      {/* 🔱 Middle border (VERTICALLY MIRRORED - M → W) */}
+      <ScrollingBorder flipVertical />
 
       {/* Temple Cards */}
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -128,9 +125,7 @@ export default function TemplesList() {
                   <h2 className="text-2xl font-semibold text-orange-800 font-[Playfair]">
                     {name}
                   </h2>
-
                   <p className="text-gray-700 text-sm mt-1">{location}</p>
-
                   <p className="text-gray-600 text-sm mt-2 font-[Poppins] leading-relaxed">
                     {about}...
                   </p>
@@ -141,7 +136,7 @@ export default function TemplesList() {
         )}
       </div>
 
-      {/* Final Decorative Border */}
+      
     </div>
   );
 }
