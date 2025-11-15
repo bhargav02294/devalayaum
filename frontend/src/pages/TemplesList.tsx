@@ -5,7 +5,7 @@ import i18n from "../i18n";
 
 // Mandala Border Image URL (online)
 const BORDER_URL =
-  "https://www.vecteezy.com/png/11660121-golden-vintage-border";
+  "https://images.pexels.com/photos/57901/pexels-photo-57901.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
 
 interface Temple {
   _id: string;
@@ -143,7 +143,7 @@ export default function TemplesList() {
       <div className="w-full flex justify-center mt-16">
         <img
           src={BORDER_URL}
-          alt="Decorative Border"
+          alt="https://images.pexels.com/photos/57901/pexels-photo-57901.jpeg"
           className="w-full max-w-4xl opacity-90"
         />
       </div>
