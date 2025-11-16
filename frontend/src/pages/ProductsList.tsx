@@ -112,21 +112,21 @@ export default function PujasList() {
       {/* Title */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
-            🕉️ Divine Pujas
-          </h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Devotional & Spiritual Products</h1>
 
           <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Sacred rituals invoking divine blessings.</li>
-            <li>Purify karma and remove obstacles.</li>
-            <li>Bring harmony, prosperity, and spiritual upliftment.</li>
-            <li>Performed with devotion for specific deities.</li>
+            <li>Pure and energized spiritual items designed for daily devotion and meditation.</li>
+            <li>Prayer malas, rudraksha beads, and gemstones that enhance inner strength and focus.</li>
+            <li>Sacred rings, yantras, and blessed accessories that bring protection and positivity.</li>
+            <li>Divine idols and puja essentials crafted to enrich your spiritual environment.</li>
+            <li>Every product carries deep symbolic meaning and supports your spiritual journey.</li>
           </ul>
+
         </div>
 
         <div className="flex justify-center lg:justify-end">
           <img
-            src="/puja.png"
+            src="/product.png"
             alt="Puja Decorative Artwork"
             className="w-80 lg:w-[420px] drop-shadow-xl"
           />
@@ -177,7 +177,6 @@ export default function PujasList() {
         })}
       </div>
 
-      <ScrollingBorder />
     </div>
   );
 }

@@ -80,18 +80,20 @@ export default function DonationsList() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">💰 Temple Donation Campaigns</h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Temple Donations & Divine Chadhava Offerings</h1>
 
           <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Support temple maintenance & daily rituals.</li>
-            <li>Contribute to Annadanam & Seva programs.</li>
-            <li>Help preserve holy traditions & festivals.</li>
-            <li>Gain blessings, peace & spiritual merit.</li>
+            <li>Support the daily worship, rituals, and preservation of sacred temples.</li>
+            <li>Offer Chadhava to deities as a gesture of devotion, gratitude, and surrender.</li>
+            <li>Contribute to Annadanam, Seva, and essential community service programs.</li>
+            <li>Help maintain temple festivals, spiritual activities, and ancient traditions.</li>
+            <li>Participate in a divine act that brings blessings, peace, and spiritual upliftment.</li>
           </ul>
+
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <img src="/donations.png" alt="Donation Artwork" className="w-80 lg:w-[420px] drop-shadow-xl" />
+          <img src="/donation.png" alt="Donation Artwork" className="w-80 lg:w-[420px] drop-shadow-xl" />
         </div>
       </div>
 
@@ -133,7 +135,6 @@ export default function DonationsList() {
         })}
       </div>
 
-      <ScrollingBorder />
     </div>
   );
 }

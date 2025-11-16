@@ -80,18 +80,21 @@ export default function DonationsList() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">💰 Temple Donation Campaigns</h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Aartis, Divine Kathas & Powerful Mantras</h1>
 
           <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Support temple maintenance & daily rituals.</li>
-            <li>Contribute to Annadanam & Seva programs.</li>
-            <li>Help preserve holy traditions & festivals.</li>
-            <li>Gain blessings, peace & spiritual merit.</li>
+            <li>Experience sacred hymns that awaken devotion and inner peace.</li>
+            <li>Immerse in divine Kathas that reveal spiritual wisdom & ancient teachings.</li>
+            <li>Chant powerful mantras that purify the mind and elevate consciousness.</li>
+            <li>Strengthen your spiritual connection through timeless sacred verses.</li>
+            <li>Invoke divine blessings, protection, and positive vibrations.</li>
+            <li>Perfect for daily prayer, meditation, and devotional practice.</li>
           </ul>
+
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <img src="/donations.png" alt="Donation Artwork" className="w-80 lg:w-[420px] drop-shadow-xl" />
+          <img src="/aarti.png" alt="Donation Artwork" className="w-80 lg:w-[420px] drop-shadow-xl" />
         </div>
       </div>
 
@@ -133,7 +136,6 @@ export default function DonationsList() {
         })}
       </div>
 
-      <ScrollingBorder />
     </div>
   );
 }
