@@ -128,7 +128,7 @@ export default function PujasList() {
           <img
             src="/puja.png"
             alt="Puja Decorative Artwork"
-            className="w-80 lg:w-[420px] drop-shadow-xl"
+    className="w-[380px] md:w-[480px] lg:w-[560px] drop-shadow-xl"
           />
         </div>
       </div>

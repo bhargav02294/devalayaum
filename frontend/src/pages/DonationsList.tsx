@@ -94,7 +94,7 @@ export default function DonationsList() {
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <img src="/donation.png" alt="Donation Artwork" className="w-80 lg:w-[420px] drop-shadow-xl" />
+          <img src="/donation.png" alt="Donation Artwork"     className="w-[380px] md:w-[480px] lg:w-[560px] drop-shadow-xl" />
         </div>
       </div>
 
