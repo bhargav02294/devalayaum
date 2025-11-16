@@ -80,15 +80,13 @@ export default function DonationsList() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Aartis, Divine Kathas & Powerful Mantras</h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Aartis, Kathas & Mantras</h1>
 
           <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Experience sacred hymns that awaken devotion and inner peace.</li>
-            <li>Immerse in divine Kathas that reveal spiritual wisdom & ancient teachings.</li>
-            <li>Chant powerful mantras that purify the mind and elevate consciousness.</li>
-            <li>Strengthen your spiritual connection through timeless sacred verses.</li>
-            <li>Invoke divine blessings, protection, and positive vibrations.</li>
-            <li>Perfect for daily prayer, meditation, and devotional practice.</li>
+             <li>Sacred verses that inspire devotion and peace.</li>
+  <li>Kathas that share divine stories and wisdom.</li>
+  <li>Mantras that purify the mind and uplift the soul.</li>
+  <li>Perfect for daily prayer and meditation.</li>
           </ul>
 
         </div>
@@ -112,7 +110,7 @@ export default function DonationsList() {
               <div className="border rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
                 {/* Image */}
                 <div className="w-full h-56 bg-gray-100 overflow-hidden">
-                  <img src={d.thumbnail || "/placeholder.jpg"} alt={title} className="w-full h-full object-contain p-4" />
+                  <img src={d.thumbnail || "/placeholder.jpg"} alt={title} className="w-full h-full object-cover" />
                 </div>
 
                 {/* Content */}
@@ -127,8 +125,6 @@ export default function DonationsList() {
 
                   <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">{details.slice(0, 120)}...</p>
 
-                  {/* Price */}
-                  <p className="inline-block bg-orange-100 text-orange-800 font-bold px-4 py-1 rounded-full shadow text-left">₹{d.price}</p>
                 </div>
               </div>
             </Link>

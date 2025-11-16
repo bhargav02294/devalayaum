@@ -112,15 +112,15 @@ export default function PujasList() {
       {/* Title */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Pujas for Divine Blessings & Spiritual Upliftment</h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Pujas & Divine Blessings</h1>
 
-          <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Holy rituals performed to invite divine grace, protection, and prosperity.</li>
-            <li>Purifies negative energies, reduces karmic obstacles, and restores inner balance.</li>
-            <li>Strengthens your spiritual connection through devotion, mantra chanting, and offerings.</li>
-            <li>Each Puja is dedicated to specific deities, invoking their unique blessings and powers.</li>
-            <li>Creates a sacred atmosphere of peace, positivity, and spiritual transformation.</li>
-          </ul>
+         <ul className="mt-6 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+  <li>Holy rituals performed to invoke divine grace and protection.</li>
+  <li>Removes obstacles and purifies negative energies.</li>
+  <li>Strengthens devotion through mantras and sacred offerings.</li>
+  <li>Each Puja brings peace, positivity, and spiritual upliftment.</li>
+</ul>
+
 
         </div>
 

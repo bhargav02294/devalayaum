@@ -67,15 +67,16 @@ export default function TemplesList() {
 
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Temples of India – Abodes of Divine Energy </h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Temples of India
+ </h1>
 
-          <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Experience ancient temples where divine energies have been worshipped for thousands of years.</li>
-            <li>Each temple echoes timeless traditions, sacred rituals, and spiritual wisdom.</li>
-            <li>Pilgrimage sites that uplift the soul, strengthen faith, and connect devotees with the divine.</li>
-            <li>Marvel at magnificent architecture built with devotion, precision, and spiritual intent.</li>
-            <li>Every visit brings peace, blessings, and a deeper connection to one’s spiritual journey.</li>
-          </ul>
+          <ul className="mt-6 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+  <li>Ancient temples filled with divine energy and tradition.</li>
+  <li>Spiritual places that uplift the soul and strengthen faith.</li>
+  <li>Magnificent architecture crafted with devotion and precision.</li>
+  <li>Every visit brings peace, blessings, and inner connection.</li>
+</ul>
+
 
         </div>
 

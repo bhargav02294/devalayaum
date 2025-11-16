@@ -80,15 +80,16 @@ export default function DonationsList() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Temple Donations & Divine Chadhava Offerings</h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Temple Donations & Divine Chadhava</h1>
 
-          <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Support the daily worship, rituals, and preservation of sacred temples.</li>
-            <li>Offer Chadhava to deities as a gesture of devotion, gratitude, and surrender.</li>
-            <li>Contribute to Annadanam, Seva, and essential community service programs.</li>
-            <li>Help maintain temple festivals, spiritual activities, and ancient traditions.</li>
-            <li>Participate in a divine act that brings blessings, peace, and spiritual upliftment.</li>
-          </ul>
+          <ul className="mt-6 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+  <li>Support temple rituals and daily worship.</li>
+  <li>Offer Chadhava as an act of devotion and gratitude.</li>
+  <li>Contribute to Annadanam and sacred seva programs.</li>
+  <li>Help preserve festivals and ancient traditions.</li>
+  <li>Receive blessings, peace, and spiritual upliftment.</li>
+</ul>
+
 
         </div>
 
@@ -111,7 +112,7 @@ export default function DonationsList() {
               <div className="border rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
                 {/* Image */}
                 <div className="w-full h-56 bg-gray-100 overflow-hidden">
-                  <img src={d.thumbnail || "/placeholder.jpg"} alt={title} className="w-full h-full object-contain p-4" />
+                  <img src={d.thumbnail || "/placeholder.jpg"} alt={title} className="w-full h-full object-cover" />
                 </div>
 
                 {/* Content */}
@@ -126,8 +127,6 @@ export default function DonationsList() {
 
                   <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">{details.slice(0, 120)}...</p>
 
-                  {/* Price */}
-                  <p className="inline-block bg-orange-100 text-orange-800 font-bold px-4 py-1 rounded-full shadow text-left">₹{d.price}</p>
                 </div>
               </div>
             </Link>
