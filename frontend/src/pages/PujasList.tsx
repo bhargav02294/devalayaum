@@ -126,7 +126,7 @@ export default function PujasList() {
 
         <div className="flex justify-center lg:justify-end">
           <img
-            src="/aarti.png"
+            src="/puja.png"
             alt="Puja Decorative Artwork"
             className="w-80 lg:w-[420px] drop-shadow-xl"
           />
