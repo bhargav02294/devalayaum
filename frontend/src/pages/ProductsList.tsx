@@ -1,34 +1,18 @@
-// Updated ProductsList page with professional unified design + MapPin usage
+// Updated ProductsList page with correct spacing + MapPin usage
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-// Inline MapPin Icon — No dependency required
+// Inline MapPin Icon (No dependency)
 function MapPin({ size = 18, className = "" }: { size?: number; className?: string }) {
-  const s = size;
   return (
-    <svg
-      width={s}
-      height={s}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <path
-        d="M12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" stroke="currentColor" strokeWidth="1.25" />
       <path
         d="M18.5 10.5C18.5 15 12 21 12 21s-6.5-6-6.5-10.5A6.5 6.5 0 1 1 18.5 10.5z"
         stroke="currentColor"
         strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
         fill="none"
       />
     </svg>
@@ -46,7 +30,7 @@ interface Puja {
 
 function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div className="overflow-hidden py-0">
+    <div className="overflow-hidden py-1">
       <div
         className="animate-border-left"
         style={{
@@ -55,7 +39,7 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
             : "url('/temple-border.png?rev=4')",
           backgroundRepeat: "repeat-x",
           backgroundSize: "330px auto",
-          height: "55px",
+          height: "60px",
           width: "300%",
           opacity: 1,
         }}
@@ -71,55 +55,43 @@ export default function PujasList() {
   const lang = i18n.language || "en";
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await axios.get<Puja[]>(`${backendURL}/api/pujas`);
-        setPujas(res.data.filter((p) => p.published !== false));
-      } catch (err) {
-        console.error("Failed to load pujas:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+    axios
+      .get<Puja[]>(`${backendURL}/api/pujas`)
+      .then((res) => setPujas(res.data.filter((p) => p.published !== false)))
+      .finally(() => setLoading(false));
   }, [backendURL]);
 
   if (loading)
-    return (
-      <p className="text-center mt-20 text-orange-700 text-xl font-semibold">
-        Loading products...
-      </p>
-    );
+    return <p className="text-center mt-20 text-orange-700 text-xl font-semibold">Loading products...</p>;
 
   if (pujas.length === 0)
     return (
-      <div className="pt-20 pb-16 text-center text-gray-600">
-        <h2 className="text-3xl font-bold mb-3 text-orange-700">No Products Found</h2>
+      <div className="pt-24 pb-16 text-center text-gray-600">
+        <h2 className="text-3xl font-bold text-orange-700 mb-3">No Products Found</h2>
         <p>New spiritual products will be added soon 🙏</p>
       </div>
     );
 
   return (
     <div
-      className="pt-16 pb-20"
+      className="pt-24 pb-20" // KEEP 24 so content stays below navbar
       style={{
-        background:
-          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
+        background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
       }}
     >
-      {/* ⛔ ZERO GAP ABOVE TITLE */}
+      {/* Top Decorative Border */}
       <ScrollingBorder />
 
-      {/* Title + Image block — ZERO top margin */}
-      <div className="max-w-7xl mx-auto px-10 mb-4 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+      {/* Title Section — NO TOP MARGIN */}
+      <div className="max-w-7xl mx-auto px-10 mb-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
 
-        {/* LEFT CONTENT */}
+        {/* Title Block */}
         <div>
-          <h1 className="text-4xl md:text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair]">
             Spiritual & Devotional Products
           </h1>
 
-          <ul className="mt-4 space-y-2 text-gray-700 text-lg md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+          <ul className="mt-4 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
             <li>Essential items for daily worship and meditation.</li>
             <li>Malas, rudraksha, and gemstones for inner strength.</li>
             <li>Yantras, rings, and blessed accessories for protection.</li>
@@ -127,61 +99,50 @@ export default function PujasList() {
           </ul>
         </div>
 
-        {/* RIGHT IMAGE */}
+        {/* Right Image */}
         <div className="flex justify-center lg:justify-end">
           <img
             src="/product.png"
-            alt="Products Artwork"
-            className="w-[340px] md:w-[460px] lg:w-[520px] xl:w-[560px] drop-shadow-xl"
+            alt="Devotional Products Artwork"
+            className="w-[360px] md:w-[460px] lg:w-[540px] drop-shadow-xl"
           />
         </div>
-
       </div>
 
-      {/* ⛔ ZERO GAP BETWEEN TITLE AND SECOND BORDER */}
+      {/* Bottom Decorative Border */}
       <ScrollingBorder flipped />
 
       {/* Product Cards */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-6">
+
         {pujas.map((p) => {
           const title = p.name?.[lang] || p.name?.en;
           const desc = p.description?.[lang] || p.description?.en || "";
 
           return (
-            <Link
-              key={p._id}
-              to={`/pujas/${p._id}`}
-              className="block rounded-2xl overflow-hidden"
-            >
-              <div className="border rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+            <Link key={p._id} to={`/pujas/${p._id}`} className="block rounded-2xl overflow-hidden">
+              <div className="border rounded-2xl bg-white shadow-sm hover:-translate-y-1 hover:shadow-md transition-all">
 
                 <div className="w-full h-56 bg-gray-100 overflow-hidden">
-                  <img
-                    src={p.image || "/placeholder.jpg"}
-                    alt={title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={p.image || "/placeholder.jpg"} alt={title} className="w-full h-full object-cover" />
                 </div>
 
                 <div className="p-4 space-y-3">
-                  <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">
-                    {title}
-                  </h2>
+                  <h2 className="text-lg font-semibold font-[Playfair] text-gray-900">{title}</h2>
 
-                  <div className="flex items-center text-gray-600 text-sm text-left">
+                  <div className="flex items-center text-gray-600 text-sm">
                     <MapPin size={18} className="mr-2" />
                     <span className="capitalize">{p.category}</span>
                   </div>
 
-                  <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">
-                    {desc.slice(0, 140)}...
-                  </p>
+                  <p className="text-sm text-gray-700 font-[Poppins] leading-relaxed">{desc.slice(0, 140)}...</p>
                 </div>
 
               </div>
             </Link>
           );
         })}
+
       </div>
 
     </div>

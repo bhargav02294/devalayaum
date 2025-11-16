@@ -1,3 +1,4 @@
+// src/pages/DonationsList.tsx
 // Updated DonationsList page with unified professional design + MapPin usage
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -17,11 +18,11 @@ function MapPin({ size = 18, className = "" }: { size?: number; className?: stri
 
 interface Donation {
   _id: string;
-  thumbnail: string;
-  templeName: Record<string, string>;
-  donationName: Record<string, string>;
+  thumbnail?: string;
+  templeName?: Record<string, string>;
+  donationName?: Record<string, string>;
   shortDetails?: Record<string, string>;
-  price: number;
+  price?: number;
 }
 
 function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
@@ -51,10 +52,11 @@ export default function DonationsList() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await axios.get(`${backendURL}/api/donations`);
-        setDonations(res.data);
+        const res = await axios.get<Donation[]>(`${backendURL}/api/donations`);
+        setDonations(res.data || []);
       } catch (err) {
         console.error("Failed to load donations:", err);
+        setDonations([]);
       } finally {
         setLoading(false);
       }
@@ -75,68 +77,83 @@ export default function DonationsList() {
 
   return (
     <div
-  className="pt-20 pb-20"
-  style={{
-    background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
-  }}
->
-  <ScrollingBorder />
-  <div className="max-w-7xl mx-auto px-10 mt-4 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+      className="pt-24 pb-20"
+      style={{ background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)" }}
+    >
+      {/* Top sliding border (keeps below navbar due to pt-24) */}
+      <ScrollingBorder />
+
+      {/* Header block — NO top margin so border sits directly above title */}
+      <div className="max-w-7xl mx-auto px-10 mb-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Temple Donations & Divine Chadhava</h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
+            Temple Donations & Divine Chadhava
+          </h1>
 
-          <ul className="mt-6 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-  <li>Support temple rituals and daily worship.</li>
-  <li>Offer Chadhava as an act of devotion and gratitude.</li>
-  <li>Contribute to Annadanam and sacred seva programs.</li>
-  <li>Help preserve festivals and ancient traditions.</li>
-  <li>Receive blessings, peace, and spiritual upliftment.</li>
-</ul>
-
-
+          <ul className="mt-4 space-y-2 text-gray-700 text-lg md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+            <li>Support temple rituals and daily worship.</li>
+            <li>Offer Chadhava as an act of devotion and gratitude.</li>
+            <li>Contribute to Annadanam and sacred seva programs.</li>
+            <li>Help preserve festivals and ancient traditions.</li>
+            <li>Receive blessings, peace, and spiritual upliftment.</li>
+          </ul>
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <img src="/donation.png" alt="Donation Artwork"     className="w-[380px] md:w-[480px] lg:w-[560px] drop-shadow-xl" />
+          <img
+            src="/donation.png"
+            alt="Donation Artwork"
+            className="w-[340px] md:w-[460px] lg:w-[540px] drop-shadow-xl"
+          />
         </div>
       </div>
 
+      {/* Mirrored border right after the title block (no extra gap) */}
       <ScrollingBorder flipped />
 
-      {/* Donation Cards */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
+      {/* Cards grid */}
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
         {donations.map((d) => {
-          const title = d.donationName?.[lang] || "Donation Campaign";
-          const temple = d.templeName?.[lang] || "";
-          const details = d.shortDetails?.[lang] || "";
+          const title = d.donationName?.[lang] || d.donationName?.en || "Donation Campaign";
+          const temple = d.templeName?.[lang] || d.templeName?.en || "";
+          const details = d.shortDetails?.[lang] || d.shortDetails?.en || "";
 
           return (
             <Link key={d._id} to={`/donations/${d._id}`} className="block rounded-2xl overflow-hidden">
               <div className="border rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
                 {/* Image */}
                 <div className="w-full h-56 bg-gray-100 overflow-hidden">
-                  <img src={d.thumbnail || "/placeholder.jpg"} alt={title} className="w-full h-full object-cover" />
+                  <img
+                    src={d.thumbnail || "/placeholder.jpg"}
+                    alt={title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Content */}
                 <div className="p-4 space-y-3">
                   <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">{title}</h2>
 
-                  {/* Temple Row with MapPin */}
                   <div className="flex items-center text-gray-600 text-sm text-left">
                     <MapPin size={18} className="mr-2" />
                     <span className="truncate max-w-[160px]">{temple}</span>
                   </div>
 
-                  <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">{details.slice(0, 120)}...</p>
+                  <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">
+                    {details.slice(0, 120)}...
+                  </p>
 
+                  <div className="mt-2">
+                    <span className="inline-block bg-orange-100 text-orange-800 font-bold px-3 py-1 rounded-full shadow">
+                      {d.price ? `₹${d.price}` : "₹—"}
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>
           );
         })}
       </div>
-
     </div>
   );
 }
