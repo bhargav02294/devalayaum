@@ -73,21 +73,13 @@ export default function PujasList() {
     );
 
   return (
-    <div
-      className="pt-24 pb-20" // KEEP 24 so content stays below navbar
-      style={{
-        background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
-      }}
-    >
-      {/* Top Decorative Border */}
+    <div className="pt-24 pb-20" style={{ background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)" }}>
       <ScrollingBorder />
 
-      {/* Title Section — NO TOP MARGIN */}
-      <div className="max-w-7xl mx-auto px-10 mb-6 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-
-        {/* Title Block */}
+      {/* Header */}
+      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair]">
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
             Spiritual & Devotional Products
           </h1>
 
