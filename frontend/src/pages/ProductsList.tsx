@@ -99,44 +99,45 @@ export default function PujasList() {
       </div>
     );
 
-  return (
-    <div
-      className="pt-24 pb-20"
-      style={{
-        background:
-          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
-      }}
-    >
-      <ScrollingBorder />
+ return (
+  <div
+    className="pt-20 pb-20"   // ⬅️ Reduced from pt-24 → pt-20
+    style={{
+      background:
+        "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
+    }}
+  >
+    <ScrollingBorder />
 
-      {/* Title */}
-      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Spiritual & Devotional Products</h1>
+    {/* Title */}
+    <div className="max-w-7xl mx-auto px-10 mt-4 mb-8 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
+          Spiritual & Devotional Products
+        </h1>
 
-          <ul className="mt-6 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-  <li>Essential items for daily worship and meditation.</li>
-  <li>Malas, rudraksha, and gemstones for inner strength.</li>
-<li>Yantras, rings, and blessed accessories for protection.</li>
-  <li>Divine idols and puja essentials for your sacred space.</li>
-</ul>
+        <ul className="mt-5 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+          <li>Essential items for daily worship and meditation.</li>
+          <li>Malas, rudraksha, and gemstones for inner strength.</li>
+          <li>Yantras, rings, and blessed accessories for protection.</li>
+          <li>Divine idols and puja essentials for your sacred space.</li>
+        </ul>
+      </div>
 
-
-        </div>
 
         <div className="flex justify-center lg:justify-end">
-          <img
-            src="/product.png"
-            alt="Puja Decorative Artwork"
-    className="w-[380px] md:w-[480px] lg:w-[560px] drop-shadow-xl"
-          />
-        </div>
+        <img
+          src="/product.png"
+          alt="Puja Decorative Artwork"
+          className="w-[380px] md:w-[480px] lg:w-[560px] drop-shadow-xl"
+        />
       </div>
+    </div>
 
       <ScrollingBorder flipped />
 
       {/* Cards */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
+    <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-8">
         {pujas.map((p) => {
           const title = p.name?.[lang] || p.name?.en;
           const desc = p.description?.[lang] || p.description?.en || "";
