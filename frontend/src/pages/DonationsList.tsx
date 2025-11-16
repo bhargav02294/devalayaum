@@ -1,7 +1,19 @@
+// Updated DonationsList page with unified professional design + MapPin usage
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
+
+// Inline MapPin Icon — No dependency required
+function MapPin({ size = 18, className = "" }: { size?: number; className?: string }) {
+  const s = size;
+  return (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18.5 10.5C18.5 15 12 21 12 21s-6.5-6-6.5-10.5A6.5 6.5 0 1 1 18.5 10.5z" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}
 
 interface Donation {
   _id: string;
@@ -12,21 +24,18 @@ interface Donation {
   price: number;
 }
 
-// 🔱 Scrolling Border Component
-function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
+function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   return (
     <div className="overflow-hidden py-1">
       <div
-        className={`animate-border-left ${
-          flipVertical ? "border-flip-vertical" : ""
-        }`}
+        className="animate-border-left"
         style={{
-          backgroundImage: "url('/temple-border.png')",
+          backgroundImage: flipped ? "url('/temple-border-flip.png?rev=4')" : "url('/temple-border.png?rev=4')",
           backgroundRepeat: "repeat-x",
-          backgroundSize: "110px auto",
-          height: "22px",
+          backgroundSize: "330px auto",
+          height: "60px",
           width: "300%",
-          opacity: 0.95,
+          opacity: 1,
         }}
       />
     </div>
@@ -36,12 +45,11 @@ function ScrollingBorder({ flipVertical = false }: { flipVertical?: boolean }) {
 export default function DonationsList() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
-
   const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
 
   useEffect(() => {
-    const loadDonations = async () => {
+    const load = async () => {
       try {
         const res = await axios.get(`${backendURL}/api/donations`);
         setDonations(res.data);
@@ -51,110 +59,80 @@ export default function DonationsList() {
         setLoading(false);
       }
     };
-    loadDonations();
+    load();
   }, [backendURL]);
 
   if (loading)
-    return (
-      <p className="text-center mt-20 text-orange-700 text-lg font-semibold">
-        Loading Donations...
-      </p>
-    );
+    return <p className="text-center mt-20 text-orange-700 text-lg font-semibold">Loading Donations...</p>;
 
   if (donations.length === 0)
     return (
       <div className="pt-24 pb-16 text-center text-gray-600">
-        <h2 className="text-3xl font-bold mb-3 text-orange-700">
-          No Donations Available
-        </h2>
+        <h2 className="text-3xl font-bold mb-3 text-orange-700">No Donations Available</h2>
         <p>New donation campaigns will be added soon 🙏</p>
       </div>
     );
 
   return (
-    <div
-      className="pt-24 pb-20"
-      style={{
-        background:
-          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
-      }}
-    >
-      {/* 🔱 Top Border */}
+    <div className="pt-24 pb-20" style={{ background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)" }}>
       <ScrollingBorder />
 
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto px-6 mb-6">
-        <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md">
-          💰 Temple Donation Campaigns
-        </h1>
+      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">💰 Temple Donation Campaigns</h1>
 
-        <div className="mt-4 text-lg text-gray-700 leading-relaxed font-[Poppins] space-y-2">
-          <p>
-            Donations offered to temples are a sacred act of devotion, helping
-            preserve ancient heritage, support rituals, and serve devotees.
-          </p>
-
-          <ul className="text-left max-w-xl mx-auto list-disc list-inside text-gray-700 text-base mt-3">
-            <li>🪔 Support temple maintenance & daily rituals</li>
-            <li>🙏 Contribute to Annadanam & Seva programs</li>
-            <li>✨ Help preserve holy traditions & festivals</li>
-            <li>🌼 Gain blessings, peace & spiritual merit</li>
+          <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+            <li>Support temple maintenance & daily rituals.</li>
+            <li>Contribute to Annadanam & Seva programs.</li>
+            <li>Help preserve holy traditions & festivals.</li>
+            <li>Gain blessings, peace & spiritual merit.</li>
           </ul>
+        </div>
+
+        <div className="flex justify-center lg:justify-end">
+          <img src="/donations.png" alt="Donation Artwork" className="w-80 lg:w-[420px] drop-shadow-xl" />
         </div>
       </div>
 
-      {/* 🔱 Middle (Flipped) Border */}
-      <ScrollingBorder flipVertical />
+      <ScrollingBorder flipped />
 
       {/* Donation Cards */}
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
-        {donations.map((d) => (
-          <Link
-            to={`/donations/${d._id}`}
-            key={d._id}
-            className="group rounded-2xl overflow-hidden"
-          >
-            {/* Image Box */}
-            <div
-              className="relative h-64 bg-white rounded-2xl shadow-lg 
-              border border-yellow-300 transition-all duration-500
-              group-hover:shadow-[0_0_30px_rgba(255,150,0,0.6)]
-              group-hover:-translate-y-2"
-            >
-              <img
-                src={d.thumbnail || "/placeholder.jpg"}
-                alt={d.donationName?.[lang]}
-                className="w-full h-full object-contain p-4 
-                transition-transform duration-700 group-hover:scale-110"
-              />
-            </div>
+        {donations.map((d) => {
+          const title = d.donationName?.[lang] || "Donation Campaign";
+          const temple = d.templeName?.[lang] || "";
+          const details = d.shortDetails?.[lang] || "";
 
-            {/* Details */}
-            <div className="pt-4 px-2 text-center">
-              <h3 className="text-2xl font-semibold text-orange-800 font-[Playfair]">
-                {d.donationName?.[lang] || "Donation Campaign"}
-              </h3>
+          return (
+            <Link key={d._id} to={`/donations/${d._id}`} className="block rounded-2xl overflow-hidden">
+              <div className="border rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                {/* Image */}
+                <div className="w-full h-56 bg-gray-100 overflow-hidden">
+                  <img src={d.thumbnail || "/placeholder.jpg"} alt={title} className="w-full h-full object-contain p-4" />
+                </div>
 
-              <p className="text-gray-600 mt-1">{d.templeName?.[lang]}</p>
+                {/* Content */}
+                <div className="p-4 space-y-3">
+                  <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">{title}</h2>
 
-              <p className="text-gray-700 text-sm mt-2 font-[Poppins] leading-relaxed">
-                {d.shortDetails?.[lang]?.slice(0, 90)}...
-              </p>
+                  {/* Temple Row with MapPin */}
+                  <div className="flex items-center text-gray-600 text-sm text-left">
+                    <MapPin size={18} className="mr-2" />
+                    <span className="truncate max-w-[160px]">{temple}</span>
+                  </div>
 
-              {/* Price Badge */}
-              <p className="mt-3 inline-block bg-orange-100 text-orange-800 font-bold px-4 py-1 rounded-full shadow">
-                ₹{d.price}
-              </p>
+                  <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">{details.slice(0, 120)}...</p>
 
-              <p className="mt-3 text-orange-600 font-medium hover:underline">
-                View Details →
-              </p>
-            </div>
-          </Link>
-        ))}
+                  {/* Price */}
+                  <p className="inline-block bg-orange-100 text-orange-800 font-bold px-4 py-1 rounded-full shadow text-left">₹{d.price}</p>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
-      {/* 🔱 Bottom Border */}
       <ScrollingBorder />
     </div>
   );
