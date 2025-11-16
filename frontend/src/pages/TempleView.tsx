@@ -110,7 +110,7 @@ function LabelValue({ label, value }: { label: string; value?: string | null }) 
 
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="mt-8">
+    <section id={id} className="mt-8 scroll-mt-[92px]">
       <h3 className="text-2xl font-semibold text-orange-700 mb-4">{title}</h3>
       <div className="prose max-w-none text-gray-700">{children}</div>
     </section>
@@ -129,6 +129,9 @@ export default function TempleView() {
   const backendURL = import.meta.env.VITE_API_URL;
   const navRef = useRef<HTMLDivElement | null>(null);
 
+  // NAVBAR OFFSET (approximate; matches your Navbar) — used for anchor scrolling
+  const NAVBAR_OFFSET = 92; // 76px navbar + 16px safe gap
+
   useEffect(() => {
     if (!id) return;
     setLoading(true);
@@ -141,6 +144,11 @@ export default function TempleView() {
       })
       .finally(() => setLoading(false));
   }, [id, backendURL]);
+
+  useEffect(() => {
+    // reset active image index when images change
+    setActiveImage(0);
+  }, [temple?.images]);
 
   if (loading)
     return (
@@ -159,13 +167,30 @@ export default function TempleView() {
       </div>
     );
 
-  const images = temple.images && temple.images.length ? temple.images : ["/temple-placeholder.jpg"];
-  const mainImage = images[activeImage] || images[0];
+  // ensure images is a proper string[] and non-empty
+// ensure images is a guaranteed non-empty string[]
+const images: string[] =
+  temple.images && temple.images.length > 0
+    ? temple.images
+    : ["/temple-placeholder.jpg"];
+
+// clamp index safely
+const safeIndex =
+  Number.isFinite(activeImage)
+    ? Math.min(Math.max(Math.floor(activeImage), 0), images.length - 1)
+    : 0;
+
+// runtime check + non-null assertion so TS won't complain
+const mainImage: string = images.length > 0 ? images[safeIndex]! : "/temple-placeholder.jpg";
+
 
   const scrollTo = (id?: string) => {
     if (!id) return;
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const top = rect.top + window.scrollY - NAVBAR_OFFSET;
+    window.scrollTo({ top, behavior: "smooth" });
   };
 
   return (
@@ -173,7 +198,7 @@ export default function TempleView() {
       <ScrollingBorder />
 
       <div className="max-w-6xl mx-auto px-6">
-        {/* Top header: title + actions */}
+        {/* Top header: title */}
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           <div className="flex-1">
             <h1 className="text-4xl lg:text-5xl font-[Playfair] font-bold text-orange-800 leading-tight mb-3 flex items-center gap-3">
@@ -191,31 +216,13 @@ export default function TempleView() {
             </p>
 
             <div className="flex items-center gap-3 mt-3">
-              <Link to="/temples" className="text-sm text-orange-600 hover:underline">
-                ← Back to Temples
-              </Link>
-
-              <button
-                onClick={() => window.print()}
-                className="ml-2 inline-flex items-center gap-2 text-sm bg-white border px-3 py-1 rounded-lg shadow-sm hover:shadow-md"
-              >
-                Print
-              </button>
-
-              <a
-                href={`mailto:info@yourtemple.org?subject=Enquiry about ${encodeURIComponent(getText(temple.name))}`}
-                className="ml-2 text-sm text-orange-700 hover:underline"
-              >
-                Contact
-              </a>
-
               {temple.published === false && (
                 <span className="ml-3 inline-block text-sm text-red-600 bg-red-50 px-3 py-1 rounded">Unpublished</span>
               )}
             </div>
           </div>
 
-          {/* mini nav (sticky-ish on large screens) */}
+          {/* mini nav (sticky on large screens) */}
           <div className="w-full lg:w-[320px] sticky top-28 self-start" ref={navRef}>
             <div className="bg-white rounded-2xl p-4 shadow-sm border">
               <p className="text-sm text-gray-600 mb-2">Quick links</p>
@@ -239,26 +246,13 @@ export default function TempleView() {
 
         {/* Main content: gallery + core info */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Gallery */}
-          <div className="lg:col-span-2">
-            <div className="rounded-2xl overflow-hidden bg-white border shadow-sm">
-              <div className="w-full h-[460px] bg-gray-50 flex items-center justify-center">
-                <img src={mainImage} alt={getText(temple.name)} className="w-full h-full object-cover" />
+          {/* Gallery: show all images full-size stacked */}
+          <div className="lg:col-span-2 space-y-6">
+            {images.map((src, idx) => (
+              <div key={idx} className="rounded-2xl overflow-hidden bg-white border shadow-sm">
+                <img src={src} alt={`${getText(temple.name)}-${idx}`} className="w-full h-auto max-h-[900px] object-contain" />
               </div>
-
-              {/* thumbnails */}
-              <div className="p-3 bg-white flex gap-3 overflow-x-auto">
-                {images.map((src, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveImage(idx)}
-                    className={`flex-shrink-0 w-28 h-20 rounded-lg overflow-hidden border ${idx === activeImage ? "border-orange-400 ring-2 ring-orange-200" : "border-gray-200"}`}
-                  >
-                    <img src={src} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            </div>
+            ))}
 
             {/* About */}
             <Section id="about" title="About the Temple">
