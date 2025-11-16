@@ -67,8 +67,7 @@ export default function TemplesList() {
 
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Temples of India
- </h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Journey Through the Holy Temples of Bharat</h1>
 
           <ul className="mt-6 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
   <li>Ancient temples filled with divine energy and tradition.</li>
@@ -152,3 +151,6 @@ export default function TemplesList() {
     </div>
   );
 }
+
+
+

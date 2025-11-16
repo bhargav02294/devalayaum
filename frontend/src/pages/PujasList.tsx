@@ -55,7 +55,7 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
             : "url('/temple-border.png?rev=4')",
           backgroundRepeat: "repeat-x",
           backgroundSize: "330px auto",
-          height: "60px",
+          height: "50px",
           width: "300%",
           opacity: 1,
         }}
@@ -86,14 +86,14 @@ export default function PujasList() {
 
   if (loading)
     return (
-      <p className="text-center mt-20 text-orange-700 text-xl font-semibold">
+      <p className="text-center mt-16 text-orange-700 text-xl font-semibold">
         Loading pujas...
       </p>
     );
 
   if (pujas.length === 0)
     return (
-      <div className="pt-24 pb-16 text-center text-gray-600">
+      <div className="pt-20 pb-16 text-center text-gray-600">
         <h2 className="text-3xl font-bold mb-3 text-orange-700">No Pujas Found</h2>
         <p>New divine pujas will be added soon. Stay tuned 🙏</p>
       </div>
@@ -101,34 +101,33 @@ export default function PujasList() {
 
   return (
     <div
-      className="pt-24 pb-20"
+      className="pt-16 pb-20"
       style={{
-        background:
-          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
+        background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
       }}
     >
       <ScrollingBorder />
 
-      {/* Title */}
-      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+      {/* Title Block with reduced gap */}
+      <div className="max-w-7xl mx-auto px-10 mt-2 mb-4 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Pujas & Divine Blessings</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
+            Spiritual & Devotional Products
+          </h1>
 
-         <ul className="mt-6 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-  <li>Holy rituals performed to invoke divine grace and protection.</li>
-  <li>Removes obstacles and purifies negative energies.</li>
-  <li>Strengthens devotion through mantras and sacred offerings.</li>
-  <li>Each Puja brings peace, positivity, and spiritual upliftment.</li>
-</ul>
-
-
+          <ul className="mt-4 space-y-2 text-gray-700 text-lg md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+            <li>Essential items for daily worship and meditation.</li>
+            <li>Malas, rudraksha, and gemstones for inner strength.</li>
+            <li>Yantras, rings, and blessed accessories for protection.</li>
+            <li>Divine idols and puja essentials for your sacred space.</li>
+          </ul>
         </div>
 
         <div className="flex justify-center lg:justify-end">
           <img
-            src="/puja.png"
+            src="/product.png"
             alt="Puja Decorative Artwork"
-    className="w-[380px] md:w-[480px] lg:w-[560px] drop-shadow-xl"
+            className="w-[340px] md:w-[440px] lg:w-[520px] xl:w-[560px] drop-shadow-xl"
           />
         </div>
       </div>
@@ -136,7 +135,7 @@ export default function PujasList() {
       <ScrollingBorder flipped />
 
       {/* Cards */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
         {pujas.map((p) => {
           const title = p.name?.[lang] || p.name?.en;
           const desc = p.description?.[lang] || p.description?.en || "";
@@ -176,7 +175,6 @@ export default function PujasList() {
           );
         })}
       </div>
-
     </div>
   );
 }
