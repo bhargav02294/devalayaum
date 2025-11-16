@@ -1,4 +1,4 @@
-// Updated PujasList page with professional unified design + MapPin usage
+// Updated ProductsList page with professional unified design + MapPin usage
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -46,7 +46,7 @@ interface Puja {
 
 function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   return (
-    <div className="overflow-hidden py-1">
+    <div className="overflow-hidden py-0">
       <div
         className="animate-border-left"
         style={{
@@ -55,7 +55,7 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
             : "url('/temple-border.png?rev=4')",
           backgroundRepeat: "repeat-x",
           backgroundSize: "330px auto",
-          height: "60px",
+          height: "55px",
           width: "300%",
           opacity: 1,
         }}
@@ -87,57 +87,62 @@ export default function PujasList() {
   if (loading)
     return (
       <p className="text-center mt-20 text-orange-700 text-xl font-semibold">
-        Loading pujas...
+        Loading products...
       </p>
     );
 
   if (pujas.length === 0)
     return (
-      <div className="pt-24 pb-16 text-center text-gray-600">
-        <h2 className="text-3xl font-bold mb-3 text-orange-700">No Pujas Found</h2>
-        <p>New divine pujas will be added soon. Stay tuned 🙏</p>
+      <div className="pt-20 pb-16 text-center text-gray-600">
+        <h2 className="text-3xl font-bold mb-3 text-orange-700">No Products Found</h2>
+        <p>New spiritual products will be added soon 🙏</p>
       </div>
     );
 
- return (
-  <div
-    className="pt-20 pb-20"   // ⬅️ Reduced from pt-24 → pt-20
-    style={{
-      background:
-        "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
-    }}
-  >
-    <ScrollingBorder />
+  return (
+    <div
+      className="pt-16 pb-20"
+      style={{
+        background:
+          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
+      }}
+    >
+      {/* ⛔ ZERO GAP ABOVE TITLE */}
+      <ScrollingBorder />
 
-    {/* Title */}
-    <div className="max-w-7xl mx-auto px-10 mt-4 mb-8 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-      <div>
-        <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
-          Spiritual & Devotional Products
-        </h1>
+      {/* Title + Image block — ZERO top margin */}
+      <div className="max-w-7xl mx-auto px-10 mb-4 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
 
-        <ul className="mt-5 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-          <li>Essential items for daily worship and meditation.</li>
-          <li>Malas, rudraksha, and gemstones for inner strength.</li>
-          <li>Yantras, rings, and blessed accessories for protection.</li>
-          <li>Divine idols and puja essentials for your sacred space.</li>
-        </ul>
-      </div>
+        {/* LEFT CONTENT */}
+        <div>
+          <h1 className="text-4xl md:text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
+            Spiritual & Devotional Products
+          </h1>
 
+          <ul className="mt-4 space-y-2 text-gray-700 text-lg md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+            <li>Essential items for daily worship and meditation.</li>
+            <li>Malas, rudraksha, and gemstones for inner strength.</li>
+            <li>Yantras, rings, and blessed accessories for protection.</li>
+            <li>Divine idols and puja essentials for your sacred space.</li>
+          </ul>
+        </div>
 
+        {/* RIGHT IMAGE */}
         <div className="flex justify-center lg:justify-end">
-        <img
-          src="/product.png"
-          alt="Puja Decorative Artwork"
-          className="w-[380px] md:w-[480px] lg:w-[560px] drop-shadow-xl"
-        />
-      </div>
-    </div>
+          <img
+            src="/product.png"
+            alt="Products Artwork"
+            className="w-[340px] md:w-[460px] lg:w-[520px] xl:w-[560px] drop-shadow-xl"
+          />
+        </div>
 
+      </div>
+
+      {/* ⛔ ZERO GAP BETWEEN TITLE AND SECOND BORDER */}
       <ScrollingBorder flipped />
 
-      {/* Cards */}
-    <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-8">
+      {/* Product Cards */}
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
         {pujas.map((p) => {
           const title = p.name?.[lang] || p.name?.en;
           const desc = p.description?.[lang] || p.description?.en || "";
@@ -149,6 +154,7 @@ export default function PujasList() {
               className="block rounded-2xl overflow-hidden"
             >
               <div className="border rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+
                 <div className="w-full h-56 bg-gray-100 overflow-hidden">
                   <img
                     src={p.image || "/placeholder.jpg"}
@@ -162,7 +168,6 @@ export default function PujasList() {
                     {title}
                   </h2>
 
-                  {/* Category Row with MapPin */}
                   <div className="flex items-center text-gray-600 text-sm text-left">
                     <MapPin size={18} className="mr-2" />
                     <span className="capitalize">{p.category}</span>
@@ -172,6 +177,7 @@ export default function PujasList() {
                     {desc.slice(0, 140)}...
                   </p>
                 </div>
+
               </div>
             </Link>
           );
