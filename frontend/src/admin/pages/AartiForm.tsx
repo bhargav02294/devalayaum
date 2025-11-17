@@ -1,293 +1,212 @@
-// E:\devalayaum\frontend\src\admin\pages\AartiForm.tsx
-import React, { useState } from "react";
+// src/pages/AartisList.tsx
+import React from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import i18n from "../../i18n";
 
-const LANGS = [
-  { code: "en", label: "EN" },
-  { code: "hi", label: "हिं" },
-  { code: "mr", label: "मर" },
-  { code: "ta", label: "த" },
-  { code: "te", label: "తె" },
-  { code: "bn", label: "ব" },
-];
-
-type LangCode = "en" | "hi" | "mr" | "ta" | "te" | "bn";
-type Multilingual = Partial<Record<LangCode, string>>;
-type AartiType = "aarti" | "katha" | "mantra";
-
-interface FormState {
-  title: Multilingual;
-  description: Multilingual;
-  content: Multilingual;
-  meaning: Multilingual;
-  imageFile: File | null;
-  image: string;
-  type: AartiType;
-  temple: string;
-  published: boolean;
+/** --------------------------
+ * Inline MapPin Icon (clean)
+ * ---------------------------*/
+function MapPin({ size = 18, className = "" }: { size?: number; className?: string }) {
+  const s = size;
+  return (
+    <svg
+      width={s}
+      height={s}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden
+      role="img"
+    >
+      <path
+        d="M12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18.5 10.5C18.5 15 12 21 12 21s-6.5-6-6.5-10.5A6.5 6.5 0 1 1 18.5 10.5z"
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
 }
 
-export default function AartiForm() {
-  const [form, setForm] = useState<FormState>({
-    title: { en: "" },
-    description: { en: "" },
-    content: { en: "" },
-    meaning: { en: "" },
-    imageFile: null,
-    image: "",
-    type: "aarti",
-    temple: "",
-    published: true,
-  });
+/** --------------------------
+ * Types
+ * ---------------------------*/
+interface Aarti {
+  _id: string;
+  title?: Record<string, string>;
+  description?: Record<string, string>;
+  content?: Record<string, string>;
+  meaning?: Record<string, string>;
+  image?: string;
+  type: "aarti" | "katha" | "mantra";
+  published?: boolean;
+}
 
-  const [activeLang, setActiveLang] = useState<LangCode>(
-    (i18n.language as LangCode) || "en"
+/** --------------------------
+ * Scrolling border (shared)
+ * ---------------------------*/
+function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
+  return (
+    <div className="overflow-hidden py-1">
+      <div
+        className="animate-border-left"
+        style={{
+          backgroundImage: flipped
+            ? "url('/temple-border-flip.png?rev=4')"
+            : "url('/temple-border.png?rev=4')",
+          backgroundRepeat: "repeat-x",
+          backgroundSize: "330px auto",
+          height: "60px",
+          width: "300%",
+          opacity: 1,
+        }}
+      />
+    </div>
   );
-  const [loading, setLoading] = useState(false);
+}
+
+/** --------------------------
+ * Safe language utilities
+ * ---------------------------*/
+function getLang(): string {
+  try {
+    const saved = typeof window !== "undefined" ? (localStorage.getItem("i18nextLng") || localStorage.getItem("lang")) : null;
+    if (saved) return saved.split("-")[0];
+  } catch {
+    // ignore localStorage errors
+  }
+
+  if (typeof navigator !== "undefined" && navigator.language) {
+    return navigator.language.split("-")[0];
+  }
+
+  return "en";
+}
+
+function getText(field?: Record<string, string>, lang?: string) {
+  if (!field) return "";
+  const l = lang || "en";
+  return field[l] || field.en || Object.values(field)[0] || "";
+}
+
+/** --------------------------
+ * Page Component
+ * ---------------------------*/
+export default function AartisList() {
+  const [aartis, setAartis] = useState<Aarti[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const backendURL = import.meta.env.VITE_API_URL;
-  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const lang = getLang();
 
-  // 🔹 Helper: Safe multilingual getter
-  const getText = (field: Multilingual) => field?.[activeLang] ?? "";
-
-  // 🔹 Update multilingual field
-  const setMulti = (field: keyof FormState, lang: LangCode, value: string) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: { ...(prev[field] as Multilingual), [lang]: value },
-    }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((prev) => ({
-      ...prev,
-      imageFile: e.target.files?.[0] || null,
-    }));
-  };
-
-  const uploadToCloudinary = async (file: File): Promise<string> => {
-    if (!cloudName || !uploadPreset)
-      throw new Error("❌ Cloudinary not configured");
-
-    const url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
-
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("upload_preset", uploadPreset);
-
-    const res = await fetch(url, { method: "POST", body: fd });
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data?.error?.message || "Upload failed");
-    return data.secure_url;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!form.title.en) {
-      alert("Please provide English title");
-      return;
-    }
-
+  useEffect(() => {
+    let mounted = true;
     setLoading(true);
 
-    try {
-      let imageUrl = form.image;
-
-      if (form.imageFile) {
-        imageUrl = await uploadToCloudinary(form.imageFile);
+    (async () => {
+      try {
+        const res = await axios.get<Aarti[]>(`${backendURL}/api/aartis`);
+        if (!mounted) return;
+        setAartis(res.data.filter((a) => a.published !== false));
+      } catch (e) {
+        console.error("Failed to load aartis:", e);
+        if (mounted) setAartis([]);
+      } finally {
+        if (mounted) setLoading(false);
       }
+    })();
 
-      const payload = {
-        title: form.title,
-        description: form.description,
-        content: form.content,
-        meaning: form.meaning,
-        type: form.type,
-        image: imageUrl,
-        temple: form.temple || undefined,
-        published: form.published,
-      };
+    return () => {
+      mounted = false;
+    };
+  }, [backendURL]);
 
-      const token = localStorage.getItem("ADMIN_TOKEN");
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (token) headers.Authorization = `Bearer ${token}`;
+  if (loading) {
+    return <p className="text-center mt-20 text-orange-700 text-xl font-semibold">Loading aartis...</p>;
+  }
 
-      await axios.post(`${backendURL}/api/aartis`, payload, { headers });
-
-      alert("✅ Aarti saved successfully!");
-
-      // Reset form
-      setForm({
-        title: { en: "" },
-        description: { en: "" },
-        content: { en: "" },
-        meaning: { en: "" },
-        imageFile: null,
-        image: "",
-        type: "aarti",
-        temple: "",
-        published: true,
-      });
-    } catch (err) {
-      console.error("Save failed:", err);
-      alert("❌ Save failed. Check console.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (aartis.length === 0) {
+    return (
+      <div className="pt-24 pb-16 text-center text-gray-600">
+        <h2 className="text-3xl font-bold mb-3 text-orange-700">No Aartis Found</h2>
+        <p>New divine aartis will be added soon 🙏</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-4">🪔 Add / Edit Aarti</h2>
+    <div
+      className="pt-24 pb-20"
+      style={{ background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)" }}
+    >
+      <ScrollingBorder />
 
-      {/* Language Tabs */}
-      <div className="mb-3 flex gap-2">
-        {LANGS.map((l) => (
-          <button
-            key={l.code}
-            type="button"
-            onClick={() => setActiveLang(l.code as LangCode)}
-            className={`px-3 py-1 rounded ${
-              activeLang === l.code ? "bg-blue-600 text-white" : "bg-gray-100"
-            }`}
+      {/* Header 60% / 40% */}
+      <div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
+        <div>
+          <h1
+            className="text-5xl font-bold font-[Marcellus] drop-shadow-md leading-tight"
+            style={{ color: "#b34a00", marginTop: 0, paddingTop: 0 }}
           >
-            {l.label}
-          </button>
-        ))}
+            Aartis of the Eternal Gods & Goddesses
+          </h1>
+
+          <ul
+            className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
+            style={{ marginTop: 12, color: "#5a4636" }}
+          >
+            <li>Chants that purify the mind and awaken devotion.</li>
+            <li>Feel the divine presence in every sacred verse.</li>
+            <li>Aartis that bring peace, strength, and positivity.</li>
+            <li>Let your heart glow with the rhythm of devotion.</li>
+            <li>Sacred melodies to connect you with the Divine.</li>
+            <li>Begin and end your day with God’s blessings.</li>
+          </ul>
+        </div>
+
+        <div className="flex justify-center lg:justify-end" style={{ marginTop: 0, paddingTop: 0 }}>
+          <img src="/aarti.png" alt="Aarti Artwork" className="w-80 md:w-[360px] lg:w-[480px] drop-shadow-xl" />
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Title */}
-        <div>
-          <label className="block font-semibold">
-            Title ({activeLang.toUpperCase()})
-          </label>
-          <input
-            value={getText(form.title)}
-            onChange={(e) =>
-              setMulti("title", activeLang, e.target.value)
-            }
-            className="w-full border p-2 rounded"
-            required={activeLang === "en"}
-          />
-        </div>
+      <ScrollingBorder flipped />
 
-        {/* Type */}
-        <div>
-          <label className="block font-semibold">Type</label>
-          <select
-            value={form.type}
-            onChange={(e) =>
-              setForm((prev) => ({
-                ...prev,
-                type: e.target.value as AartiType,
-              }))
-            }
-            className="w-full border p-2 rounded"
-          >
-            <option value="aarti">Aarti</option>
-            <option value="katha">Katha</option>
-            <option value="mantra">Mantra</option>
-          </select>
-        </div>
+      {/* Cards */}
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-8">
+        {aartis.map((a) => {
+          const title = getText(a.title, lang) || "Untitled";
+          const description = getText(a.description, lang);
 
-        {/* Description */}
-        <div>
-          <label className="block font-semibold">
-            Short Description ({activeLang.toUpperCase()})
-          </label>
-          <textarea
-            value={getText(form.description)}
-            onChange={(e) =>
-              setMulti("description", activeLang, e.target.value)
-            }
-            className="w-full border p-2 rounded h-24"
-          />
-        </div>
+          return (
+            <Link key={a._id} to={`/aartis/${a._id}`} className="block rounded-2xl overflow-hidden">
+              <div className="border rounded-2xl bg-white shadow-sm hover:-translate-y-1 hover:shadow-md transition-all">
+                <div className="w-full h-56 bg-gray-100 overflow-hidden">
+                  <img src={a.image || "/placeholder.jpg"} alt={title} className="w-full h-full object-cover" />
+                </div>
 
-        {/* Content */}
-        <div>
-          <label className="block font-semibold">
-            Main Content ({activeLang.toUpperCase()})
-          </label>
-          <textarea
-            value={getText(form.content)}
-            onChange={(e) =>
-              setMulti("content", activeLang, e.target.value)
-            }
-            className="w-full border p-2 rounded h-40"
-          />
-        </div>
+                <div className="p-4 space-y-3">
+                  <h2 className="text-lg font-semibold text-gray-900 font-[Playfair]">{title}</h2>
 
-        {/* Meaning (only for mantra) */}
-        {form.type === "mantra" && (
-          <div>
-            <label className="block font-semibold">
-              Meaning ({activeLang.toUpperCase()})
-            </label>
-            <textarea
-              value={getText(form.meaning)}
-              onChange={(e) =>
-                setMulti("meaning", activeLang, e.target.value)
-              }
-              className="w-full border p-2 rounded h-32"
-            />
-          </div>
-        )}
-
-        {/* Thumbnail */}
-        <div>
-          <label className="block font-semibold">Thumbnail Image</label>
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-          {form.image && (
-            <img
-              src={form.image}
-              alt="Preview"
-              className="w-40 h-40 object-cover rounded mt-2"
-            />
-          )}
-        </div>
-
-        {/* Temple ID */}
-        <div>
-          <label className="block font-semibold">Temple ID (optional)</label>
-          <input
-            value={form.temple}
-            onChange={(e) =>
-              setForm((p) => ({ ...p, temple: e.target.value }))
-            }
-            className="w-full border p-2 rounded"
-          />
-        </div>
-
-        {/* Published */}
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={form.published}
-            onChange={(e) =>
-              setForm((p) => ({ ...p, published: e.target.checked }))
-            }
-          />
-          <span>Published</span>
-        </label>
-
-        {/* Submit */}
-        <button
-          disabled={loading}
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          {loading ? "Saving..." : "Save Aarti"}
-        </button>
-      </form>
+                  <p className="text-sm text-gray-700 font-[Poppins] leading-relaxed">
+                    {description ? `${description.slice(0, 120)}...` : "Click to read more"}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }
