@@ -214,35 +214,43 @@ export default function TempleView() {
         </div>
 
         {/* BELOW HEADER: IMAGE + VISITOR INFO -------------------- */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: Gallery */}
-          <div className="lg:col-span-2">
-            <div className="rounded-3xl overflow-hidden border bg-white shadow-lg">
-              {/* Main Image */}
-              <div className="relative h-[500px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff8ec] to-white">
-                <img src={displayImage} alt="temple" className="max-w-full max-h-full object-contain z-10" />
-              </div>
+        {/* BELOW HEADER: IMAGE + VISITOR INFO -------------------- */}
+<div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+{/* Left: Gallery */}
+<div className="lg:col-span-2">
+<div className="rounded-3xl overflow-hidden border border-orange-200/60 bg-gradient-to-br from-white via-orange-50/30 to-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] backdrop-blur-sm">
+{/* Main Image */}
+<div className="relative h-[500px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff4e1] to-white/90 rounded-t-3xl">
+<img
+src={displayImage}
+alt="temple"
+className="max-w-full max-h-full object-contain z-10"
+/>
+</div>
 
-              {/* Thumbnails */}
-              <div className="p-4 flex gap-4 overflow-x-auto">
-                {images.map((src, idx) => {
-                  const active = idx === activeImage;
-                  return (
-                    <button
-                      key={idx}
-                      onMouseEnter={() => setHoverImage(src)}
-                      onMouseLeave={() => setHoverImage(null)}
-                      onClick={() => setActiveImage(idx)}
-                      className={`rounded-xl overflow-hidden border shadow-sm transition-all ${active ? "border-orange-500 ring-2 ring-orange-200 scale-105" : "border-gray-200 hover:scale-105"}`}
-                      style={{ width: active ? 180 : 120, height: active ? 120 : 72 }}
-                    >
-                      <img src={src} className="w-full h-full object-cover" />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+
+{/* Thumbnails */}
+<div className="p-5 flex gap-5 overflow-x-auto bg-gradient-to-b from-white/90 to-orange-50/40 border-t border-orange-200/40">
+{images.map((src, idx) => {
+const active = idx === activeImage;
+return (
+<button
+key={idx}
+onMouseEnter={() => setHoverImage(src)}
+onMouseLeave={() => setHoverImage(null)}
+onClick={() => setActiveImage(idx)}
+className={`rounded-xl overflow-hidden border shadow-sm transition-all ${
+active ? "border-orange-500 ring-2 ring-orange-200 scale-105" : "border-gray-200 hover:scale-105"
+}`}
+style={{ width: active ? 180 : 120, height: active ? 120 : 72 }}
+>
+<img src={src} className="w-full h-full object-cover" />
+</button>
+);
+})}
+</div>
+</div>
+</div>
 
           {/* Right: Visitor Info */}
           <div className="bg-white border rounded-2xl p-5 shadow-sm h-fit">
@@ -297,30 +305,8 @@ export default function TempleView() {
           </Section>
         ) : null}
 
-        {/* FOOTER META ---------------------------------------- */}
-        <div className="mt-10 bg-white border rounded-2xl p-6 shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <p className="text-gray-700">
-              <strong>Published:</strong> {temple.published ? "Yes" : "No"}
-            </p>
-            {temple.updatedAt && <p className="text-gray-600">Updated: {new Date(temple.updatedAt).toLocaleString()}</p>}
-
-            <div className="flex items-center gap-3">
-              <Link to={`/temples/${temple._id}/edit`} className="bg-white border px-4 py-2 rounded-lg text-sm hover:shadow-md">
-                Edit
-              </Link>
-              <a
-                href={`mailto:info@yourtemple.org?subject=Booking for ${encodeURIComponent(getText(temple.name))}`}
-                className="bg-orange-600 text-white px-4 py-2 text-sm rounded-lg hover:shadow-lg"
-              >
-                Request Booking
-              </a>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <ScrollingBorder flipped />
     </div>
   );
 }
