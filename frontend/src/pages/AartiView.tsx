@@ -1,4 +1,4 @@
-// E:\devalayaum\frontend\src\pages\AartiView.tsx
+// src/pages/AartiView.tsx
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -20,8 +20,13 @@ export default function AartiView() {
   const [item, setItem] = useState<AartiItem | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
+  const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
+
+  const getText = (field?: Record<string, string>) =>
+    field?.[lang] || field?.en || "";
+
+  const glow = "shadow-[0_10px_30px_rgba(255,140,60,0.22)]";
 
   useEffect(() => {
     const load = async () => {
@@ -37,78 +42,111 @@ export default function AartiView() {
     load();
   }, [id, backendURL]);
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
-  if (!item) return <p className="text-center mt-10 text-red-600">Item not found</p>;
+  if (loading)
+    return (
+      <p className="text-center mt-20 text-orange-700 text-lg font-medium">
+        Loading…
+      </p>
+    );
 
-  const getText = (field?: Record<string, string>) =>
-    field?.[lang] || field?.en || "";
+  if (!item)
+    return (
+      <p className="text-center mt-20 text-red-600 text-lg">Item not found</p>
+    );
 
   return (
-    <div className="pt-24 px-6 pb-16 max-w-5xl mx-auto">
-      <Link to="/aartis" className="text-orange-600 hover:underline">
-        ← Back to List
-      </Link>
+    <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e6] via-white to-white min-h-screen">
+      <div className="max-w-4xl mx-auto">
 
-      <div className="bg-white shadow-lg rounded-lg p-6 mt-4">
-        {/* Title */}
-        <h1 className="text-3xl font-bold text-orange-700 mb-2">
-          {getText(item.title)}
-        </h1>
-        <p className="text-gray-600 capitalize mb-4">📜 {item.type}</p>
+        {/* BACK BUTTON */}
+        <Link to="/aartis" className="text-orange-700 hover:underline">
+          ← Back to Aartis
+        </Link>
 
-        {/* Image */}
-        {item.image && (
-          <img
-            src={item.image}
-            alt={getText(item.title)}
-            className="w-full rounded-lg mb-6 object-contain"
-          />
-        )}
+        {/* HEADER SECTION */}
+        <div className="mt-6 text-center">
+          <h1 className="text-4xl font-[Marcellus] text-orange-900 font-bold">
+            {getText(item.title)}
+          </h1>
 
-        {/* Description */}
-        {item.description && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-orange-700 mb-2">Description</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-              {getText(item.description)}
-            </p>
-          </div>
-        )}
-
-        {/* Content */}
-        {item.content && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-orange-700 mb-2">
-              {item.type === "mantra" ? "Mantra Text" : "Main Content"}
-            </h2>
-            <p className="text-gray-800 leading-relaxed whitespace-pre-line">
-              {getText(item.content)}
-            </p>
-          </div>
-        )}
-
-        {/* Meaning (only for Mantra) */}
-        {item.type === "mantra" && item.meaning && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-orange-700 mb-2">Meaning</h2>
-            <p className="text-gray-800 leading-relaxed whitespace-pre-line">
-              {getText(item.meaning)}
-            </p>
-          </div>
-        )}
-
-        {/* Related Temple */}
-        {typeof item.temple === "object" && item.temple?.name && (
-          <p className="mt-6 text-gray-600">
-            🛕 Related Temple:{" "}
-            <Link
-              to={`/temple/${item.temple._id}`}
-              className="text-orange-600 hover:underline"
-            >
-              {getText(item.temple.name)}
-            </Link>
+          <p className="text-gray-600 mt-1 text-sm tracking-wide capitalize">
+            📜 {item.type}
           </p>
+        </div>
+
+        {/* IMAGE (Small + Glow + No Border) */}
+        {item.image && (
+          <div className="flex justify-center mt-8">
+            <div className={`rounded-3xl overflow-hidden ${glow} bg-white p-3`}>
+              <img
+                src={item.image}
+                alt={getText(item.title)}
+                className="w-64 h-64 object-cover rounded-2xl"
+              />
+            </div>
+          </div>
         )}
+
+        {/* CONTENT SECTIONS */}
+        <div className="mt-12 space-y-10">
+
+          {/* DESCRIPTION */}
+          {item.description && (
+            <section>
+              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-3">
+                Description
+              </h2>
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                {getText(item.description)}
+              </p>
+            </section>
+          )}
+
+          {/* MAIN CONTENT (Aarti/Katha/Mantra text) */}
+          {item.content && (
+            <section>
+              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-3">
+                {item.type === "mantra"
+                  ? "Mantra"
+                  : item.type === "katha"
+                  ? "Katha Content"
+                  : "Aarti Text"}
+              </h2>
+
+              <p className="text-gray-900 leading-relaxed whitespace-pre-line text-lg">
+                {getText(item.content)}
+              </p>
+            </section>
+          )}
+
+          {/* MEANING (Only for Mantra) */}
+          {item.type === "mantra" && item.meaning && (
+            <section>
+              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-3">
+                Meaning
+              </h2>
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                {getText(item.meaning)}
+              </p>
+            </section>
+          )}
+
+          {/* RELATED TEMPLE */}
+          {typeof item.temple === "object" && item.temple?.name && (
+            <section>
+              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-2">
+                Related Temple
+              </h2>
+
+              <Link
+                to={`/temple/${item.temple._id}`}
+                className="text-orange-700 underline hover:text-orange-900 text-lg"
+              >
+                🛕 {getText(item.temple.name)}
+              </Link>
+            </section>
+          )}
+        </div>
       </div>
     </div>
   );
