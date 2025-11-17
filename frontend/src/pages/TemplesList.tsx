@@ -65,7 +65,7 @@ export default function TemplesList() {
     >
       <ScrollingBorder />
 
-      <div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+<div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
 
   {/* LEFT TEXT BLOCK */}
   <div>

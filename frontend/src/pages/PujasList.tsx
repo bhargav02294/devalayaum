@@ -104,29 +104,45 @@ export default function PujasList() {
       <ScrollingBorder />
 
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Divine Rituals to Bring Blessings Into Your Life</h1>
+<div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
 
-          <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Perform sacred pujas with pure devotion and divine blessings.</li>
-            <li>Bring peace, prosperity, and protection into your home.</li>
-            <li>Authentic Vedic pujas performed by trusted priests.</li>
-            <li>Every puja begins with faith — and ends with blessings.</li>
-            <li>Let divine rituals bring harmony to your life.</li>
-            <li>Book your puja effortlessly and receive God’s grace.</li>
-          </ul>
+  {/* LEFT BLOCK */}
+  <div>
+    <h1
+      className="text-5xl font-bold font-[Marcellus] text-[#b34a00] drop-shadow-md leading-tight"
+      style={{ marginTop: "0px", paddingTop: "0px" }}
+    >
+      Divine Rituals to Bring Blessings Into Your Life
+    </h1>
 
-        </div>
+    <ul
+      className="space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
+      style={{ marginTop: "10px" }}
+    >
+      <li>Perform sacred pujas with pure devotion and divine blessings.</li>
+      <li>Bring peace, prosperity, and protection into your home.</li>
+      <li>Authentic Vedic pujas performed by trusted priests.</li>
+      <li>Every puja begins with faith — and ends with blessings.</li>
+      <li>Let divine rituals bring harmony to your life.</li>
+      <li>Book your puja effortlessly and receive God’s grace.</li>
+    </ul>
+  </div>
 
-        <div className="flex justify-center lg:justify-end">
-          <img
-            src="/puja.png"
-            alt="Puja Decorative Artwork"
-            className="w-80 lg:w-[420px] drop-shadow-xl"
-          />
-        </div>
-      </div>
+  {/* RIGHT IMAGE BLOCK */}
+  <div
+    className="flex justify-center lg:justify-end"
+    style={{ marginTop: "0px", paddingTop: "0px" }}
+  >
+    <img
+      src="/puja.png"
+      alt="Puja Decorative Artwork"
+      className="w-150 lg:w-[420px] drop-shadow-xl"
+      style={{ marginTop: "0px", paddingTop: "0px" }}
+    />
+  </div>
+
+</div>
+
 
       <ScrollingBorder flipped />
 
