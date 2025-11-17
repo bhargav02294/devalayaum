@@ -55,82 +55,88 @@ export default function Hero() {
   }, []);
 
   return (
-    <div
-      className="relative w-full h-[100vh] overflow-hidden"
-      style={{ fontFamily: "Poppins, sans-serif" }}
-    >
+    <div className="relative w-full h-[80vh] overflow-hidden">
+
+      {/* Slides */}
       {slides.map((s, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-[1500ms] ${
+          className={`absolute inset-0 flex transition-opacity duration-[1500ms] ${
             current === index ? "opacity-100" : "opacity-0"
           }`}
         >
-          {/* FULL BACKGROUND IMAGE */}
+          {/* LEFT SOLID COLOR (40%) */}
           <div
-            className="absolute inset-0"
+            className="w-[40%] h-full relative z-10 flex items-center px-10 md:px-16"
             style={{
-              backgroundImage: `url(${s.img})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              filter: "brightness(0.85)",
+              backgroundColor: s.color,
             }}
-          />
-
-          {/* COLOR OVERLAY FADED INTO IMAGE */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(
-                to right,
-                ${s.color} 0%,
-                ${s.color} 35%,
-                rgba(0,0,0,0) 75%
-              )`,
-            }}
-          />
-
-          {/* DIAGONAL BLEND (Professional premium effect) */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(120deg, rgba(0,0,0,0.4) 0%, transparent 60%)",
-            }}
-          />
-
-          {/* CONTENT LEFT */}
-          <div className="relative z-10 h-full flex items-center pl-10 md:pl-20 max-w-xl">
+          >
             <div>
-              <h1 className="text-5xl md:text-6xl font-extrabold text-white drop-shadow-lg leading-tight">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-lg">
                 {s.title}
               </h1>
 
-              <p className="mt-4 text-gray-200 text-lg md:text-xl leading-relaxed">
+              <p className="mt-4 text-gray-300 text-lg md:text-xl leading-relaxed">
                 {s.text}
               </p>
 
               <Link
                 to={s.link}
-                className="mt-8 inline-block bg-gradient-to-r from-orange-600 to-yellow-500 text-white px-8 py-3 rounded-full text-lg shadow-lg hover:scale-[1.05] transition-all duration-300"
+                className="mt-8 inline-block bg-gradient-to-r from-orange-600 to-yellow-500 text-white px-8 py-3 rounded-full text-lg shadow-lg hover:scale-105 transition-all duration-300"
               >
                 {s.btnText}
               </Link>
             </div>
           </div>
+
+          {/* RIGHT IMAGE PART (60%) */}
+          <div
+            className="w-[60%] h-full relative"
+            style={{
+              backgroundImage: `url(${s.img})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "brightness(0.90)",
+            }}
+          />
+
+          {/* SMOOTH BLEND BETWEEN COLOR → IMAGE */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `
+                linear-gradient(
+                  to right,
+                  ${s.color} 0%,
+                  ${s.color} 20%,
+                  rgba(0,0,0,0) 55%
+                )
+              `,
+            }}
+          />
+
+          {/* DIAGONAL LIGHT BLEND (premium effect) */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(115deg, rgba(0,0,0,0.4) 0%, transparent 60%)",
+            }}
+          />
         </div>
       ))}
 
       {/* INDICATORS */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
-        {slides.map((_, index) => (
+        {slides.map((_, idx) => (
           <button
-            key={index}
-            onClick={() => setCurrent(index)}
+            key={idx}
+            onClick={() => setCurrent(idx)}
             className={`w-3 h-3 rounded-full transition-all duration-500 ${
-              current === index
+              current === idx
                 ? "bg-orange-500 scale-125 shadow-lg"
-                : "bg-white/50 hover:bg-white"
+                : "bg-white/60 hover:bg-white"
             }`}
           />
         ))}
