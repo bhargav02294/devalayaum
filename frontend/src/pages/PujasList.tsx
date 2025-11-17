@@ -106,14 +106,15 @@ export default function PujasList() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Pujas & Divine Blessings</h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Divine Rituals to Bring Blessings Into Your Life</h1>
 
           <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Holy rituals performed to invite divine grace, protection, and prosperity.</li>
-            <li>Purifies negative energies, reduces karmic obstacles, and restores inner balance.</li>
-            <li>Strengthens your spiritual connection through devotion, mantra chanting, and offerings.</li>
-            <li>Each Puja is dedicated to specific deities, invoking their unique blessings and powers.</li>
-            <li>Creates a sacred atmosphere of peace, positivity, and spiritual transformation.</li>
+            <li>Perform sacred pujas with pure devotion and divine blessings.</li>
+            <li>Bring peace, prosperity, and protection into your home.</li>
+            <li>Authentic Vedic pujas performed by trusted priests.</li>
+            <li>Every puja begins with faith — and ends with blessings.</li>
+            <li>Let divine rituals bring harmony to your life.</li>
+            <li>Book your puja effortlessly and receive God’s grace.</li>
           </ul>
 
         </div>

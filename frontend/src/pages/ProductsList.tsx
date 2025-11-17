@@ -79,15 +79,15 @@ export default function PujasList() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
-            Spiritual & Devotional Products
-          </h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Pure Spiritual Items for Your Daily Worship</h1>
 
           <ul className="mt-4 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Essential items for daily worship and meditation.</li>
-            <li>Malas, rudraksha, and gemstones for inner strength.</li>
-            <li>Yantras, rings, and blessed accessories for protection.</li>
-            <li>Divine idols and puja essentials for your sacred space.</li>
+            <li>Every product is chosen with purity and devotion.</li>
+            <li>Bring home the blessings of divine energy.</li>
+            <li>From diyas to idols — everything your worship needs.</li>
+            <li>High-quality spiritual items delivered with trust.</li>
+            <li>Make every prayer more powerful with pure products.</li>
+            <li>Spirituality made simple, sacred, and accessible.</li>
           </ul>
         </div>
 

@@ -80,13 +80,16 @@ export default function DonationsList() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Sacred Aartis, Kathas & Mantras</h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Aartis of the Eternal Gods & Goddesses</h1>
 
           <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-             <li>Sacred verses that inspire devotion and peace.</li>
-  <li>Kathas that share divine stories and wisdom.</li>
-  <li>Mantras that purify the mind and uplift the soul.</li>
-  <li>Perfect for daily prayer and meditation.</li>
+             <li>Chants that purify the mind and awaken devotion.</li>
+            <li>Feel the divine presence in every sacred verse.</li>
+            <li>Aartis that bring peace, strength, and positivity.</li>
+            <li>Let your heart glow with the rhythm of devotion.</li>
+            <li>Sacred melodies to connect you with the Divine.</li>
+            <li>Begin and end your day with God’s blessings.</li>
+
           </ul>
 
         </div>

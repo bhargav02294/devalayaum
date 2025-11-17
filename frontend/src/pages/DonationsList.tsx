@@ -82,16 +82,18 @@ export default function DonationsList() {
       {/* Header */}
       <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">
-            Temple Donations & Divine Chadhava
-          </h1>
+          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Blessings Begin Here — with a small act of faith that reaches the feet of the Divine.</h1>
 
           <ul className="mt-4 space-y-2 text-gray-700 text-lg md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Support temple rituals and daily worship.</li>
-            <li>Offer Chadhava as an act of devotion and gratitude.</li>
-            <li>Contribute to Annadanam and sacred seva programs.</li>
-            <li>Help preserve festivals and ancient traditions.</li>
-            <li>Receive blessings, peace, and spiritual upliftment.</li>
+            <li>Your offering becomes a prayer in the mandir.</li>
+            <li>Give with love, receive divine grace.</li>
+            <li>Every small devotion creates countless blessings.</li>
+            <li>Your faith reaches God through our seva.</li>
+            <li>A pure intention is enough to earn punya.</li>
+            <li>What you give from the heart returns as peace.</li>
+            <li>Your devotion lights someone else’s life.</li>
+            <li>Blessings flow where kindness begins.</li>
+
           </ul>
         </div>
 

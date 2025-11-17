@@ -65,28 +65,41 @@ export default function TemplesList() {
     >
       <ScrollingBorder />
 
-      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Journey Through the Holy Temples of Bharat</h1>
+      <div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
-          <ul className="mt-6 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-  <li>Ancient temples filled with divine energy and tradition.</li>
-  <li>Spiritual places that uplift the soul and strengthen faith.</li>
-  <li>Magnificent architecture crafted with devotion and precision.</li>
-  <li>Every visit brings peace, blessings, and inner connection.</li>
-</ul>
+  {/* LEFT TEXT BLOCK */}
+  <div>
+    <h1
+      className="text-5xl font-bold text-[#b34a00] font-[Marcellus] drop-shadow-md leading-tight"
+      style={{ marginTop: "0px", paddingTop: "0px" }}
+    >
+      Devalayaum Temple Collection
+    </h1>
 
+    <ul
+      className="mt-4 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
+      style={{ marginTop: "0px" }}
+    >
+      <li>Authentic history, stories, and significance of every holy shrine.</li>
+      <li>A spiritual guide to the temples that shape our devotion.</li>
+      <li>From Jyotirlingas to Shaktipeeths — experience the divine.</li>
+      <li>Explore real photos, legends, timings, and rituals of every temple.</li>
+      <li>Your digital journey to India’s most sacred places begins here.</li>
+      <li>Where faith meets information — temple details you can trust.</li>
+    </ul>
+  </div>
 
-        </div>
+  {/* RIGHT IMAGE BLOCK */}
+  <div className="flex justify-center lg:justify-end" style={{ marginTop: "0px", paddingTop: "0px" }}>
+    <img
+      src="/temple.png"
+      alt="Temple Decorative Artwork"
+      className="w-80 lg:w-[420px] drop-shadow-xl"
+      style={{ marginTop: "0px", paddingTop: "0px" }}
+    />
+  </div>
 
-        <div className="flex justify-center lg:justify-end">
-          <img
-            src="/temple.png"
-            alt="Temple Decorative Artwork"
-            className="w-80 lg:w-[420px] drop-shadow-xl"
-          />
-        </div>
-      </div>
+</div>
 
       <ScrollingBorder flipped />
 
