@@ -193,62 +193,64 @@ export default function PujaView() {
         </div>
 
         {/* CONTENT SECTIONS */}
-        {/* OVERVIEW */}
-        <div id="overview" className="mt-12">
-          <h2 className="text-3xl font-[Marcellus] text-[#6b2f0f] mb-3">Overview</h2>
-          <p className="text-gray-700 leading-relaxed">{t(puja.description)}</p>
+       {/* OVERVIEW */}
+<div id="overview" className="mt-12">
+  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Overview</h2>
+  <p className="text-gray-700 leading-relaxed">{t(puja.description)}</p>
 
-          {puja.whyPerform && (
-            <p className="mt-4 text-gray-700"><strong>Why Perform:</strong> {t(puja.whyPerform)}</p>
-          )}
-        </div>
+  {puja.whyPerform && (
+    <p className="mt-4 text-gray-700"><strong>Why Perform:</strong> {t(puja.whyPerform)}</p>
+  )}
+</div>
 
-        {/* BENEFITS */}
-        <div id="benefits" className="mt-12">
-          <h2 className="text-3xl font-[Marcellus] text-[#6b2f0f] mb-3">Benefits</h2>
-          <p className="text-gray-700">{t(puja.benefits)}</p>
-        </div>
+{/* BENEFITS */}
+<div id="benefits" className="mt-12">
+  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Benefits</h2>
+  <p className="text-gray-700">{t(puja.benefits)}</p>
+</div>
 
-        {/* PROCEDURE */}
-        <div id="procedure" className="mt-12">
-          <h2 className="text-3xl font-[Marcellus] text-[#6b2f0f] mb-3">Procedure</h2>
-          <p className="text-gray-700 whitespace-pre-line">{t(puja.procedure)}</p>
-        </div>
+{/* PROCEDURE */}
+<div id="procedure" className="mt-12">
+  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Procedure</h2>
+  <p className="text-gray-700 whitespace-pre-line">{t(puja.procedure)}</p>
+</div>
 
-        {/* MANTRA */}
-        <div id="mantra" className="mt-12">
-          <h2 className="text-3xl font-[Marcellus] text-[#6b2f0f] mb-3">Main Mantra</h2>
-          <p className="text-gray-900 font-medium italic">{t(puja.mantra)}</p>
-        </div>
+{/* MANTRA */}
+<div id="mantra" className="mt-12">
+  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Main Mantra</h2>
+  <p className="text-gray-900 font-medium italic">{t(puja.mantra)}</p>
+</div>
 
-        {/* MATERIALS */}
-        <div id="materials" className="mt-12">
-          <h2 className="text-3xl font-[Marcellus] text-[#6b2f0f] mb-3">Materials Required</h2>
-          <p className="text-gray-700">{t(puja.materialsRequired)}</p>
-        </div>
+{/* MATERIALS */}
+<div id="materials" className="mt-12">
+  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Materials Required</h2>
+  <p className="text-gray-700">{t(puja.materialsRequired)}</p>
+</div>
 
-        {/* AVAILABILITY */}
-        <div id="availability" className="mt-12">
-          <h2 className="text-3xl font-[Marcellus] text-[#6b2f0f] mb-3">Availability</h2>
-          {puja.availableAt?.length ? (
-            <ul className="list-disc ml-6 text-gray-700">
-              {puja.availableAt.map((a, i) => (
-                <li key={i}>{t(a)}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-700">Not specified.</p>
-          )}
+{/* AVAILABILITY */}
+<div id="availability" className="mt-12">
+  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Availability</h2>
+  {puja.availableAt?.length ? (
+    <ul className="list-disc ml-6 text-gray-700">
+      {puja.availableAt.map((a, i) => (
+        <li key={i}>{t(a)}</li>
+      ))}
+    </ul>
+  ) : (
+    <p className="text-gray-700">Not specified.</p>
+  )}
 
-          {puja.placesDescription && (
-            <p className="mt-3 text-gray-700">{t(puja.placesDescription)}</p>
-          )}
-        </div>
+  {puja.placesDescription && (
+    <p className="mt-3 text-gray-700">{t(puja.placesDescription)}</p>
+  )}
+</div>
 
-        {/* PACKAGES */}
-        <div id="packages" className="mt-16">
-          <h2 className="text-3xl font-[Marcellus] text-[#6b2f0f] mb-6">Puja Packages</h2>
 
+
+        
+{/* PACKAGES */}
+<div id="packages" className="mt-16">
+  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-6">Puja Packages</h2>
           {puja.packages?.length ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {puja.packages.map((pkg) => (
