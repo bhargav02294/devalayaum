@@ -54,73 +54,64 @@ export default function Hero() {
     return () => clearInterval(auto);
   }, []);
 
+  const slide = slides[current];
+
   return (
     <div className="relative w-full h-[80vh] overflow-hidden">
 
-      {slides.map((s, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 flex transition-opacity duration-[1300ms] ${
-            current === index ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {/* LEFT COLOR SIDE */}
-          <div
-            className="w-[40%] h-full flex items-center px-10 md:px-16 relative"
-            style={{ backgroundColor: s.color }}
+      {/* BACKGROUND IMAGE (full) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url(${slide.img})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center right",
+          filter: "brightness(0.92)",
+        }}
+      ></div>
+
+      {/* LEFT COLOR OVERLAY */}
+      <div
+        className="absolute inset-y-0 left-0 w-[40%]"
+        style={{
+          backgroundColor: slide.color,
+        }}
+      ></div>
+
+      {/* TRUE BLEND ZONE (this makes the magic fade) */}
+      <div
+        className="absolute inset-y-0 left-[35%] w-[20%] pointer-events-none"
+        style={{
+          background: `linear-gradient(
+            to right,
+            ${slide.color} 0%,
+            rgba(0,0,0,0.0) 100%
+          )`,
+          mixBlendMode: "multiply",
+        }}
+      ></div>
+
+      {/* TEXT CONTENT */}
+      <div className="absolute inset-y-0 left-0 w-[40%] flex items-center px-10 md:px-16 z-10">
+        <div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
+            {slide.title}
+          </h1>
+
+          <p className="mt-4 text-gray-300 text-lg md:text-xl">
+            {slide.text}
+          </p>
+
+          <Link
+            to={slide.link}
+            className="mt-8 inline-block bg-gradient-to-r from-orange-600 to-yellow-500 text-white px-8 py-3 rounded-full text-lg shadow-lg hover:scale-105 transition-all duration-300"
           >
-            <div>
-              <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
-                {s.title}
-              </h1>
-
-              <p className="mt-4 text-gray-300 text-lg md:text-xl">
-                {s.text}
-              </p>
-
-              <Link
-                to={s.link}
-                className="mt-8 inline-block bg-gradient-to-r from-orange-600 to-yellow-500 text-white px-8 py-3 rounded-full text-lg shadow-lg hover:scale-105 transition-all duration-300"
-              >
-                {s.btnText}
-              </Link>
-            </div>
-
-            {/* FADE RIGHT EDGE OF COLOR */}
-            <div
-              className="absolute top-0 right-0 h-full w-20 pointer-events-none"
-              style={{
-                background: `linear-gradient(to right, ${s.color}, transparent)`,
-              }}
-            />
-          </div>
-
-          {/* RIGHT IMAGE SIDE */}
-          <div className="w-[60%] h-full relative">
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `url(${s.img})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                filter: "brightness(0.92)",
-              }}
-            />
-
-            {/* FADE LEFT EDGE OF IMAGE TO BLEND INTO COLOR */}
-            <div
-              className="absolute top-0 left-0 h-full w-40 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(to left, transparent, rgba(0,0,0,0.25))",
-                mixBlendMode: "screen",
-              }}
-            />
-          </div>
+            {slide.btnText}
+          </Link>
         </div>
-      ))}
+      </div>
 
-      {/* INDICATORS */}
+      {/* DOT INDICATORS */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, idx) => (
           <button
