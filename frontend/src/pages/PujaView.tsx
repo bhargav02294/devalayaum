@@ -1,5 +1,6 @@
 // src/pages/PujaView.tsx
 // PREMIUM PUJA VIEWER — Professional Devotional Theme (Final)
+// Buttons use a professional sans font (title remains Marcellus)
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -106,7 +107,7 @@ export default function PujaView() {
       <div className="max-w-7xl mx-auto px-6">
 
         {/* TITLE */}
-        <h1 className="text-4xl lg:text-5xl font-[Marcellus] text-[#6b2f0f] font-bold mb-2">
+        <h1 className="mt-6 text-4xl lg:text-5xl font-[Marcellus] text-orange-900 font-bold flex items-center gap-4">
           {t(puja.name)}
         </h1>
 
@@ -114,27 +115,48 @@ export default function PujaView() {
           {puja.category} {puja.subCategory ? `› ${puja.subCategory}` : ""}
         </p>
 
-        {/* QUICK VIEW BUTTONS */}
+        {/* QUICK VIEW BUTTONS — use professional sans font (do NOT change title font) */}
         <div className="flex flex-wrap gap-3 mb-8">
-          <button onClick={() => scrollTo("overview")} className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0]">
+          <button
+            onClick={() => scrollTo("overview")}
+            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
+          >
             Overview
           </button>
-          <button onClick={() => scrollTo("benefits")} className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0]">
+          <button
+            onClick={() => scrollTo("benefits")}
+            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
+          >
             Benefits
           </button>
-          <button onClick={() => scrollTo("procedure")} className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0]">
+          <button
+            onClick={() => scrollTo("procedure")}
+            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
+          >
             Procedure
           </button>
-          <button onClick={() => scrollTo("mantra")} className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0]">
+          <button
+            onClick={() => scrollTo("mantra")}
+            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
+          >
             Mantra
           </button>
-          <button onClick={() => scrollTo("materials")} className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0]">
+          <button
+            onClick={() => scrollTo("materials")}
+            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
+          >
             Materials
           </button>
-          <button onClick={() => scrollTo("availability")} className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0]">
+          <button
+            onClick={() => scrollTo("availability")}
+            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
+          >
             Availability
           </button>
-          <button onClick={() => scrollTo("packages")} className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0]">
+          <button
+            onClick={() => scrollTo("packages")}
+            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
+          >
             Packages
           </button>
         </div>
@@ -147,7 +169,7 @@ export default function PujaView() {
             {puja.videoUrl && (
               <button
                 onClick={() => setVideoOpen(true)}
-                className="absolute bottom-5 right-5 bg-white/90 text-[#8a3c0f] px-4 py-2 rounded-full shadow"
+                className="absolute bottom-5 right-5 bg-white/90 text-[#8a3c0f] px-4 py-2 rounded-full shadow font-sans font-medium"
               >
                 ▶ Play Video
               </button>
@@ -161,9 +183,7 @@ export default function PujaView() {
                 onMouseEnter={() => setHoverPreview(src)}
                 onMouseLeave={() => setHoverPreview(null)}
                 onClick={() => setActiveIndex(idx)}
-                className={`overflow-hidden rounded-xl transition-all ${
-                  idx === activeIndex ? "ring-2 ring-[#d9a06a] scale-105" : "hover:scale-105"
-                }`}
+                className={`overflow-hidden rounded-xl transition-all ${idx === activeIndex ? "ring-2 ring-[#d9a06a] scale-105" : "hover:scale-105"}`}
                 style={{ width: 130, height: 90 }}
               >
                 <img src={src} className="w-full h-full object-cover" />
@@ -232,10 +252,7 @@ export default function PujaView() {
           {puja.packages?.length ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {puja.packages.map((pkg) => (
-                <div
-                  key={pkg.key}
-                  className={`p-6 rounded-2xl bg-white ${glow}`}
-                >
+                <div key={pkg.key} className={`p-6 rounded-2xl bg-white ${glow}`}>
                   <h3 className="text-xl font-bold text-[#8a3c0f]">{packageTitle(pkg)}</h3>
 
                   <p className="text-2xl font-semibold text-gray-900 mt-2">
@@ -245,17 +262,10 @@ export default function PujaView() {
                     )}
                   </p>
 
-                  {pkg.details && (
-                    <p className="mt-2 text-gray-700">{t(pkg.details)}</p>
-                  )}
-                  {pkg.benefits && (
-                    <p className="mt-2 text-gray-700 italic">{t(pkg.benefits)}</p>
-                  )}
+                  {pkg.details && <p className="mt-2 text-gray-700">{t(pkg.details)}</p>}
+                  {pkg.benefits && <p className="mt-2 text-gray-700 italic">{t(pkg.benefits)}</p>}
 
-                  <Link
-                    to={`/pujas/${puja._id}/book/${pkg.key}`}
-                    className="mt-6 block text-center bg-[#8a3c0f] text-white px-4 py-2 rounded-lg hover:bg-[#5e290d]"
-                  >
+                  <Link to={`/pujas/${puja._id}/book/${pkg.key}`} className="mt-6 block text-center bg-[#8a3c0f] text-white px-4 py-2 rounded-lg hover:bg-[#5e290d] font-sans font-medium">
                     Book Now
                   </Link>
                 </div>
@@ -269,25 +279,15 @@ export default function PujaView() {
 
       {/* VIDEO MODAL */}
       {videoOpen && puja.videoUrl && (
-        <div
-          className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50"
-          onClick={() => setVideoOpen(false)}
-        >
-          <div
-            className="bg-white rounded-xl w-full max-w-4xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50" onClick={() => setVideoOpen(false)}>
+          <div className="bg-white rounded-xl w-full max-w-4xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-end p-3">
               <button onClick={() => setVideoOpen(false)}>✕</button>
             </div>
 
             <div className="aspect-video">
               {(puja.videoUrl.includes("youtube") || puja.videoUrl.includes("youtu.be")) ? (
-                <iframe
-                  className="w-full h-full"
-                  src={puja.videoUrl.replace("watch?v=", "embed/")}
-                  allowFullScreen
-                />
+                <iframe className="w-full h-full" src={puja.videoUrl.replace("watch?v=", "embed/")} allowFullScreen />
               ) : (
                 <video src={puja.videoUrl} controls className="w-full h-full bg-black" />
               )}
