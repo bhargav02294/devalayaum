@@ -324,29 +324,7 @@ export default function TempleView() {
           </Section>
         ) : null}
 
-        {/* FOOTER */}
-        <div className="mt-12 bg-white border rounded-2xl p-6 shadow-sm">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-700">
-              <strong>Published:</strong> {temple.published ? "Yes" : "No"}
-            </p>
-
-            {temple.updatedAt && (
-              <p className="text-gray-600">Updated: {new Date(temple.updatedAt).toLocaleString()}</p>
-            )}
-
-            <div className="flex items-center gap-3">
-              <Link to={`/temples/${temple._id}/edit`} className="bg-white border px-4 py-2 rounded-lg text-sm hover:shadow-md">Edit</Link>
-
-              <a
-                href={`mailto:info@yourtemple.org?subject=Booking for ${encodeURIComponent(getText(temple.name))}`}
-                className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:shadow-lg"
-              >
-                Request Booking
-              </a>
-            </div>
-          </div>
-        </div>
+        
 
       </div>
 
