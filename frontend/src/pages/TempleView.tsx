@@ -1,5 +1,5 @@
 // src/pages/TempleView.tsx
-// CLEAN, CORRECT, PROFESSIONAL FULL PAGE — UPDATED AS PER YOUR NEW LAYOUT FORMAT
+// CLEAN, CORRECT, GAP-FREE, SPIRITUAL PREMIUM UI
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -54,6 +54,7 @@ function IconClock({ size = 16 }: { size?: number }) {
     </svg>
   );
 }
+
 function IconLocation({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -62,6 +63,7 @@ function IconLocation({ size = 16 }: { size?: number }) {
     </svg>
   );
 }
+
 function IconTemple({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -79,7 +81,7 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
       <div
         className="animate-border-left"
         style={{
-          backgroundImage: flipped ? "url('/temple-border-flip.png?rev=4')" : "url('/temple-border.png?rev=4')",
+          backgroundImage: flipped ? "url('/temple-border-flip.png')" : "url('/temple-border.png')",
           backgroundRepeat: "repeat-x",
           backgroundSize: "330px auto",
           height: "60px",
@@ -109,7 +111,7 @@ function LabelValue({ label, value }: { label: string; value?: string | null }) 
 
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="mt-14">
+    <section id={id} className="mt-12">
       <h3 className="text-2xl font-[Playfair] text-orange-800 font-semibold mb-4">{title}</h3>
       <div className="text-gray-700 leading-relaxed">{children}</div>
     </section>
@@ -148,7 +150,7 @@ export default function TempleView() {
 
   if (!temple)
     return (
-      <div className="pt-24 pb-20 max-w-4xl mx-auto px-6 text-center">
+      <div className="pt-24 pb-20 text-center">
         <p className="text-red-600 font-semibold">Temple not found</p>
         <Link to="/temples" className="mt-4 inline-block text-orange-700 hover:underline">
           ← Back to Temples
@@ -160,18 +162,23 @@ export default function TempleView() {
   const mainImage = images[activeImage];
   const displayImage = hoverImage ?? mainImage;
 
-  // SAFE: compute prohibited items string so .join is only used when array exists
-  const prohibitedItemsStr = temple.prohibitedItems && temple.prohibitedItems.length > 0 ? temple.prohibitedItems.join(", ") : undefined;
+  // FIX: Safe join
+  const prohibitedItemsStr =
+    Array.isArray(temple.prohibitedItems) && temple.prohibitedItems.length
+      ? temple.prohibitedItems.join(", ")
+      : undefined;
 
   return (
     <div className="pt-20 pb-20" style={{ background: "linear-gradient(to bottom, #fff7e3, #fffdf8, #ffffff)" }}>
       <ScrollingBorder />
 
       <div className="max-w-6xl mx-auto px-6">
-        {/* HEADER -------------------------------------------------- */}
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
-          {/* Left: Name + Location */}
-          <div>
+
+        {/* ---------------- HEADER ROW ---------------- */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+          {/* LEFT: Name + Location */}
+          <div className="lg:col-span-2">
             <h1 className="text-4xl lg:text-5xl font-[Playfair] text-orange-900 font-bold flex items-center gap-4">
               <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
                 <IconTemple />
@@ -185,8 +192,8 @@ export default function TempleView() {
             </p>
           </div>
 
-          {/* Right: Darshan & Aarti */}
-          <div className="bg-white border rounded-2xl p-5 shadow-sm w-full lg:w-[340px]">
+          {/* RIGHT: Darshan Box */}
+          <div className="bg-white border rounded-2xl p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
 
             <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
@@ -196,15 +203,9 @@ export default function TempleView() {
                 <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
 
                 <div className="space-y-1 text-gray-800">
-                  <div className="flex items-center gap-2">
-                    <IconClock /> <span><strong>Morning:</strong> {temple.aartiTimings.morning || "-"}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <IconClock /> <span><strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <IconClock /> <span><strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}</span>
-                  </div>
+                  <div className="flex items-center gap-2"><IconClock /> <strong>Morning:</strong> {temple.aartiTimings.morning || "-"}</div>
+                  <div className="flex items-center gap-2"><IconClock /> <strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}</div>
+                  <div className="flex items-center gap-2"><IconClock /> <strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}</div>
                 </div>
               </div>
             )}
@@ -213,58 +214,56 @@ export default function TempleView() {
           </div>
         </div>
 
-        {/* BELOW HEADER: IMAGE + VISITOR INFO -------------------- */}
-        <div className="mt-0 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          {/* Left: Gallery */}
-          <div className="lg:col-span-2">
-            <div className="rounded-3xl overflow-hidden border bg-white shadow-lg">
-              {/* Main Image */}
-              <div className="relative h-[500px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff8ec] to-white">
-                <img src={displayImage} alt="temple" className="max-w-full max-h-full object-contain z-10" />
-              </div>
-
-              {/* Thumbnails */}
-              <div className="p-4 flex gap-4 overflow-x-auto">
-                {images.map((src, idx) => {
-                  const active = idx === activeImage;
-                  return (
-                    <button
-                      key={idx}
-                      onMouseEnter={() => setHoverImage(src)}
-                      onMouseLeave={() => setHoverImage(null)}
-                      onClick={() => setActiveImage(idx)}
-                      className={`rounded-xl overflow-hidden border shadow-sm transition-all ${active ? "border-orange-500 ring-2 ring-orange-200 scale-105" : "border-gray-200 hover:scale-105"}`}
-                      style={{ width: active ? 180 : 120, height: active ? 120 : 72 }}
-                    >
-                      <img src={src} className="w-full h-full object-cover" />
-                    </button>
-                  );
-                })}
-              </div>
+        {/* ---------------- GALLERY DIRECTLY UNDER LOCATION ---------------- */}
+        <div className="mt-4">
+          <div className="rounded-3xl overflow-hidden border bg-white shadow-lg">
+            {/* Main Image */}
+            <div className="relative h-[500px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff8ec] to-white">
+              <img src={displayImage} alt="temple" className="max-w-full max-h-full object-contain" />
             </div>
-          </div>
 
-          {/* Right: Visitor Info */}
-          <div className="bg-white border rounded-2xl p-5 shadow-sm h-fit">
-            <h3 className="text-lg font-semibold text-orange-700 mb-3">Visitor Information</h3>
-
-            <LabelValue label="Dress Code" value={getText(temple.dressCode)} />
-            <LabelValue label="Entry Rules" value={getText(temple.entryRules)} />
-
-            {prohibitedItemsStr && <LabelValue label="Prohibited Items" value={prohibitedItemsStr} />}
-
-            <p className="text-gray-800 mt-2">
-              <strong>Locker Facility:</strong> {temple.lockerFacility ? "Available" : "Not Available"}
-            </p>
+            {/* Thumbnails */}
+            <div className="p-4 flex gap-4 overflow-x-auto">
+              {images.map((src, idx) => {
+                const active = idx === activeImage;
+                return (
+                  <button
+                    key={idx}
+                    onMouseEnter={() => setHoverImage(src)}
+                    onMouseLeave={() => setHoverImage(null)}
+                    onClick={() => setActiveImage(idx)}
+                    className={`rounded-xl overflow-hidden border shadow-sm transition-all ${
+                      active ? "border-orange-500 ring-2 ring-orange-200 scale-105" : "border-gray-200 hover:scale-105"
+                    }`}
+                    style={{ width: active ? 180 : 120, height: active ? 120 : 72 }}
+                  >
+                    <img src={src} className="w-full h-full object-cover" />
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* ABOUT ------------------------------------------------ */}
+        {/* ---------------- VISITOR INFO BELOW GALLERY (Correct) --------------- */}
+        <div className="mt-6 bg-white border rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-semibold text-orange-700 mb-3">Visitor Information</h3>
+
+          <LabelValue label="Dress Code" value={getText(temple.dressCode)} />
+          <LabelValue label="Entry Rules" value={getText(temple.entryRules)} />
+          {prohibitedItemsStr && <LabelValue label="Prohibited Items" value={prohibitedItemsStr} />}
+
+          <p className="text-gray-800 mt-2">
+            <strong>Locker Facility:</strong> {temple.lockerFacility ? "Available" : "Not Available"}
+          </p>
+        </div>
+
+        {/* ABOUT ------------------------------------------- */}
         <Section id="about" title="About the Temple">
           {getText(temple.about)}
         </Section>
 
-        {/* RELIGIOUS INFO -------------------------------------- */}
+        {/* RELIGIOUS INFO ---------------------------------- */}
         <Section id="religion" title="Religious & Historical Information">
           <LabelValue label="Main Deity" value={getText(temple.mainDeity)} />
           <LabelValue label="Deity Description" value={getText(temple.deityDescription)} />
@@ -275,7 +274,7 @@ export default function TempleView() {
           <LabelValue label="Consecration Date" value={temple.consecrationDate} />
         </Section>
 
-        {/* TRAVEL --------------------------------------------- */}
+        {/* TRAVEL ------------------------------------------ */}
         <Section id="travel" title="Travel & Connectivity">
           <LabelValue label="How to Reach" value={getText(temple.howToReach)} />
           <LabelValue label="Nearest Airport" value={getText(temple.nearestAirport)} />
@@ -283,7 +282,7 @@ export default function TempleView() {
           <LabelValue label="Road Connectivity" value={getText(temple.roadConnectivity)} />
         </Section>
 
-        {/* NEARBY ---------------------------------------------- */}
+        {/* NEARBY ------------------------------------------ */}
         {temple.nearbyPlaces?.length ? (
           <Section id="nearby" title="Nearby Places">
             <div className="space-y-3">
@@ -297,13 +296,19 @@ export default function TempleView() {
           </Section>
         ) : null}
 
-        {/* FOOTER META ---------------------------------------- */}
+        {/* FOOTER ------------------------------------------ */}
         <div className="mt-10 bg-white border rounded-2xl p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
             <p className="text-gray-700">
               <strong>Published:</strong> {temple.published ? "Yes" : "No"}
             </p>
-            {temple.updatedAt && <p className="text-gray-600">Updated: {new Date(temple.updatedAt).toLocaleString()}</p>}
+
+            {temple.updatedAt && (
+              <p className="text-gray-600">
+                Updated: {new Date(temple.updatedAt).toLocaleString()}
+              </p>
+            )}
 
             <div className="flex items-center gap-3">
               <Link to={`/temples/${temple._id}/edit`} className="bg-white border px-4 py-2 rounded-lg text-sm hover:shadow-md">
@@ -316,8 +321,10 @@ export default function TempleView() {
                 Request Booking
               </a>
             </div>
+
           </div>
         </div>
+
       </div>
 
       <ScrollingBorder flipped />
