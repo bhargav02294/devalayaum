@@ -50,7 +50,7 @@ const backendURL = import.meta.env.VITE_API_URL;
 
       {/* Cards */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6">
-        {list.map((item) => {
+  {list.slice(0, 3).map((item) => {
           const title = item.title?.[lang] || item.title?.en || "Untitled";
           const desc =
             item.description?.[lang]?.slice(0, 120) ||

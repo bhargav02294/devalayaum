@@ -57,7 +57,7 @@ const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
 
       {/* Cards - 3 centered */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6">
-        {donations.map((d) => {
+{donations.slice(0, 3).map((d) => {
           const donationTitle = d.donationName?.[lang] || d.donationName?.en || "";
           const temple = d.templeName?.[lang] || d.templeName?.en || "";
           const short =

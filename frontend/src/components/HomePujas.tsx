@@ -46,7 +46,7 @@ export default function HomePujas() {
 
       {/* Cards */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-6">
-        {pujas.map((puja) => {
+{pujas.slice(0, 3).map((puja) => {
           const name = puja.name?.[lang] || puja.name?.en || "";
           const desc =
             puja.description?.[lang]?.substring(0, 120) ||
