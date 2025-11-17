@@ -4,13 +4,12 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
+// AARTI ITEM STRUCTURE
 interface AartiItem {
   _id: string;
   title: Record<string, string>;
   type: "aarti" | "katha" | "mantra";
   description?: Record<string, string>;
-  content?: Record<string, string>;
-  meaning?: Record<string, string>;
   image?: string;
   published?: boolean;
 }
@@ -28,36 +27,41 @@ const ScrollingBorder = ({ flipped = false }: { flipped?: boolean }) => (
         backgroundSize: "330px auto",
         height: "60px",
         width: "300%",
-        opacity: 1,
       }}
     />
   </div>
 );
 
-const AartisList = () => {
+export default function AartisList() {
   const [items, setItems] = useState<AartiItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [filter, setFilter] = useState<"all" | "aarti" | "katha" | "mantra">(
+    "all"
+  );
 
   const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
 
+  // FETCH ALL AARTI/KATHA/MANTRA
   useEffect(() => {
     axios
-      .get(`${backendURL}/api/aartis?published=true`)
+      .get(`${backendURL}/api/aartis`)
       .then((res) => setItems(res.data || []))
-      .catch((err) => {
-        console.error("Failed to load aartis:", err);
-        setItems([]);
-      })
+      .catch(() => setItems([]))
       .finally(() => setLoading(false));
   }, [backendURL]);
 
+  // FILTER TAKES EFFECT HERE
+  const filteredItems =
+    filter === "all"
+      ? items
+      : items.filter((it) => it.type === filter);
+
   if (loading) {
     return (
-      <div className="pt-24 pb-20 flex items-center justify-center">
-        <p className="text-orange-700 text-lg font-semibold">
-          Loading aartis, kathas & mantras…
-        </p>
+      <div className="pt-24 pb-20 text-center text-orange-700 font-semibold text-lg">
+        Loading Aartis, Kathas & Mantras…
       </div>
     );
   }
@@ -72,92 +76,99 @@ const AartisList = () => {
     >
       <ScrollingBorder />
 
-      {/* Header — 60% text / 40% image */}
-      <div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-6 items-center mt-6">
+      {/* Header Section */}
+      <div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-8 items-center">
         <div>
           <h1
             className="text-5xl font-bold font-[Marcellus] text-[#b34a00] drop-shadow-md leading-tight"
-            style={{ marginTop: 0, paddingTop: 0 }}
-          >
-            Sacred Aartis, Divine Kathas & Powerful Mantras
+            style={{ marginTop: 0 }}
+          >Aartis of the Eternal Gods & Goddesses
           </h1>
 
-          <ul
-            className="mt-4 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
-            style={{ color: "#5a4636" }}
-          >
-            <li>Experience sacred hymns that awaken devotion and inner peace.</li>
-            <li>Immerse in kathas that reveal spiritual wisdom.</li>
-            <li>Chant mantras that purify the mind and energize the soul.</li>
-            <li>Perfect for daily prayer, meditation, and devotion.</li>
-          </ul>
+          <p className="mt-4 text-xl text-[#5a4636] font-[Poppins] leading-relaxed">
+            Explore divine hymns, spiritual stories, and powerful mantras that
+            uplift your soul and bring peace, devotion & energy.
+          </p>
         </div>
 
-        <div
-          className="flex justify-center lg:justify-end"
-          style={{ marginTop: 0, paddingTop: 0 }}
-        >
+        <div className="flex justify-center lg:justify-end">
           <img
             src="/aarti.png"
-            alt="Aarti Decorative Artwork"
-            className="w-[300px] md:w-[380px] lg:w-[480px] drop-shadow-xl"
+            alt="Aarti Artwork"
+            className="w-[300px] md:w-[420px] lg:w-[480px] drop-shadow-xl"
           />
         </div>
       </div>
 
+      {/* FILTER BUTTONS */}
+      <div className="max-w-7xl mx-auto px-10 mb-8 flex flex-wrap gap-4 justify-center">
+        {[
+          { key: "all", label: "All" },
+          { key: "aarti", label: "Aartis" },
+          { key: "katha", label: "Kathas" },
+          { key: "mantra", label: "Mantras" },
+        ].map((btn) => (
+          <button
+            key={btn.key}
+            onClick={() =>
+              setFilter(btn.key as "all" | "aarti" | "katha" | "mantra")
+            }
+            className={`px-6 py-2 rounded-full font-medium text-lg transition-all border 
+              ${
+                filter === btn.key
+                  ? "bg-orange-600 text-white shadow-lg scale-105 border-orange-700"
+                  : "bg-white text-orange-700 border-orange-500 hover:bg-orange-100"
+              }
+            `}
+          >
+            {btn.label}
+          </button>
+        ))}
+      </div>
+
       <ScrollingBorder flipped />
 
-      {/* Items grid */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-        {items.length === 0 ? (
-          <div className="col-span-full text-center text-gray-600 py-12">
+      {/* LIST GRID */}
+      <div className="max-w-7xl mx-auto px-6 mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {filteredItems.length === 0 ? (
+          <div className="col-span-full text-center text-gray-600 pt-10">
             <h3 className="text-2xl font-semibold text-orange-700">
-              No aartis available
+              No items found
             </h3>
-            <p className="mt-2">New items will be added soon. 🙏</p>
+            <p>Try selecting another category.</p>
           </div>
         ) : (
-          items.map((it) => {
+          filteredItems.map((it) => {
             const title = it.title?.[lang] || it.title?.en || "Untitled";
             const desc = it.description?.[lang] || it.description?.en || "";
             const image = it.image || "/placeholder.jpg";
 
-            const badge =
-              it.type === "aarti"
-                ? "🪔 Aarti"
-                : it.type === "katha"
-                ? "📖 Katha"
-                : "🕉️ Mantra";
-
             return (
               <Link
-                key={it._id}
                 to={`/aarti/${it._id}`}
-                className="block rounded-2xl overflow-hidden transition-all duration-200 hover:-translate-y-1"
+                key={it._id}
+                className="block rounded-2xl overflow-hidden border bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
               >
-                <div className="border rounded-2xl bg-white shadow-sm hover:shadow-md">
-                  <div className="w-full h-56 bg-gray-100 overflow-hidden">
-                    <img
-                      src={image}
-                      alt={title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <div className="w-full h-56 bg-gray-200 overflow-hidden">
+                  <img
+                    src={image}
+                    alt={title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
-                  <div className="p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-semibold font-[Playfair] text-gray-900">
-                        {title}
-                      </h2>
-                      <span className="text-sm px-3 py-1 rounded-full bg-orange-50 text-orange-700 font-medium">
-                        {badge}
-                      </span>
-                    </div>
+                <div className="p-4 space-y-2">
+                  <h2 className="text-xl font-[Playfair] font-semibold text-gray-900">
+                    {title}
+                  </h2>
 
-                    <p className="text-sm text-gray-700 leading-relaxed font-[Poppins]">
-                      {desc.length > 140 ? desc.slice(0, 140) + "..." : desc}
-                    </p>
-                  </div>
+                  <span className="text-sm text-orange-700 font-medium">
+                    {it.type.toUpperCase()}
+                  </span>
+
+                  <p className="text-sm text-gray-700 font-[Poppins]">
+                    {desc.length > 130 ? desc.slice(0, 130) + "..." : desc}
+                  </p>
                 </div>
               </Link>
             );
@@ -165,15 +176,11 @@ const AartisList = () => {
         )}
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 mt-10">
-        <ScrollingBorder />
-      </div>
+      <ScrollingBorder />
 
-      <p className="text-center mt-8 text-gray-700 italic text-sm">
-        🌼 “Chant with devotion — each verse carries divine vibrations.” 🌼
+      <p className="text-center mt-8 text-gray-600 italic">
+        ✨ “Devotion begins with one verse of love.” ✨
       </p>
     </div>
   );
-};
-
-export default AartisList;
+}
