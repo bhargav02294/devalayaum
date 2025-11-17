@@ -231,63 +231,68 @@ export default function DonationView() {
       </div>
 
       {/* ----------------  DONATION FORM BOTTOM  ---------------- */}
-      <div className={`max-w-3xl mx-auto mt-16 p-8 rounded-3xl bg-white ${glow}`}>
+      {/* ----------------  DONATION FORM BOTTOM  ---------------- */}
+<div className={`max-w-6xl mx-auto mt-16 px-2 md:px-0`}>
+  <div className={`md:w-1/2 p-8 rounded-3xl bg-white ${glow}`}>
 
-        <h3 className="text-3xl font-[Merriweather] text-[#b34a00] text-center mb-6">
-          Make a Donation
-        </h3>
+    <h3 className="text-3xl font-[Merriweather] text-[#b34a00] mb-6">
+      Make a Donation
+    </h3>
 
-        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
+    {error && <p className="text-red-600 mb-4">{error}</p>}
 
-        <input
-          type="text"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Full Name"
-          className="w-full border p-3 rounded-xl mb-4"
-        />
+    <input
+      type="text"
+      value={fullName}
+      onChange={(e) => setFullName(e.target.value)}
+      placeholder="Full Name"
+      className="w-full border p-3 rounded-xl mb-4"
+    />
 
-        <input
-          type="text"
-          value={mobile}
-          onChange={(e) => setMobile(e.target.value)}
-          placeholder="Mobile / WhatsApp Number"
-          className="w-full border p-3 rounded-xl mb-4"
-        />
+    <input
+      type="text"
+      value={mobile}
+      onChange={(e) => setMobile(e.target.value)}
+      placeholder="Mobile / WhatsApp Number"
+      className="w-full border p-3 rounded-xl mb-4"
+    />
 
-        {/* Suggested Amounts */}
-        <div className="flex flex-wrap justify-center gap-3 mb-4">
-          {suggestedAmounts.map((amt) => (
-            <button
-              key={amt}
-              onClick={() => setAmount(amt)}
-              className={`px-5 py-2 rounded-full border font-semibold 
-                ${amount === amt
-                  ? "bg-[#b34a00] text-white border-[#b34a00]"
-                  : "bg-white text-[#b34a00] border-[#b34a00] hover:bg-[#fff0e0]"
-                }`}
-            >
-              ₹{amt}
-            </button>
-          ))}
-        </div>
-
-        <input
-          type="number"
-          min={1}
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-          placeholder="Enter custom amount"
-          className="w-full border p-3 rounded-xl mb-6"
-        />
-
+    {/* Suggested Amounts */}
+    <div className="flex flex-wrap gap-3 mb-4">
+      {suggestedAmounts.map((amt) => (
         <button
-          onClick={handleDonate}
-          className="w-full bg-[#b34a00] hover:bg-[#8a3c0f] text-white text-lg font-semibold py-3 rounded-xl"
+          key={amt}
+          onClick={() => setAmount(amt)}
+          className={`px-5 py-2 rounded-full border font-semibold 
+            ${
+              amount === amt
+                ? "bg-[#b34a00] text-white border-[#b34a00]"
+                : "bg-white text-[#b34a00] border-[#b34a00] hover:bg-[#fff0e0]"
+            }`}
         >
-          Donate Now
+          ₹{amt}
         </button>
-      </div>
+      ))}
+    </div>
+
+    <input
+      type="number"
+      min={1}
+      value={amount}
+      onChange={(e) => setAmount(Number(e.target.value))}
+      placeholder="Enter custom amount"
+      className="w-full border p-3 rounded-xl mb-6"
+    />
+
+    <button
+      onClick={handleDonate}
+      className="w-full bg-[#b34a00] hover:bg-[#8a3c0f] text-white text-lg font-semibold py-3 rounded-xl"
+    >
+      Donate Now
+    </button>
+
+  </div>
+</div>
     </div>
   );
 }
