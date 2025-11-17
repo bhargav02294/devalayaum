@@ -107,9 +107,9 @@ export default function PujaView() {
 
        
 
-        {/* GALLERY — SMALLER WIDTH + CENTERED */}
-<div className="flex justify-center mt-6">
-  <div className={`rounded-2xl overflow-hidden bg-white p-3 ${glow} w-full max-w-3xl`}>
+      {/* GALLERY — SMALLER WIDTH + CENTERED */}
+<div className="flex justify-center mt-6 mb-12">   {/* added mb-12 for spacing */}
+  <div className={`rounded-2xl overflow-hidden bg-white p-4 ${glow} w-full max-w-3xl`}>
     
     {/* MAIN IMAGE BOX */}
     <div className="h-[380px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2] relative rounded-xl">
@@ -129,7 +129,7 @@ export default function PujaView() {
     </div>
 
     {/* THUMBNAILS */}
-    <div className="p-3 flex gap-3 overflow-x-auto bg-[#fffaf5] rounded-xl mt-3 justify-center">
+    <div className="p-3 flex gap-3 overflow-x-auto bg-[#fffaf5] rounded-xl mt-4 justify-center">
       {gallery.map((src, idx) => (
         <button
           key={idx}
@@ -150,28 +150,28 @@ export default function PujaView() {
 
 
 
+{/* QUICK LINK BUTTONS — NO BORDER + SPIRITUAL GLOW */}
+<div className="flex flex-wrap gap-3 mb-10 mt-10">   {/* added mt-10 for spacing */}
+  {[
+    ["overview", "Overview"],
+    ["benefits", "Benefits"],
+    ["procedure", "Procedure"],
+    ["mantra", "Mantra"],
+    ["materials", "Materials"],
+    ["availability", "Availability"],
+    ["packages", "Packages"],
+  ].map(([sec, label]) => (
+    <button
+      key={sec}
+      onClick={() => scrollTo(sec)}
+      className={`px-5 py-2 rounded-full bg-white text-gray-800 font-sans font-medium 
+      hover:bg-[#fff3e2] transition shadow-md ${glow}`}
+    >
+      {label}
+    </button>
+  ))}
+</div>
 
- {/* QUICK LINK BUTTONS — NO BORDER + SPIRITUAL GLOW */}
-        <div className="flex flex-wrap gap-3 mb-8">
-          {[
-            ["overview", "Overview"],
-            ["benefits", "Benefits"],
-            ["procedure", "Procedure"],
-            ["mantra", "Mantra"],
-            ["materials", "Materials"],
-            ["availability", "Availability"],
-            ["packages", "Packages"],
-          ].map(([sec, label]) => (
-            <button
-              key={sec}
-              onClick={() => scrollTo(sec)}
-              className={`px-5 py-2 rounded-full bg-white text-gray-800 font-sans font-medium 
-              hover:bg-[#fff3e2] transition shadow-md ${glow}`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
 
 
 
