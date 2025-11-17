@@ -57,27 +57,24 @@ export default function Hero() {
   return (
     <div className="relative w-full h-[80vh] overflow-hidden">
 
-      {/* Slides */}
       {slides.map((s, index) => (
         <div
           key={index}
-          className={`absolute inset-0 flex transition-opacity duration-[1500ms] ${
+          className={`absolute inset-0 flex transition-opacity duration-[1300ms] ${
             current === index ? "opacity-100" : "opacity-0"
           }`}
         >
-          {/* LEFT SOLID COLOR (40%) */}
+          {/* LEFT COLOR SIDE */}
           <div
-            className="w-[40%] h-full relative z-10 flex items-center px-10 md:px-16"
-            style={{
-              backgroundColor: s.color,
-            }}
+            className="w-[40%] h-full flex items-center px-10 md:px-16 relative"
+            style={{ backgroundColor: s.color }}
           >
             <div>
-              <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-lg">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
                 {s.title}
               </h1>
 
-              <p className="mt-4 text-gray-300 text-lg md:text-xl leading-relaxed">
+              <p className="mt-4 text-gray-300 text-lg md:text-xl">
                 {s.text}
               </p>
 
@@ -88,42 +85,38 @@ export default function Hero() {
                 {s.btnText}
               </Link>
             </div>
+
+            {/* FADE RIGHT EDGE OF COLOR */}
+            <div
+              className="absolute top-0 right-0 h-full w-20 pointer-events-none"
+              style={{
+                background: `linear-gradient(to right, ${s.color}, transparent)`,
+              }}
+            />
           </div>
 
-          {/* RIGHT IMAGE PART (60%) */}
-          <div
-            className="w-[60%] h-full relative"
-            style={{
-              backgroundImage: `url(${s.img})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              filter: "brightness(0.90)",
-            }}
-          />
+          {/* RIGHT IMAGE SIDE */}
+          <div className="w-[60%] h-full relative">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${s.img})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                filter: "brightness(0.92)",
+              }}
+            />
 
-          {/* SMOOTH BLEND BETWEEN COLOR → IMAGE */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: `
-                linear-gradient(
-                  to right,
-                  ${s.color} 0%,
-                  ${s.color} 20%,
-                  rgba(0,0,0,0) 55%
-                )
-              `,
-            }}
-          />
-
-          {/* DIAGONAL LIGHT BLEND (premium effect) */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(115deg, rgba(0,0,0,0.4) 0%, transparent 60%)",
-            }}
-          />
+            {/* FADE LEFT EDGE OF IMAGE TO BLEND INTO COLOR */}
+            <div
+              className="absolute top-0 left-0 h-full w-40 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(to left, transparent, rgba(0,0,0,0.25))",
+                mixBlendMode: "screen",
+              }}
+            />
+          </div>
         </div>
       ))}
 
@@ -138,7 +131,7 @@ export default function Hero() {
                 ? "bg-orange-500 scale-125 shadow-lg"
                 : "bg-white/60 hover:bg-white"
             }`}
-          />
+          ></button>
         ))}
       </div>
     </div>
