@@ -65,41 +65,52 @@ export default function TemplesList() {
     >
       <ScrollingBorder />
 
-<div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
+{/* Header */}
+  <div
+    className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+    style={{ marginTop: "0px", paddingTop: "0px" }}
+  >
+    {/* LEFT - 60% */}
+    <div className="w-full lg:w-[60%]">
+      <h1
+        className="text-5xl font-[Marcellus] font-bold drop-shadow-sm leading-tight"
+        style={{
+          color: "#b34a00", // Devotional warm saffron tone
+          marginTop: "0px",
+          paddingTop: "0px",
+        }}
+      >
+        Pure Spiritual Items for Your Daily Worship
+      </h1>
 
-  {/* LEFT TEXT BLOCK */}
-  <div>
-    <h1
-      className="text-5xl font-bold text-[#b34a00] font-[Marcellus] drop-shadow-md leading-tight"
+      <ul
+        className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
+        style={{
+          marginTop: "15px",
+          color: "#5a4636", // Softer spiritual brown tone
+        }}
+      >
+        <li>Every product is chosen with purity and devotion.</li>
+        <li>Bring home the blessings of divine energy.</li>
+        <li>From diyas to idols — everything your worship needs.</li>
+        <li>High-quality spiritual items delivered with trust.</li>
+        <li>Make every prayer more powerful with pure products.</li>
+        <li>Spirituality made simple, sacred, and accessible.</li>
+      </ul>
+    </div>
+
+    {/* RIGHT - 40% */}
+    <div
+      className="flex justify-center lg:justify-end w-full lg:w-[40%]"
       style={{ marginTop: "0px", paddingTop: "0px" }}
     >
-      Devalayaum Temple Collection
-    </h1>
-
-    <ul
-      className="mt-4 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
-      style={{ marginTop: "0px" }}
-    >
-      <li>Authentic history, stories, and significance of every holy shrine.</li>
-      <li>A spiritual guide to the temples that shape our devotion.</li>
-      <li>From Jyotirlingas to Shaktipeeths — experience the divine.</li>
-      <li>Explore real photos, legends, timings, and rituals of every temple.</li>
-      <li>Your digital journey to India’s most sacred places begins here.</li>
-      <li>Where faith meets information — temple details you can trust.</li>
-    </ul>
+      <img
+        src="/product.png"
+        alt="Devotional Products Artwork"
+        className="w-[360px] md:w-[460px] lg:w-[540px] drop-shadow-xl"
+      />
+    </div>
   </div>
-
-  {/* RIGHT IMAGE BLOCK */}
-  <div className="flex justify-center lg:justify-end" style={{ marginTop: "0px", paddingTop: "0px" }}>
-    <img
-      src="/temple.png"
-      alt="Temple Decorative Artwork"
-      className="w-80 lg:w-[420px] drop-shadow-xl"
-      style={{ marginTop: "0px", paddingTop: "0px" }}
-    />
-  </div>
-
-</div>
 
       <ScrollingBorder flipped />
 

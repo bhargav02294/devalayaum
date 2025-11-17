@@ -117,7 +117,7 @@ export default function PujasList() {
 
     <ul
       className="space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
-      style={{ marginTop: "10px" }}
+      style={{ marginTop: "15px" }}
     >
       <li>Perform sacred pujas with pure devotion and divine blessings.</li>
       <li>Bring peace, prosperity, and protection into your home.</li>
@@ -136,7 +136,7 @@ export default function PujasList() {
     <img
       src="/puja.png"
       alt="Puja Decorative Artwork"
-      className="w-150 lg:w-[420px] drop-shadow-xl"
+    className="w-[260px] md:w-[360px] lg:w-[800px] drop-shadow-xl"
       style={{ marginTop: "0px", paddingTop: "0px" }}
     />
   </div>
