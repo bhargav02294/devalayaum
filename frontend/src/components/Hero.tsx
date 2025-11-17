@@ -1,5 +1,20 @@
-import { useEffect, useState } from "react";
+// src/components/Hero.tsx
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+// Convert hex → rgba
+function hexToRgba(hex: string, alpha = 1) {
+  if (!hex) return `rgba(0,0,0,${alpha})`;
+  const h = hex.replace("#", "");
+  const bigint = parseInt(
+    h.length === 3 ? h.split("").map((c) => c + c).join("") : h,
+    16
+  );
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 export default function Hero() {
   const slides = [
@@ -48,77 +63,101 @@ export default function Hero() {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    const auto = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
+    const interval = setInterval(() => {
+      setCurrent((s) => (s + 1) % slides.length);
     }, 6000);
-    return () => clearInterval(auto);
-  }, []);
-
-  const slide = slides[current];
+    return () => clearInterval(interval);
+  }, [slides.length]);
 
   return (
-    <div className="relative w-full h-[80vh] overflow-hidden">
+    <div className="relative w-full h-[80vh] overflow-hidden select-none">
 
-      {/* BACKGROUND IMAGE (full) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${slide.img})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center right",
-          filter: "brightness(0.92)",
-        }}
-      ></div>
+      {slides.map((s, index) => {
+        const isActive = index === current;
 
-      {/* LEFT COLOR OVERLAY */}
-      <div
-        className="absolute inset-y-0 left-0 w-[40%]"
-        style={{
-          backgroundColor: slide.color,
-        }}
-      ></div>
+        const strong = hexToRgba(s.color, 0.98);
+        const transparent = "rgba(0,0,0,0)";
 
-      {/* TRUE BLEND ZONE (this makes the magic fade) */}
-      <div
-        className="absolute inset-y-0 left-[35%] w-[20%] pointer-events-none"
-        style={{
+        // Main blend color → transparent
+        const blendStyle = {
           background: `linear-gradient(
             to right,
-            ${slide.color} 0%,
-            rgba(0,0,0,0.0) 100%
+            ${strong} 0%,
+            ${strong} 38%,
+            ${hexToRgba(s.color, 0.55)} 45%,
+            ${transparent} 56%
           )`,
-          mixBlendMode: "multiply",
-        }}
-      ></div>
+        };
 
-      {/* TEXT CONTENT */}
-      <div className="absolute inset-y-0 left-0 w-[40%] flex items-center px-10 md:px-16 z-10">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
-            {slide.title}
-          </h1>
+        const diagonalStyle = {
+          background:
+            "linear-gradient(115deg, rgba(0,0,0,0.22) 0%, transparent 50%)",
+        };
 
-          <p className="mt-4 text-gray-300 text-lg md:text-xl">
-            {slide.text}
-          </p>
-
-          <Link
-            to={slide.link}
-            className="mt-8 inline-block bg-gradient-to-r from-orange-600 to-yellow-500 text-white px-8 py-3 rounded-full text-lg shadow-lg hover:scale-105 transition-all duration-300"
+        return (
+          <div
+            key={index}
+            className={`absolute inset-0 flex transition-opacity duration-[1000ms] ease-in-out ${
+              isActive ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
           >
-            {slide.btnText}
-          </Link>
-        </div>
-      </div>
+            {/* LEFT COLOR BLOCK (40%) */}
+            <div
+              className="w-[40%] h-full flex items-center px-10 md:px-16 relative"
+              style={{ backgroundColor: s.color }}
+            >
+              <div className="max-w-lg">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight drop-shadow-lg">
+                  {s.title}
+                </h1>
 
-      {/* DOT INDICATORS */}
+                <p className="mt-4 text-gray-200 text-lg md:text-xl">
+                  {s.text}
+                </p>
+
+                <Link
+                  to={s.link}
+                  className="mt-8 inline-block bg-gradient-to-r from-orange-600 to-yellow-500 text-white px-8 py-3 rounded-full text-lg shadow-lg hover:scale-[1.05] transition-all"
+                >
+                  {s.btnText}
+                </Link>
+              </div>
+            </div>
+
+            {/* RIGHT IMAGE (60%) */}
+            <div className="w-[60%] h-full relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                style={{
+                  backgroundImage: `url(${s.img})`,
+                  filter: "brightness(0.94)",
+                }}
+              />
+
+              {/* The REAL blend */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={blendStyle}
+              />
+
+              {/* Premium diagonal fade */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={diagonalStyle}
+              />
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Indicators */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrent(idx)}
-            className={`w-3 h-3 rounded-full transition-all duration-500 ${
-              current === idx
+            className={`w-3 h-3 rounded-full transition-all ${
+              idx === current
                 ? "bg-orange-500 scale-125 shadow-lg"
                 : "bg-white/60 hover:bg-white"
             }`}
