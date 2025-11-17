@@ -1,6 +1,5 @@
 // src/pages/PujaView.tsx
-// PREMIUM PUJA VIEWER — Professional Devotional Theme (Final)
-// Buttons use a professional sans font (title remains Marcellus)
+// PREMIUM PUJA VIEWER — Updated with smaller image section + glowing buttons
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -37,7 +36,6 @@ interface Puja {
   }[];
 }
 
-// FIX TYPE ERROR
 type PujaPackage = NonNullable<Puja["packages"]>[number];
 
 export default function PujaView() {
@@ -56,35 +54,26 @@ export default function PujaView() {
   const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await axios.get(`${backendURL}/api/pujas/${id}`);
-        setPuja(res.data);
-      } catch (e) {
-        console.error(e);
-        setPuja(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+    axios
+      .get(`${backendURL}/api/pujas/${id}`)
+      .then((res) => setPuja(res.data))
+      .catch(() => setPuja(null))
+      .finally(() => setLoading(false));
   }, [id, backendURL]);
 
-  if (loading) {
+  if (loading)
     return (
       <div className="pt-24 flex justify-center text-lg text-gray-500">
         Loading Puja…
       </div>
     );
-  }
 
-  if (!puja) {
+  if (!puja)
     return (
       <div className="pt-24 flex justify-center text-lg text-red-600">
         Puja not found.
       </div>
     );
-  }
 
   const gallery = [...(puja.images || [])];
   if (puja.image && !gallery.includes(puja.image)) gallery.unshift(puja.image);
@@ -98,9 +87,10 @@ export default function PujaView() {
     window.scrollTo({ top: el.offsetTop - 90, behavior: "smooth" });
   };
 
-  const packageTitle = (pkg: PujaPackage) => t(pkg.title) || pkg.key.toUpperCase();
+  const packageTitle = (pkg: PujaPackage) =>
+    t(pkg.title) || pkg.key.toUpperCase();
 
-  const glow = "shadow-[0_10px_30px_rgba(140,85,40,0.15)]"; // golden soft glow
+  const glow = "shadow-[0_6px_18px_rgba(170,120,60,0.25)]";
 
   return (
     <div className="pt-20 pb-20 bg-gradient-to-b from-[#fff8ec] via-[#fffdf9] to-white min-h-screen">
@@ -115,76 +105,53 @@ export default function PujaView() {
           {puja.category} {puja.subCategory ? `› ${puja.subCategory}` : ""}
         </p>
 
-        {/* QUICK VIEW BUTTONS — use professional sans font (do NOT change title font) */}
+        {/* QUICK LINK BUTTONS — NO BORDER + SPIRITUAL GLOW */}
         <div className="flex flex-wrap gap-3 mb-8">
-          <button
-            onClick={() => scrollTo("overview")}
-            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => scrollTo("benefits")}
-            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
-          >
-            Benefits
-          </button>
-          <button
-            onClick={() => scrollTo("procedure")}
-            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
-          >
-            Procedure
-          </button>
-          <button
-            onClick={() => scrollTo("mantra")}
-            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
-          >
-            Mantra
-          </button>
-          <button
-            onClick={() => scrollTo("materials")}
-            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
-          >
-            Materials
-          </button>
-          <button
-            onClick={() => scrollTo("availability")}
-            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
-          >
-            Availability
-          </button>
-          <button
-            onClick={() => scrollTo("packages")}
-            className="px-4 py-2 rounded-full bg-white border text-gray-700 hover:bg-[#ffefe0] font-sans font-medium"
-          >
-            Packages
-          </button>
+          {[
+            ["overview", "Overview"],
+            ["benefits", "Benefits"],
+            ["procedure", "Procedure"],
+            ["mantra", "Mantra"],
+            ["materials", "Materials"],
+            ["availability", "Availability"],
+            ["packages", "Packages"],
+          ].map(([sec, label]) => (
+            <button
+              key={sec}
+              onClick={() => scrollTo(sec)}
+              className={`px-5 py-2 rounded-full bg-white text-gray-800 font-sans font-medium 
+              hover:bg-[#fff3e2] transition shadow-md ${glow}`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
-        {/* GALLERY */}
-        <div className={`rounded-3xl overflow-hidden bg-white ${glow}`}>
-          <div className="h-[520px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2] relative">
+        {/* GALLERY — SMALLER SIZE */}
+        <div className={`rounded-2xl overflow-hidden bg-white p-3 ${glow}`}>
+          <div className="h-[380px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2] relative rounded-xl">
             <img src={mainImg} className="max-w-full max-h-full object-contain" />
 
             {puja.videoUrl && (
               <button
                 onClick={() => setVideoOpen(true)}
-                className="absolute bottom-5 right-5 bg-white/90 text-[#8a3c0f] px-4 py-2 rounded-full shadow font-sans font-medium"
+                className="absolute bottom-4 right-4 bg-white/90 text-[#8a3c0f] px-4 py-2 rounded-full shadow font-sans font-medium"
               >
                 ▶ Play Video
               </button>
             )}
           </div>
 
-          <div className="p-4 flex gap-4 overflow-x-auto bg-[#fffaf5]">
+          <div className="p-3 flex gap-3 overflow-x-auto bg-[#fffaf5] rounded-xl mt-3">
             {gallery.map((src, idx) => (
               <button
                 key={idx}
                 onMouseEnter={() => setHoverPreview(src)}
                 onMouseLeave={() => setHoverPreview(null)}
                 onClick={() => setActiveIndex(idx)}
-                className={`overflow-hidden rounded-xl transition-all ${idx === activeIndex ? "ring-2 ring-[#d9a06a] scale-105" : "hover:scale-105"}`}
-                style={{ width: 130, height: 90 }}
+                className={`overflow-hidden rounded-xl transition-all 
+                ${idx === activeIndex ? "ring-2 ring-[#d9a06a] scale-105" : "hover:scale-105"}`}
+                style={{ width: 110, height: 75 }}
               >
                 <img src={src} className="w-full h-full object-cover" />
               </button>
@@ -192,82 +159,89 @@ export default function PujaView() {
           </div>
         </div>
 
-        {/* CONTENT SECTIONS */}
-       {/* OVERVIEW */}
-<div id="overview" className="mt-12">
-  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Overview</h2>
-  <p className="text-gray-700 leading-relaxed">{t(puja.description)}</p>
+        {/* SECTIONS */}
+        <div id="overview" className="mt-12">
+          <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Overview</h2>
+          <p className="text-gray-700 leading-relaxed">{t(puja.description)}</p>
 
-  {puja.whyPerform && (
-    <p className="mt-4 text-gray-700"><strong>Why Perform:</strong> {t(puja.whyPerform)}</p>
-  )}
-</div>
+          {puja.whyPerform && (
+            <p className="mt-4 text-gray-700">
+              <strong>Why Perform:</strong> {t(puja.whyPerform)}
+            </p>
+          )}
+        </div>
 
-{/* BENEFITS */}
-<div id="benefits" className="mt-12">
-  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Benefits</h2>
-  <p className="text-gray-700">{t(puja.benefits)}</p>
-</div>
+        <div id="benefits" className="mt-12">
+          <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Benefits</h2>
+          <p className="text-gray-700">{t(puja.benefits)}</p>
+        </div>
 
-{/* PROCEDURE */}
-<div id="procedure" className="mt-12">
-  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Procedure</h2>
-  <p className="text-gray-700 whitespace-pre-line">{t(puja.procedure)}</p>
-</div>
+        <div id="procedure" className="mt-12">
+          <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Procedure</h2>
+          <p className="text-gray-700 whitespace-pre-line">{t(puja.procedure)}</p>
+        </div>
 
-{/* MANTRA */}
-<div id="mantra" className="mt-12">
-  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Main Mantra</h2>
-  <p className="text-gray-900 font-medium italic">{t(puja.mantra)}</p>
-</div>
+        <div id="mantra" className="mt-12">
+          <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Main Mantra</h2>
+          <p className="text-gray-900 font-medium italic">{t(puja.mantra)}</p>
+        </div>
 
-{/* MATERIALS */}
-<div id="materials" className="mt-12">
-  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Materials Required</h2>
-  <p className="text-gray-700">{t(puja.materialsRequired)}</p>
-</div>
+        <div id="materials" className="mt-12">
+          <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Materials Required</h2>
+          <p className="text-gray-700">{t(puja.materialsRequired)}</p>
+        </div>
 
-{/* AVAILABILITY */}
-<div id="availability" className="mt-12">
-  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Availability</h2>
-  {puja.availableAt?.length ? (
-    <ul className="list-disc ml-6 text-gray-700">
-      {puja.availableAt.map((a, i) => (
-        <li key={i}>{t(a)}</li>
-      ))}
-    </ul>
-  ) : (
-    <p className="text-gray-700">Not specified.</p>
-  )}
+        <div id="availability" className="mt-12">
+          <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-3">Availability</h2>
+          {puja.availableAt?.length ? (
+            <ul className="list-disc ml-6 text-gray-700">
+              {puja.availableAt.map((a, i) => (
+                <li key={i}>{t(a)}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-700">Not specified.</p>
+          )}
 
-  {puja.placesDescription && (
-    <p className="mt-3 text-gray-700">{t(puja.placesDescription)}</p>
-  )}
-</div>
+          {puja.placesDescription && (
+            <p className="mt-3 text-gray-700">{t(puja.placesDescription)}</p>
+          )}
+        </div>
 
+        {/* PACKAGES */}
+        <div id="packages" className="mt-16">
+          <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-6">
+            Puja Packages
+          </h2>
 
-
-        
-{/* PACKAGES */}
-<div id="packages" className="mt-16">
-  <h2 className="text-3xl font-[Merriweather] text-[#6b2f0f] mb-6">Puja Packages</h2>
           {puja.packages?.length ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {puja.packages.map((pkg) => (
                 <div key={pkg.key} className={`p-6 rounded-2xl bg-white ${glow}`}>
-                  <h3 className="text-xl font-bold text-[#8a3c0f]">{packageTitle(pkg)}</h3>
+                  <h3 className="text-xl font-bold text-[#8a3c0f]">
+                    {packageTitle(pkg)}
+                  </h3>
 
                   <p className="text-2xl font-semibold text-gray-900 mt-2">
                     ₹{pkg.discountPrice || pkg.price}
                     {pkg.discountPrice && pkg.price && (
-                      <span className="text-sm text-gray-500 line-through ml-2">₹{pkg.price}</span>
+                      <span className="text-sm text-gray-500 line-through ml-2">
+                        ₹{pkg.price}
+                      </span>
                     )}
                   </p>
 
-                  {pkg.details && <p className="mt-2 text-gray-700">{t(pkg.details)}</p>}
-                  {pkg.benefits && <p className="mt-2 text-gray-700 italic">{t(pkg.benefits)}</p>}
+                  {pkg.details && (
+                    <p className="mt-2 text-gray-700">{t(pkg.details)}</p>
+                  )}
+                  {pkg.benefits && (
+                    <p className="mt-2 text-gray-700 italic">{t(pkg.benefits)}</p>
+                  )}
 
-                  <Link to={`/pujas/${puja._id}/book/${pkg.key}`} className="mt-6 block text-center bg-[#8a3c0f] text-white px-4 py-2 rounded-lg hover:bg-[#5e290d] font-sans font-medium">
+                  <Link
+                    to={`/pujas/${puja._id}/book/${pkg.key}`}
+                    className="mt-6 block text-center bg-[#8a3c0f] text-white px-4 py-2 rounded-lg hover:bg-[#5e290d] font-sans font-medium"
+                  >
                     Book Now
                   </Link>
                 </div>
@@ -281,17 +255,32 @@ export default function PujaView() {
 
       {/* VIDEO MODAL */}
       {videoOpen && puja.videoUrl && (
-        <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50" onClick={() => setVideoOpen(false)}>
-          <div className="bg-white rounded-xl w-full max-w-4xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50"
+          onClick={() => setVideoOpen(false)}
+        >
+          <div
+            className="bg-white rounded-xl w-full max-w-4xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-end p-3">
               <button onClick={() => setVideoOpen(false)}>✕</button>
             </div>
 
             <div className="aspect-video">
-              {(puja.videoUrl.includes("youtube") || puja.videoUrl.includes("youtu.be")) ? (
-                <iframe className="w-full h-full" src={puja.videoUrl.replace("watch?v=", "embed/")} allowFullScreen />
+              {puja.videoUrl.includes("youtube") ||
+              puja.videoUrl.includes("youtu.be") ? (
+                <iframe
+                  className="w-full h-full"
+                  src={puja.videoUrl.replace("watch?v=", "embed/")}
+                  allowFullScreen
+                />
               ) : (
-                <video src={puja.videoUrl} controls className="w-full h-full bg-black" />
+                <video
+                  src={puja.videoUrl}
+                  controls
+                  className="w-full h-full bg-black"
+                />
               )}
             </div>
           </div>
