@@ -1,4 +1,6 @@
 // src/pages/TempleView.tsx
+// FULL UPDATED TempleView component — professional devotional design + premium gallery (Option A: object-contain)
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -101,17 +103,17 @@ const useLang = () => {
 function LabelValue({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
-    <div className="mb-2">
+    <div className="mb-3">
       <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-gray-700 font-medium">{value}</p>
+      <p className="text-gray-800 font-medium leading-snug">{value}</p>
     </div>
   );
 }
 
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="mt-8">
-      <h3 className="text-2xl font-semibold text-orange-700 mb-4">{title}</h3>
+    <section id={id} className="mt-10">
+      <h3 className="text-2xl font-[Playfair] font-semibold text-orange-800 mb-4">{title}</h3>
       <div className="prose max-w-none text-gray-700">{children}</div>
     </section>
   );
@@ -125,6 +127,7 @@ export default function TempleView() {
   const [temple, setTemple] = useState<Temple | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState<number>(0);
+  const [hoverImage, setHoverImage] = useState<string | null>(null);
 
   const backendURL = import.meta.env.VITE_API_URL;
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -161,6 +164,7 @@ export default function TempleView() {
 
   const images = temple.images && temple.images.length ? temple.images : ["/temple-placeholder.jpg"];
   const mainImage = images[activeImage] || images[0];
+  const displayedImage = hoverImage ?? mainImage; // hover preview takes precedence
 
   const scrollTo = (id?: string) => {
     if (!id) return;
@@ -169,45 +173,31 @@ export default function TempleView() {
   };
 
   return (
-    <div className="pt-20 pb-20" style={{ background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)" }}>
+    <div className="pt-20 pb-20" style={{ background: "linear-gradient(to bottom, #fff6e1 0%, #fffdf7 30%, #ffffff 100%)" }}>
       <ScrollingBorder />
 
       <div className="max-w-6xl mx-auto px-6">
         {/* Top header: title + actions */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
           <div className="flex-1">
-            <h1 className="text-4xl lg:text-5xl font-[Playfair] font-bold text-orange-800 leading-tight mb-3 flex items-center gap-3">
-              <span className="inline-block bg-orange-50 p-2 rounded-full">
+            <h1 className="text-4xl lg:text-5xl font-[Playfair] font-bold text-orange-900 leading-tight mb-3 flex items-center gap-4">
+              <span className="inline-block bg-orange-50 p-3 rounded-full shadow-inner border border-orange-100">
                 <IconTemple />
               </span>
               <span>{getText(temple.name) || "Untitled Temple"}</span>
             </h1>
 
-            <p className="text-gray-700 mb-3">
+            <p className="text-gray-700 mb-3 flex items-center gap-3">
               <span className="inline-flex items-center gap-2 text-gray-600">
                 <IconLocation /> <strong className="text-gray-800">Location:</strong>
-              </span>{" "}
-              <span className="ml-2">{getText(temple.location) || "Location not specified"}</span>
+              </span>
+              <span className="ml-1">{getText(temple.location) || "Location not specified"}</span>
             </p>
 
-            <div className="flex items-center gap-3 mt-3">
+            <div className="flex items-center gap-4 mt-3">
               <Link to="/temples" className="text-sm text-orange-600 hover:underline">
                 ← Back to Temples
               </Link>
-
-              <button
-                onClick={() => window.print()}
-                className="ml-2 inline-flex items-center gap-2 text-sm bg-white border px-3 py-1 rounded-lg shadow-sm hover:shadow-md"
-              >
-                Print
-              </button>
-
-              <a
-                href={`mailto:info@yourtemple.org?subject=Enquiry about ${encodeURIComponent(getText(temple.name))}`}
-                className="ml-2 text-sm text-orange-700 hover:underline"
-              >
-                Contact
-              </a>
 
               {temple.published === false && (
                 <span className="ml-3 inline-block text-sm text-red-600 bg-red-50 px-3 py-1 rounded">Unpublished</span>
@@ -215,7 +205,7 @@ export default function TempleView() {
             </div>
           </div>
 
-          {/* mini nav (sticky-ish on large screens) */}
+          {/* mini nav (sticky on large screens) */}
           <div className="w-full lg:w-[320px] sticky top-28 self-start" ref={navRef}>
             <div className="bg-white rounded-2xl p-4 shadow-sm border">
               <p className="text-sm text-gray-600 mb-2">Quick links</p>
@@ -241,22 +231,53 @@ export default function TempleView() {
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Gallery */}
           <div className="lg:col-span-2">
-            <div className="rounded-2xl overflow-hidden bg-white border shadow-sm">
-              <div className="w-full h-[460px] bg-gray-50 flex items-center justify-center">
-                <img src={mainImage} alt={getText(temple.name)} className="w-full h-full object-cover" />
+            <div className="rounded-3xl overflow-hidden bg-white border shadow-lg">
+              {/* Main Image Container - Option A: fixed height, object-contain */}
+              <div className="relative w-full h-[500px] bg-gradient-to-b from-white via-[#fff8ec] to-white flex items-center justify-center">
+                {/* Decorative devotional glow behind image */}
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                  <div className="w-11/12 h-4/5 rounded-2xl blur-[28px] opacity-30" style={{ background: 'radial-gradient(circle at 50% 40%, rgba(255,178,64,0.18), rgba(255,240,220,0.02))' }} />
+                </div>
+
+                <img
+                  src={displayedImage}
+                  alt={getText(temple.name)}
+                  loading="lazy"
+                  className="relative z-10 max-w-full max-h-full object-contain transition-opacity duration-300 ease-in-out"
+                  style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}
+                />
+
+                {/* small caption overlay */}
+                <div className="absolute left-6 bottom-6 bg-white/70 backdrop-blur rounded-full px-3 py-1 text-sm text-gray-700 shadow-sm">
+                  {activeImage + 1}/{images.length}
+                </div>
               </div>
 
-              {/* thumbnails */}
-              <div className="p-3 bg-white flex gap-3 overflow-x-auto">
-                {images.map((src, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveImage(idx)}
-                    className={`flex-shrink-0 w-28 h-20 rounded-lg overflow-hidden border ${idx === activeImage ? "border-orange-400 ring-2 ring-orange-200" : "border-gray-200"}`}
-                  >
-                    <img src={src} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
-                  </button>
-                ))}
+              {/* Thumbnails */}
+              <div className="p-4 bg-white flex gap-4 overflow-x-auto items-center">
+                {images.map((src, idx) => {
+                  const isActive = idx === activeImage;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImage(idx)}
+                      onMouseEnter={() => setHoverImage(src)}
+                      onMouseLeave={() => setHoverImage(null)}
+                      aria-label={`Show image ${idx + 1}`}
+                      className={`flex-shrink-0 rounded-xl overflow-hidden border transition-all duration-200 shadow-sm focus:outline-none ${
+                        isActive ? 'border-orange-400 ring-2 ring-orange-200 scale-105' : 'border-gray-200 hover:scale-105'
+                      }`}
+                      style={{ width: isActive ? 180 : 120, height: isActive ? 120 : 72 }}
+                    >
+                      <img src={src} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  );
+                })}
+
+                {/* show an elegant placeholder if only one image */}
+                {images.length === 1 && (
+                  <div className="ml-2 text-sm text-gray-500">Single image — add more to enable previews</div>
+                )}
               </div>
             </div>
 
@@ -343,7 +364,7 @@ export default function TempleView() {
         </div>
 
         {/* Meta and actions */}
-        <div className="mt-8 bg-white border rounded-2xl p-6 shadow-sm">
+        <div className="mt-10 bg-white border rounded-2xl p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <p className="text-gray-700"><strong>Published:</strong> {temple.published ? "Yes" : "No"}</p>
