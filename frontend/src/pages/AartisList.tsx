@@ -78,26 +78,46 @@ export default function DonationsList() {
       <ScrollingBorder />
 
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Aartis of the Eternal Gods & Goddesses</h1>
+      {/* Header */}
+<div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
 
-          <ul className="mt-6 space-y-4 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-             <li>Chants that purify the mind and awaken devotion.</li>
-            <li>Feel the divine presence in every sacred verse.</li>
-            <li>Aartis that bring peace, strength, and positivity.</li>
-            <li>Let your heart glow with the rhythm of devotion.</li>
-            <li>Sacred melodies to connect you with the Divine.</li>
-            <li>Begin and end your day with God’s blessings.</li>
+  {/* LEFT BLOCK */}
+  <div>
+    <h1
+      className="text-5xl font-bold font-[Marcellus] drop-shadow-md leading-tight"
+      style={{ color: "#b34a00", marginTop: "0px", paddingTop: "0px" }}
+    >
+      Aartis of the Eternal Gods & Goddesses
+    </h1>
 
-          </ul>
+    <ul
+      className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
+      style={{ marginTop: "12px", color: "#5a4636" }}
+    >
+      <li>Chants that purify the mind and awaken devotion.</li>
+      <li>Feel the divine presence in every sacred verse.</li>
+      <li>Aartis that bring peace, strength, and positivity.</li>
+      <li>Let your heart glow with the rhythm of devotion.</li>
+      <li>Sacred melodies to connect you with the Divine.</li>
+      <li>Begin and end your day with God’s blessings.</li>
+    </ul>
+  </div>
 
-        </div>
+  {/* RIGHT IMAGE BLOCK */}
+  <div
+    className="flex justify-center lg:justify-end"
+    style={{ marginTop: "0px", paddingTop: "0px" }}
+  >
+    <img
+      src="/aarti.png"
+      alt="Aarti Artwork"
+      className="w-80 lg:w-[420px] drop-shadow-xl"
+      style={{ marginTop: "0px", paddingTop: "0px" }}
+    />
+  </div>
 
-        <div className="flex justify-center lg:justify-end">
-          <img src="/aarti.png" alt="Donation Artwork" className="w-80 lg:w-[420px] drop-shadow-xl" />
-        </div>
-      </div>
+</div>
+
 
       <ScrollingBorder flipped />
 

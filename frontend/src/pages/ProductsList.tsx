@@ -73,62 +73,48 @@ export default function PujasList() {
     );
 
   return (
-    <div
-  className="pt-24 pb-20"
-  style={{
-    background:
-      "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
-  }}
->
-  <ScrollingBorder />
+    <div className="pt-24 pb-20" style={{ background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)" }}>
+      <ScrollingBorder />
 
-  {/* Header */}
+      {/* Header */}
+<div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
+
+  {/* LEFT BLOCK */}
+  <div>
+    <h1
+      className="text-5xl font-bold font-[Marcellus] drop-shadow-md leading-tight"
+      style={{ color: "#b34a00", marginTop: "0px", paddingTop: "0px" }}
+    >
+      Pure Spiritual Items for Your Daily Worship
+    </h1>
+
+    <ul
+      className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
+      style={{ marginTop: "12px", color: "#5a4636" }}
+    >
+      <li>Every product is chosen with purity and devotion.</li>
+      <li>Bring home the blessings of divine energy.</li>
+      <li>From diyas to idols — everything your worship needs.</li>
+      <li>High-quality spiritual items delivered with trust.</li>
+      <li>Make every prayer more powerful with pure products.</li>
+      <li>Spirituality made simple, sacred, and accessible.</li>
+    </ul>
+  </div>
+
+  {/* RIGHT IMAGE BLOCK */}
   <div
-    className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+    className="flex justify-center lg:justify-end"
     style={{ marginTop: "0px", paddingTop: "0px" }}
   >
-    {/* LEFT - 60% */}
-    <div className="w-full lg:w-[60%]">
-      <h1
-        className="text-5xl font-[Marcellus] font-bold drop-shadow-sm leading-tight"
-        style={{
-          color: "#b34a00",
-          marginTop: "0px",
-          paddingTop: "0px",
-        }}
-      >
-        Pure Spiritual Items for Your Daily Worship
-      </h1>
-
-      <ul
-        className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
-        style={{
-          marginTop: "12px",
-          color: "#5a4636",
-        }}
-      >
-        <li>Every product is chosen with purity and devotion.</li>
-        <li>Bring home the blessings of divine energy.</li>
-        <li>From diyas to idols — everything your worship needs.</li>
-        <li>High-quality spiritual items delivered with trust.</li>
-        <li>Make every prayer more powerful with pure products.</li>
-        <li>Spirituality made simple, sacred, and accessible.</li>
-      </ul>
-    </div>
-
-    {/* RIGHT - 40% */}
-    <div
-      className="flex justify-center lg:justify-end w-full lg:w-[40%]"
+    <img
+      src="/product.png"
+      alt="Devotional Products Artwork"
+      className="w-[360px] md:w-[460px] lg:w-[540px] drop-shadow-xl"
       style={{ marginTop: "0px", paddingTop: "0px" }}
-    >
-      <img
-        src="/product.png"
-        alt="Devotional Products Artwork"
-        className="w-[360px] md:w-[460px] lg:w-[540px] drop-shadow-xl"
-        style={{ marginTop: "0px", paddingTop: "0px" }}
-      />
-    </div>
+    />
   </div>
+
+</div>
 
 
       {/* Bottom Decorative Border */}
