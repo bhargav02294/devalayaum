@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -57,63 +55,84 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="relative w-full h-[100vh] overflow-hidden" style={{ fontFamily: "Poppins, sans-serif" }}>
-
-      {/* Main Slide Container */}
+    <div
+      className="relative w-full h-[100vh] overflow-hidden"
+      style={{ fontFamily: "Poppins, sans-serif" }}
+    >
       {slides.map((s, index) => (
         <div
           key={index}
-          className={`absolute inset-0 flex transition-opacity duration-[1500ms] ${
+          className={`absolute inset-0 transition-opacity duration-[1500ms] ${
             current === index ? "opacity-100" : "opacity-0"
           }`}
         >
-          {/* LEFT SOLID PART */}
+          {/* FULL BACKGROUND IMAGE */}
           <div
-            className="w-[45%] md:w-[40%] h-full flex flex-col justify-center px-10 md:px-20"
-            style={{
-              background: s.color,
-            }}
-          >
-            <h1 className="text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-wide drop-shadow-md">
-              {s.title}
-            </h1>
-
-            <p className="mt-4 text-gray-300 text-lg md:text-xl tracking-wide">{s.text}</p>
-
-            <Link
-              to={s.link}
-              className="mt-8 inline-block bg-gradient-to-r from-orange-600 to-yellow-500 text-white px-8 py-3 rounded-full text-lg shadow-[0_4px_12px_rgba(255,165,0,0.4)] hover:shadow-[0_6px_18px_rgba(255,165,0,0.7)] transition-all duration-300 hover:scale-105 border border-white/20"
-            >
-              {s.btnText}
-            </Link>
-          </div>
-
-          {/* RIGHT IMAGE SIDE */}
-          <div
-            className="w-[55%] md:w-[60%] h-full"
+            className="absolute inset-0"
             style={{
               backgroundImage: `url(${s.img})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
+              filter: "brightness(0.85)",
             }}
-          ></div>
+          />
 
-          {/* BEAUTIFUL CENTER BLEND */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[rgba(0, 0, 0, 0)] via-transparent to-transparent pointer-events-none"></div>
+          {/* COLOR OVERLAY FADED INTO IMAGE */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(
+                to right,
+                ${s.color} 0%,
+                ${s.color} 35%,
+                rgba(0,0,0,0) 75%
+              )`,
+            }}
+          />
+
+          {/* DIAGONAL BLEND (Professional premium effect) */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(120deg, rgba(0,0,0,0.4) 0%, transparent 60%)",
+            }}
+          />
+
+          {/* CONTENT LEFT */}
+          <div className="relative z-10 h-full flex items-center pl-10 md:pl-20 max-w-xl">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-extrabold text-white drop-shadow-lg leading-tight">
+                {s.title}
+              </h1>
+
+              <p className="mt-4 text-gray-200 text-lg md:text-xl leading-relaxed">
+                {s.text}
+              </p>
+
+              <Link
+                to={s.link}
+                className="mt-8 inline-block bg-gradient-to-r from-orange-600 to-yellow-500 text-white px-8 py-3 rounded-full text-lg shadow-lg hover:scale-[1.05] transition-all duration-300"
+              >
+                {s.btnText}
+              </Link>
+            </div>
+          </div>
         </div>
       ))}
 
-      {/* BOTTOM CLICKABLE INDICATORS */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+      {/* INDICATORS */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrent(index)}
             className={`w-3 h-3 rounded-full transition-all duration-500 ${
-              current === index ? "bg-orange-500 scale-125 shadow-lg" : "bg-white/60 hover:bg-white"
+              current === index
+                ? "bg-orange-500 scale-125 shadow-lg"
+                : "bg-white/50 hover:bg-white"
             }`}
-          ></button>
+          />
         ))}
       </div>
     </div>
