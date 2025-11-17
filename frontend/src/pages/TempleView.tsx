@@ -175,10 +175,11 @@ export default function TempleView() {
       <div className="max-w-6xl mx-auto px-6">
 
        {/* ---------------- HEADER ROW ---------------- */}
-<div className="flex flex-col lg:flex-row justify-between items-start gap-6">
+{/* ---------------- HEADER ROW ---------------- */}
+<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
   {/* LEFT: Name + Location */}
-  <div className="flex-1">
+  <div className="lg:col-span-2">
     <h1 className="text-4xl lg:text-5xl font-[Playfair] text-orange-900 font-bold flex items-center gap-4">
       <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
         <IconTemple />
@@ -193,7 +194,7 @@ export default function TempleView() {
   </div>
 
   {/* RIGHT: Darshan Box */}
-  <div className="w-full lg:w-[360px] bg-white border rounded-2xl p-6 shadow-sm">
+  <div className="bg-white border rounded-2xl p-6 shadow-sm">
     <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
 
     <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
@@ -215,36 +216,38 @@ export default function TempleView() {
 </div>
 
 {/* ---------------- GALLERY BELOW HEADER (NO GAP) ---------------- */}
-<div className="mt-6">
+<div className="mt-4">
+  <div className="rounded-3xl overflow-hidden border bg-white shadow-lg">
 
-          <div className="rounded-3xl overflow-hidden border bg-white shadow-lg">
-            {/* Main Image */}
-            <div className="relative h-[500px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff8ec] to-white">
-              <img src={displayImage} alt="temple" className="max-w-full max-h-full object-contain" />
-            </div>
+    {/* Main Image */}
+    <div className="relative h-[500px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff8ec] to-white">
+      <img src={displayImage} alt="temple" className="max-w-full max-h-full object-contain" />
+    </div>
 
-            {/* Thumbnails */}
-            <div className="p-4 flex gap-4 overflow-x-auto">
-              {images.map((src, idx) => {
-                const active = idx === activeImage;
-                return (
-                  <button
-                    key={idx}
-                    onMouseEnter={() => setHoverImage(src)}
-                    onMouseLeave={() => setHoverImage(null)}
-                    onClick={() => setActiveImage(idx)}
-                    className={`rounded-xl overflow-hidden border shadow-sm transition-all ${
-                      active ? "border-orange-500 ring-2 ring-orange-200 scale-105" : "border-gray-200 hover:scale-105"
-                    }`}
-                    style={{ width: active ? 180 : 120, height: active ? 120 : 72 }}
-                  >
-                    <img src={src} className="w-full h-full object-cover" />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+    {/* Thumbnails */}
+    <div className="p-4 flex gap-4 overflow-x-auto">
+      {images.map((src, idx) => {
+        const active = idx === activeImage;
+        return (
+          <button
+            key={idx}
+            onMouseEnter={() => setHoverImage(src)}
+            onMouseLeave={() => setHoverImage(null)}
+            onClick={() => setActiveImage(idx)}
+            className={`rounded-xl overflow-hidden border shadow-sm transition-all ${
+              active ? "border-orange-500 ring-2 ring-orange-200 scale-105" : "border-gray-200 hover:scale-105"
+            }`}
+            style={{ width: active ? 180 : 120, height: active ? 120 : 72 }}
+          >
+            <img src={src} className="w-full h-full object-cover" />
+          </button>
+        );
+      })}
+    </div>
+
+  </div>
+</div>
+
 
         {/* ---------------- VISITOR INFO BELOW GALLERY (Correct) --------------- */}
         <div className="mt-6 bg-white border rounded-2xl p-6 shadow-sm">
