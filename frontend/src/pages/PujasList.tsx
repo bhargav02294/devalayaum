@@ -173,11 +173,13 @@ export default function PujasList() {
                   </h2>
 
                   {/* Category Row with MapPin */}
-                  <div className="flex items-center text-gray-600 text-sm text-left">
-                    <MapPin size={18} className="mr-2" />
-                    <span className="capitalize">{p.category}</span>
+                  <div className="flex items-center text-gray-600 text-sm">
+                    <MapPin size={18} className="mr-1" />
+                    <span className="truncate max-w-[110px] text-left">{p.category}</span>
                   </div>
 
+
+                  
                   <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">
                     {desc.slice(0, 140)}...
                   </p>

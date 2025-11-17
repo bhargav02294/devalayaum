@@ -90,7 +90,7 @@ export default function PujasList() {
 
     <ul
       className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
-      style={{ marginTop: "12px", color: "#5a4636" }}
+      style={{ marginTop: "15px", color: "#5a4636" }}
     >
       <li>Every product is chosen with purity and devotion.</li>
       <li>Bring home the blessings of divine energy.</li>
@@ -139,9 +139,12 @@ export default function PujasList() {
                   <h2 className="text-lg font-semibold font-[Playfair] text-gray-900">{title}</h2>
 
                   <div className="flex items-center text-gray-600 text-sm">
-                    <MapPin size={18} className="mr-2" />
-                    <span className="capitalize">{p.category}</span>
+                    <MapPin size={18} className="mr-1" />
+                    <span className="truncate max-w-[110px] text-left">{p.category}</span>
                   </div>
+
+
+
 
                   <p className="text-sm text-gray-700 font-[Poppins] leading-relaxed">{desc.slice(0, 140)}...</p>
                 </div>

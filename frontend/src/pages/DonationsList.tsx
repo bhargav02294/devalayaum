@@ -145,20 +145,18 @@ export default function DonationsList() {
                 <div className="p-4 space-y-3">
                   <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">{title}</h2>
 
-                  <div className="flex items-center text-gray-600 text-sm text-left">
-                    <MapPin size={18} className="mr-2" />
-                    <span className="truncate max-w-[160px]">{temple}</span>
+                  <div className="flex items-center text-gray-600 text-sm">
+                    <MapPin size={18} className="mr-1" />
+                    <span className="runcate max-w-[110px] text-left">{temple}</span>
                   </div>
+
+
 
                   <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">
                     {details.slice(0, 120)}...
                   </p>
 
-                  <div className="mt-2">
-                    <span className="inline-block bg-orange-100 text-orange-800 font-bold px-3 py-1 rounded-full shadow">
-                      {d.price ? `₹${d.price}` : "₹—"}
-                    </span>
-                  </div>
+                  
                 </div>
               </div>
             </Link>

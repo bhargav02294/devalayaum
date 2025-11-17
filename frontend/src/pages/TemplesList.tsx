@@ -143,12 +143,14 @@ export default function TemplesList() {
                       <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">
                         {name}
                       </h2>
+
                       <div className="flex items-center text-gray-600 text-sm">
                         <MapPin size={18} className="mr-1" />
                         <span className="truncate max-w-[110px] text-left">
                           {location}
                         </span>
                       </div>
+                      
                     </div>
 
                     <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">

@@ -141,10 +141,12 @@ export default function DonationsList() {
                   <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">{title}</h2>
 
                   {/* Temple Row with MapPin */}
-                  <div className="flex items-center text-gray-600 text-sm text-left">
-                    <MapPin size={18} className="mr-2" />
-                    <span className="truncate max-w-[160px]">{temple}</span>
+                  <div className="flex items-center text-gray-600 text-sm">
+                    <MapPin size={18} className="mr-1" />
+                    <span className="truncate max-w-[110px] text-left">{temple}</span>
                   </div>
+
+                  
 
                   <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">{details.slice(0, 120)}...</p>
 
