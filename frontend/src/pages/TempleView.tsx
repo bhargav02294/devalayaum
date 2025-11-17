@@ -184,7 +184,7 @@ export default function TempleView() {
           <div className="lg:col-span-2">
 
             {/* Temple Name + Location */}
-            <h1 className="text-4xl lg:text-5xl font-[Marcellus] text-orange-900 font-bold flex items-center gap-4">
+<h1 className="mt-6 text-4xl lg:text-5xl font-[Marcellus] text-orange-900 font-bold flex items-center gap-4">
   <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
     <IconTemple />
   </span>
@@ -236,15 +236,16 @@ export default function TempleView() {
           </div>
 
           {/* ---------------- RIGHT COLUMN ---------------- */}
-        <div className="space-y-8 lg:mt-[140px]">
+          {/* ---------------- RIGHT COLUMN ---------------- */}
+<div className="space-y-7 lg:mt-[140px]">
 
-            {/* Darshan & Aarti */}
-          <div className={`bg-white rounded-2xl p-6 ${glow}`}>
-         <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
+  {/* Darshan & Aarti */}
+  <div className={`bg-white rounded-2xl p-6 ${glow}`}>
+    <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
 
     <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
 
-              {temple.aartiTimings && (
+    {temple.aartiTimings && (
       <div className="mt-3">
         <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
 
@@ -256,10 +257,10 @@ export default function TempleView() {
       </div>
     )}
 
-              <LabelValue label="Special Pooja Info" value={getText(temple.specialPoojaInfo)} />
+    <LabelValue label="Special Pooja Info" value={getText(temple.specialPoojaInfo)} />
   </div>
 
-           {/* Visitor Information */}
+  {/* Visitor Information */}
   <div className={`bg-white rounded-2xl p-6 ${glow}`}>
     <h3 className="text-lg font-semibold text-orange-700 mb-3">Visitor Information</h3>
 
@@ -272,7 +273,8 @@ export default function TempleView() {
     </p>
   </div>
 
-          </div>
+</div>
+
         </div>
 
         {/* ---------------------------------------------------------- */}
