@@ -202,12 +202,13 @@ export default function TempleView() {
           <div className="lg:col-span-2">
 
             {/* Temple Name + Location */}
-            <h1 className="text-4xl lg:text-5xl font-[Playfair] text-orange-900 font-bold flex items-center gap-4">
-              <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
-                <IconTemple />
-              </span>
-              {getText(temple.name)}
-            </h1>
+            <h1 className="text-4xl lg:text-5xl font-[Marcellus] text-orange-900 font-bold flex items-center gap-4">
+  <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
+    <IconTemple />
+  </span>
+  {getText(temple.name)}
+</h1>
+
 
             <p className="text-gray-700 mt-3 flex items-center gap-2">
               <IconLocation />
