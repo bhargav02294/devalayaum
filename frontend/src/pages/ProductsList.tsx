@@ -73,33 +73,62 @@ export default function PujasList() {
     );
 
   return (
-    <div className="pt-24 pb-20" style={{ background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)" }}>
-      <ScrollingBorder />
+    <div
+  className="pt-24 pb-20"
+  style={{
+    background:
+      "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
+  }}
+>
+  <ScrollingBorder />
 
-      {/* Header */}
-      <div className="max-w-7xl mx-auto px-10 mt-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        <div>
-          <h1 className="text-5xl font-bold text-orange-800 tracking-wide font-[Playfair] drop-shadow-md text-left">Pure Spiritual Items for Your Daily Worship</h1>
+  {/* Header */}
+  <div
+    className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+    style={{ marginTop: "0px", paddingTop: "0px" }}
+  >
+    {/* LEFT - 60% */}
+    <div className="w-full lg:w-[60%]">
+      <h1
+        className="text-5xl font-[Marcellus] font-bold drop-shadow-sm leading-tight"
+        style={{
+          color: "#b34a00", // Devotional warm saffron tone
+          marginTop: "0px",
+          paddingTop: "0px",
+        }}
+      >
+        Pure Spiritual Items for Your Daily Worship
+      </h1>
 
-          <ul className="mt-4 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Every product is chosen with purity and devotion.</li>
-            <li>Bring home the blessings of divine energy.</li>
-            <li>From diyas to idols — everything your worship needs.</li>
-            <li>High-quality spiritual items delivered with trust.</li>
-            <li>Make every prayer more powerful with pure products.</li>
-            <li>Spirituality made simple, sacred, and accessible.</li>
-          </ul>
-        </div>
+      <ul
+        className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
+        style={{
+          marginTop: "14px",
+          color: "#5a4636", // Softer spiritual brown tone
+        }}
+      >
+        <li>Every product is chosen with purity and devotion.</li>
+        <li>Bring home the blessings of divine energy.</li>
+        <li>From diyas to idols — everything your worship needs.</li>
+        <li>High-quality spiritual items delivered with trust.</li>
+        <li>Make every prayer more powerful with pure products.</li>
+        <li>Spirituality made simple, sacred, and accessible.</li>
+      </ul>
+    </div>
 
-        {/* Right Image */}
-        <div className="flex justify-center lg:justify-end">
-          <img
-            src="/product.png"
-            alt="Devotional Products Artwork"
-            className="w-[360px] md:w-[460px] lg:w-[540px] drop-shadow-xl"
-          />
-        </div>
-      </div>
+    {/* RIGHT - 40% */}
+    <div
+      className="flex justify-center lg:justify-end w-full lg:w-[40%]"
+      style={{ marginTop: "0px", paddingTop: "0px" }}
+    >
+      <img
+        src="/product.png"
+        alt="Devotional Products Artwork"
+        className="w-[360px] md:w-[460px] lg:w-[540px] drop-shadow-xl"
+      />
+    </div>
+  </div>
+
 
       {/* Bottom Decorative Border */}
       <ScrollingBorder flipped />
