@@ -174,48 +174,49 @@ export default function TempleView() {
 
       <div className="max-w-6xl mx-auto px-6">
 
-        {/* ---------------- HEADER ROW ---------------- */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+       {/* ---------------- HEADER ROW ---------------- */}
+<div className="flex flex-col lg:flex-row justify-between items-start gap-6">
 
-          {/* LEFT: Name + Location */}
-          <div className="lg:col-span-2">
-            <h1 className="text-4xl lg:text-5xl font-[Playfair] text-orange-900 font-bold flex items-center gap-4">
-              <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
-                <IconTemple />
-              </span>
-              {getText(temple.name)}
-            </h1>
+  {/* LEFT: Name + Location */}
+  <div className="flex-1">
+    <h1 className="text-4xl lg:text-5xl font-[Playfair] text-orange-900 font-bold flex items-center gap-4">
+      <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
+        <IconTemple />
+      </span>
+      {getText(temple.name)}
+    </h1>
 
-            <p className="text-gray-700 mt-3 flex items-center gap-2">
-              <IconLocation />
-              <span className="font-medium text-gray-800">{getText(temple.location)}</span>
-            </p>
-          </div>
+    <p className="text-gray-700 mt-3 flex items-center gap-2">
+      <IconLocation />
+      <span className="font-medium text-gray-800">{getText(temple.location)}</span>
+    </p>
+  </div>
 
-          {/* RIGHT: Darshan Box */}
-          <div className="bg-white border rounded-2xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
+  {/* RIGHT: Darshan Box */}
+  <div className="w-full lg:w-[360px] bg-white border rounded-2xl p-6 shadow-sm">
+    <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
 
-            <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
+    <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
 
-            {temple.aartiTimings && (
-              <div className="mt-3">
-                <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
+    {temple.aartiTimings && (
+      <div className="mt-3">
+        <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
 
-                <div className="space-y-1 text-gray-800">
-                  <div className="flex items-center gap-2"><IconClock /> <strong>Morning:</strong> {temple.aartiTimings.morning || "-"}</div>
-                  <div className="flex items-center gap-2"><IconClock /> <strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}</div>
-                  <div className="flex items-center gap-2"><IconClock /> <strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}</div>
-                </div>
-              </div>
-            )}
-
-            <LabelValue label="Special Pooja Info" value={getText(temple.specialPoojaInfo)} />
-          </div>
+        <div className="space-y-1 text-gray-800">
+          <div className="flex items-center gap-2"><IconClock /> <strong>Morning:</strong> {temple.aartiTimings.morning || "-"}</div>
+          <div className="flex items-center gap-2"><IconClock /> <strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}</div>
+          <div className="flex items-center gap-2"><IconClock /> <strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}</div>
         </div>
+      </div>
+    )}
 
-        {/* ---------------- GALLERY DIRECTLY UNDER LOCATION ---------------- */}
-        <div className="mt-4">
+    <LabelValue label="Special Pooja Info" value={getText(temple.specialPoojaInfo)} />
+  </div>
+</div>
+
+{/* ---------------- GALLERY BELOW HEADER (NO GAP) ---------------- */}
+<div className="mt-6">
+
           <div className="rounded-3xl overflow-hidden border bg-white shadow-lg">
             {/* Main Image */}
             <div className="relative h-[500px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff8ec] to-white">
