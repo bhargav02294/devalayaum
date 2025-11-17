@@ -166,31 +166,36 @@ export default function DonationView() {
     <div className="pt-24 pb-20 bg-gradient-to-b from-[#fff4d9] via-[#fff9f1] to-white min-h-screen px-6">
 
       {/* ---------------- HEADER ---------------- */}
-      <div className="max-w-6xl mx-auto text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-[Marcellus] text-[#b34a00] font-bold">
-          {t(donation.donationName)}
-        </h1>
+<div className="max-w-6xl mx-auto mb-10 px-2 md:px-0">
+  <h1 className="text-4xl md:text-5xl font-[Marcellus] text-[#b34a00] font-bold text-left">
+    {t(donation.donationName)}
+  </h1>
 
-        <p className="text-gray-700 text-lg mt-2 font-[Poppins]">
-          <span className="font-semibold text-orange-900">{t(donation.templeName)}</span>
-        </p>
+  <p className="text-gray-700 text-lg mt-2 font-[Poppins] text-left">
+    <span className="font-semibold text-orange-900">
+      {t(donation.templeName)}
+    </span>
+  </p>
 
-        <p className="text-gray-600 text-lg">{t(donation.address)}</p>
+  <p className="text-gray-600 text-lg text-left">{t(donation.address)}</p>
 
-        <p className="mt-4 text-gray-700 italic text-xl">{t(donation.shortDetails)}</p>
-      </div>
+  <p className="mt-4 text-gray-700 italic text-xl text-left">
+    {t(donation.shortDetails)}
+  </p>
+</div>
 
-      {/* ----------------  IMAGE + DETAILS  ---------------- */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+{/* ---------------- IMAGE + DETAILS ---------------- */}
+<div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-start px-2 md:px-0">
 
-        {/* IMAGE LEFT */}
-        <div className={`rounded-3xl bg-white overflow-hidden ${glow} p-4`}>
-          <img
-            src={donation.thumbnail}
-            alt={t(donation.donationName)}
-            className="w-full h-[380px] object-cover rounded-2xl"
-          />
-        </div>
+  {/* IMAGE LEFT */}
+  <div className={`rounded-3xl bg-white overflow-hidden ${glow} p-4`}>
+    <img
+      src={donation.thumbnail}
+      alt={t(donation.donationName)}
+      className="w-full h-[380px] object-cover rounded-2xl"
+    />
+  </div>
+
 
         {/* DETAILS RIGHT */}
         <div className="space-y-8">
