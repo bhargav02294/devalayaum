@@ -1,5 +1,6 @@
 // src/pages/TempleView.tsx
 // FINAL PERFECT STRUCTURE – LEFT INFO + GALLERY | RIGHT DARSHAN + VISITOR INFO
+// Warm spiritual soft orange glow (Option B)
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -180,6 +181,9 @@ export default function TempleView() {
       ? temple.prohibitedItems.join(", ")
       : undefined;
 
+  // Warm spiritual glow
+  const glow = "shadow-[0_4px_20px_rgba(255,153,51,0.18)]";
+
   return (
     <div
       className="pt-20 pb-20"
@@ -192,7 +196,7 @@ export default function TempleView() {
         {/* ---------------------------------------------------------- */}
         {/* FIRST ROW: LEFT + RIGHT */}
         {/* ---------------------------------------------------------- */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
           {/* ---------------- LEFT COLUMN ---------------- */}
           <div className="lg:col-span-2">
@@ -210,16 +214,20 @@ export default function TempleView() {
               <span className="font-medium text-gray-800">{getText(temple.location)}</span>
             </p>
 
-            {/* ---------------- GALLERY INSIDE LEFT COLUMN ---------------- */}
-            <div className="mt-6 rounded-3xl overflow-hidden border bg-white shadow-lg">
+            {/* ---------------- GALLERY (Premium Look) ---------------- */}
+            <div className={`mt-8 rounded-3xl overflow-hidden bg-white ${glow}`}>
 
               {/* Main Image */}
-              <div className="relative h-[500px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff8ec] to-white">
-                <img src={displayImage} alt="temple" className="max-w-full max-h-full object-contain" />
+              <div className="relative h-[520px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff4dd] to-white">
+                <img
+                  src={displayImage}
+                  alt="temple"
+                  className="max-w-full max-h-full object-contain drop-shadow-[0_4px_20px_rgba(255,153,51,0.25)]"
+                />
               </div>
 
               {/* Thumbnails */}
-              <div className="p-4 flex gap-4 overflow-x-auto">
+              <div className="p-4 flex gap-4 overflow-x-auto bg-gradient-to-r from-white to-[#fff8ec]">
                 {images.map((src, idx) => {
                   const active = idx === activeImage;
                   return (
@@ -228,10 +236,11 @@ export default function TempleView() {
                       onMouseEnter={() => setHoverImage(src)}
                       onMouseLeave={() => setHoverImage(null)}
                       onClick={() => setActiveImage(idx)}
-                      className={`rounded-xl overflow-hidden border shadow-sm transition-all ${
-                        active ? "border-orange-500 ring-2 ring-orange-200 scale-105" : "border-gray-200 hover:scale-105"
-                      }`}
-                      style={{ width: active ? 180 : 120, height: active ? 120 : 72 }}
+                      className={`
+                        rounded-xl overflow-hidden transition-all 
+                        ${active ? "ring-2 ring-orange-300 scale-105 shadow-[0_4px_15px_rgba(255,153,51,0.35)]" : "hover:scale-105"}
+                      `}
+                      style={{ width: active ? 170 : 120, height: active ? 110 : 75 }}
                     >
                       <img src={src} className="w-full h-full object-cover" />
                     </button>
@@ -244,16 +253,16 @@ export default function TempleView() {
           </div>
 
           {/* ---------------- RIGHT COLUMN ---------------- */}
-          <div className="space-y-6">
+          <div className="space-y-8">
 
             {/* Darshan & Aarti */}
-            <div className="bg-white border rounded-2xl p-6 shadow-sm">
+            <div className={`bg-white rounded-2xl p-6 ${glow}`}>
               <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
 
               <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
 
               {temple.aartiTimings && (
-                <div className="mt-2">
+                <div className="mt-3">
                   <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
 
                   <div className="space-y-1 text-gray-800">
@@ -268,15 +277,12 @@ export default function TempleView() {
             </div>
 
             {/* Visitor Information */}
-            <div className="bg-white border rounded-2xl p-6 shadow-sm">
+            <div className={`bg-white rounded-2xl p-6 ${glow}`}>
               <h3 className="text-lg font-semibold text-orange-700 mb-3">Visitor Information</h3>
 
               <LabelValue label="Dress Code" value={getText(temple.dressCode)} />
               <LabelValue label="Entry Rules" value={getText(temple.entryRules)} />
-
-              {prohibitedItemsStr && (
-                <LabelValue label="Prohibited Items" value={prohibitedItemsStr} />
-              )}
+              {prohibitedItemsStr && <LabelValue label="Prohibited Items" value={prohibitedItemsStr} />}
 
               <p className="text-gray-800 mt-2">
                 <strong>Locker Facility:</strong> {temple.lockerFacility ? "Available" : "Not Available"}
@@ -315,7 +321,7 @@ export default function TempleView() {
           <Section id="nearby" title="Nearby Places">
             <div className="space-y-3">
               {temple.nearbyPlaces.map((p, i) => (
-                <div key={i} className="p-3 bg-orange-50 border rounded-xl hover:bg-orange-100 transition">
+                <div key={i} className={`p-3 bg-orange-50 rounded-xl hover:bg-orange-100 transition ${glow}`}>
                   <p className="font-medium text-gray-900">{getText(p.name)}</p>
                   <p className="text-gray-700 text-sm">{getText(p.description)}</p>
                 </div>
@@ -324,7 +330,36 @@ export default function TempleView() {
           </Section>
         ) : null}
 
-        
+        {/* ---------------------------------------------------------- */}
+        {/* FOOTER */}
+        {/* ---------------------------------------------------------- */}
+        <div className="mt-10 bg-white rounded-2xl p-6 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+            <p className="text-gray-700">
+              <strong>Published:</strong> {temple.published ? "Yes" : "No"}
+            </p>
+
+            {temple.updatedAt && (
+              <p className="text-gray-600">
+                Updated: {new Date(temple.updatedAt).toLocaleString()}
+              </p>
+            )}
+
+            <div className="flex items-center gap-3">
+              <Link to={`/temples/${temple._id}/edit`} className="bg-white border px-4 py-2 rounded-lg text-sm hover:shadow-md">
+                Edit
+              </Link>
+              <a
+                href={`mailto:info@yourtemple.org?subject=Booking for ${encodeURIComponent(getText(temple.name))}`}
+                className="bg-orange-600 text-white px-4 py-2 text-sm rounded-lg hover:shadow-lg"
+              >
+                Request Booking
+              </a>
+            </div>
+
+          </div>
+        </div>
 
       </div>
 
