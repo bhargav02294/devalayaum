@@ -105,7 +105,53 @@ export default function PujaView() {
           {puja.category} {puja.subCategory ? `› ${puja.subCategory}` : ""}
         </p>
 
-        {/* QUICK LINK BUTTONS — NO BORDER + SPIRITUAL GLOW */}
+       
+
+        {/* GALLERY — SMALLER WIDTH + CENTERED */}
+<div className="flex justify-center mt-6">
+  <div className={`rounded-2xl overflow-hidden bg-white p-3 ${glow} w-full max-w-3xl`}>
+    
+    {/* MAIN IMAGE BOX */}
+    <div className="h-[380px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2] relative rounded-xl">
+      <img
+        src={mainImg}
+        className="max-w-full max-h-full object-contain"
+      />
+
+      {puja.videoUrl && (
+        <button
+          onClick={() => setVideoOpen(true)}
+          className="absolute bottom-4 right-4 bg-white/90 text-[#8a3c0f] px-4 py-2 rounded-full shadow font-sans font-medium"
+        >
+          ▶ Play Video
+        </button>
+      )}
+    </div>
+
+    {/* THUMBNAILS */}
+    <div className="p-3 flex gap-3 overflow-x-auto bg-[#fffaf5] rounded-xl mt-3 justify-center">
+      {gallery.map((src, idx) => (
+        <button
+          key={idx}
+          onMouseEnter={() => setHoverPreview(src)}
+          onMouseLeave={() => setHoverPreview(null)}
+          onClick={() => setActiveIndex(idx)}
+          className={`overflow-hidden rounded-xl transition-all 
+            ${idx === activeIndex ? "ring-2 ring-[#d9a06a] scale-105" : "hover:scale-105"}`}
+          style={{ width: 110, height: 75 }}
+        >
+          <img src={src} className="w-full h-full object-cover" />
+        </button>
+      ))}
+    </div>
+
+  </div>
+</div>
+
+
+
+
+ {/* QUICK LINK BUTTONS — NO BORDER + SPIRITUAL GLOW */}
         <div className="flex flex-wrap gap-3 mb-8">
           {[
             ["overview", "Overview"],
@@ -127,37 +173,7 @@ export default function PujaView() {
           ))}
         </div>
 
-        {/* GALLERY — SMALLER SIZE */}
-        <div className={`rounded-2xl overflow-hidden bg-white p-3 ${glow}`}>
-          <div className="h-[380px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2] relative rounded-xl">
-            <img src={mainImg} className="max-w-full max-h-full object-contain" />
 
-            {puja.videoUrl && (
-              <button
-                onClick={() => setVideoOpen(true)}
-                className="absolute bottom-4 right-4 bg-white/90 text-[#8a3c0f] px-4 py-2 rounded-full shadow font-sans font-medium"
-              >
-                ▶ Play Video
-              </button>
-            )}
-          </div>
-
-          <div className="p-3 flex gap-3 overflow-x-auto bg-[#fffaf5] rounded-xl mt-3">
-            {gallery.map((src, idx) => (
-              <button
-                key={idx}
-                onMouseEnter={() => setHoverPreview(src)}
-                onMouseLeave={() => setHoverPreview(null)}
-                onClick={() => setActiveIndex(idx)}
-                className={`overflow-hidden rounded-xl transition-all 
-                ${idx === activeIndex ? "ring-2 ring-[#d9a06a] scale-105" : "hover:scale-105"}`}
-                style={{ width: 110, height: 75 }}
-              >
-                <img src={src} className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* SECTIONS */}
         <div id="overview" className="mt-12">
