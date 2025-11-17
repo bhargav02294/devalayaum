@@ -1,162 +1,179 @@
-// Updated DonationsList page with unified professional design + MapPin usage
-import { useEffect, useState } from "react";
+// E:\devalayaum\frontend\src\pages\AartisList.tsx
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-// Inline MapPin Icon — No dependency required
-function MapPin({ size = 18, className = "" }: { size?: number; className?: string }) {
-  const s = size;
-  return (
-    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M18.5 10.5C18.5 15 12 21 12 21s-6.5-6-6.5-10.5A6.5 6.5 0 1 1 18.5 10.5z" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}
-
-interface Donation {
+interface AartiItem {
   _id: string;
-  thumbnail: string;
-  templeName: Record<string, string>;
-  donationName: Record<string, string>;
-  shortDetails?: Record<string, string>;
-  price: number;
+  title: Record<string, string>;
+  type: "aarti" | "katha" | "mantra";
+  description?: Record<string, string>;
+  content?: Record<string, string>;
+  meaning?: Record<string, string>;
+  image?: string;
+  published?: boolean;
 }
 
-function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
-  return (
-    <div className="overflow-hidden py-1">
-      <div
-        className="animate-border-left"
-        style={{
-          backgroundImage: flipped ? "url('/temple-border-flip.png?rev=4')" : "url('/temple-border.png?rev=4')",
-          backgroundRepeat: "repeat-x",
-          backgroundSize: "330px auto",
-          height: "60px",
-          width: "300%",
-          opacity: 1,
-        }}
-      />
-    </div>
-  );
-}
+// Decorative border
+const ScrollingBorder = ({ flipped = false }: { flipped?: boolean }) => (
+  <div className="overflow-hidden py-1">
+    <div
+      className="animate-border-left"
+      style={{
+        backgroundImage: flipped
+          ? "url('/temple-border-flip.png?rev=4')"
+          : "url('/temple-border.png?rev=4')",
+        backgroundRepeat: "repeat-x",
+        backgroundSize: "330px auto",
+        height: "60px",
+        width: "300%",
+        opacity: 1,
+      }}
+    />
+  </div>
+);
 
-export default function DonationsList() {
-  const [donations, setDonations] = useState<Donation[]>([]);
+const AartisList = () => {
+  const [items, setItems] = useState<AartiItem[]>([]);
   const [loading, setLoading] = useState(true);
+
   const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await axios.get(`${backendURL}/api/donations`);
-        setDonations(res.data);
-      } catch (err) {
-        console.error("Failed to load donations:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+    axios
+      .get(`${backendURL}/api/aartis?published=true`)
+      .then((res) => setItems(res.data || []))
+      .catch((err) => {
+        console.error("Failed to load aartis:", err);
+        setItems([]);
+      })
+      .finally(() => setLoading(false));
   }, [backendURL]);
 
-  if (loading)
-    return <p className="text-center mt-20 text-orange-700 text-lg font-semibold">Loading Donations...</p>;
-
-  if (donations.length === 0)
+  if (loading) {
     return (
-      <div className="pt-24 pb-16 text-center text-gray-600">
-        <h2 className="text-3xl font-bold mb-3 text-orange-700">No Donations Available</h2>
-        <p>New donation campaigns will be added soon 🙏</p>
+      <div className="pt-24 pb-20 flex items-center justify-center">
+        <p className="text-orange-700 text-lg font-semibold">
+          Loading aartis, kathas & mantras…
+        </p>
       </div>
     );
+  }
 
   return (
-    <div className="pt-24 pb-20" style={{ background: "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)" }}>
+    <div
+      className="pt-24 pb-20"
+      style={{
+        background:
+          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 70%)",
+      }}
+    >
       <ScrollingBorder />
 
-      {/* Header */}
-      {/* Header */}
-<div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
+      {/* Header — 60% text / 40% image */}
+      <div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-6 items-center mt-6">
+        <div>
+          <h1
+            className="text-5xl font-bold font-[Marcellus] text-[#b34a00] drop-shadow-md leading-tight"
+            style={{ marginTop: 0, paddingTop: 0 }}
+          >
+            Sacred Aartis, Divine Kathas & Powerful Mantras
+          </h1>
 
-  {/* LEFT BLOCK */}
-  <div>
-    <h1
-      className="text-5xl font-bold font-[Marcellus] drop-shadow-md leading-tight"
-      style={{ color: "#b34a00", marginTop: "0px", paddingTop: "0px" }}
-    >
-      Aartis of the Eternal Gods & Goddesses
-    </h1>
+          <ul
+            className="mt-4 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
+            style={{ color: "#5a4636" }}
+          >
+            <li>Experience sacred hymns that awaken devotion and inner peace.</li>
+            <li>Immerse in kathas that reveal spiritual wisdom.</li>
+            <li>Chant mantras that purify the mind and energize the soul.</li>
+            <li>Perfect for daily prayer, meditation, and devotion.</li>
+          </ul>
+        </div>
 
-    <ul
-      className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
-      style={{ marginTop: "12px", color: "#5a4636" }}
-    >
-      <li>Chants that purify the mind and awaken devotion.</li>
-      <li>Feel the divine presence in every sacred verse.</li>
-      <li>Aartis that bring peace, strength, and positivity.</li>
-      <li>Let your heart glow with the rhythm of devotion.</li>
-      <li>Sacred melodies to connect you with the Divine.</li>
-      <li>Begin and end your day with God’s blessings.</li>
-    </ul>
-  </div>
-
-  {/* RIGHT IMAGE BLOCK */}
-  <div
-    className="flex justify-center lg:justify-end"
-    style={{ marginTop: "0px", paddingTop: "0px" }}
-  >
-    <img
-      src="/aarti.png"
-      alt="Aarti Artwork"
-      className="w-80 lg:w-[420px] drop-shadow-xl"
-      style={{ marginTop: "0px", paddingTop: "0px" }}
-    />
-  </div>
-
-</div>
-
+        <div
+          className="flex justify-center lg:justify-end"
+          style={{ marginTop: 0, paddingTop: 0 }}
+        >
+          <img
+            src="/aarti.png"
+            alt="Aarti Decorative Artwork"
+            className="w-[300px] md:w-[380px] lg:w-[480px] drop-shadow-xl"
+          />
+        </div>
+      </div>
 
       <ScrollingBorder flipped />
 
-      {/* Donation Cards */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
-        {donations.map((d) => {
-          const title = d.donationName?.[lang] || "Donation Campaign";
-          const temple = d.templeName?.[lang] || "";
-          const details = d.shortDetails?.[lang] || "";
+      {/* Items grid */}
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+        {items.length === 0 ? (
+          <div className="col-span-full text-center text-gray-600 py-12">
+            <h3 className="text-2xl font-semibold text-orange-700">
+              No aartis available
+            </h3>
+            <p className="mt-2">New items will be added soon. 🙏</p>
+          </div>
+        ) : (
+          items.map((it) => {
+            const title = it.title?.[lang] || it.title?.en || "Untitled";
+            const desc = it.description?.[lang] || it.description?.en || "";
+            const image = it.image || "/placeholder.jpg";
 
-          return (
-            <Link key={d._id} to={`/donations/${d._id}`} className="block rounded-2xl overflow-hidden">
-              <div className="border rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
-                {/* Image */}
-                <div className="w-full h-56 bg-gray-100 overflow-hidden">
-                  <img src={d.thumbnail || "/placeholder.jpg"} alt={title} className="w-full h-full object-cover" />
-                </div>
+            const badge =
+              it.type === "aarti"
+                ? "🪔 Aarti"
+                : it.type === "katha"
+                ? "📖 Katha"
+                : "🕉️ Mantra";
 
-                {/* Content */}
-                <div className="p-4 space-y-3">
-                  <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">{title}</h2>
-
-                  {/* Temple Row with MapPin */}
-                  <div className="flex items-center text-gray-600 text-sm">
-                    <MapPin size={18} className="mr-1" />
-                    <span className="truncate max-w-[110px] text-left">{temple}</span>
+            return (
+              <Link
+                key={it._id}
+                to={`/aarti/${it._id}`}
+                className="block rounded-2xl overflow-hidden transition-all duration-200 hover:-translate-y-1"
+              >
+                <div className="border rounded-2xl bg-white shadow-sm hover:shadow-md">
+                  <div className="w-full h-56 bg-gray-100 overflow-hidden">
+                    <img
+                      src={image}
+                      alt={title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
-                  
+                  <div className="p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-semibold font-[Playfair] text-gray-900">
+                        {title}
+                      </h2>
+                      <span className="text-sm px-3 py-1 rounded-full bg-orange-50 text-orange-700 font-medium">
+                        {badge}
+                      </span>
+                    </div>
 
-                  <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">{details.slice(0, 120)}...</p>
-
+                    <p className="text-sm text-gray-700 leading-relaxed font-[Poppins]">
+                      {desc.length > 140 ? desc.slice(0, 140) + "..." : desc}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })
+        )}
       </div>
 
+      <div className="max-w-7xl mx-auto px-6 mt-10">
+        <ScrollingBorder />
+      </div>
+
+      <p className="text-center mt-8 text-gray-700 italic text-sm">
+        🌼 “Chant with devotion — each verse carries divine vibrations.” 🌼
+      </p>
     </div>
   );
-}
+};
+
+export default AartisList;
