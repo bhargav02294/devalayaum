@@ -80,24 +80,7 @@ function IconTemple({ size = 20 }: { size?: number }) {
 }
 
 // --------------------------------------------------------------
-// Border
-// --------------------------------------------------------------
-function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
-  return (
-    <div className="overflow-hidden py-1">
-      <div
-        className="animate-border-left"
-        style={{
-          backgroundImage: flipped ? "url('/temple-border-flip.png')" : "url('/temple-border.png')",
-          backgroundRepeat: "repeat-x",
-          backgroundSize: "330px auto",
-          height: "60px",
-          width: "300%",
-        }}
-      />
-    </div>
-  );
-}
+
 
 // --------------------------------------------------------------
 // Helpers
@@ -189,7 +172,6 @@ export default function TempleView() {
       className="pt-20 pb-20"
       style={{ background: "linear-gradient(to bottom, #fff7e3, #fffdf8, #ffffff)" }}
     >
-      <ScrollingBorder />
 
       <div className="max-w-7xl mx-auto px-6">
 
@@ -254,41 +236,41 @@ export default function TempleView() {
           </div>
 
           {/* ---------------- RIGHT COLUMN ---------------- */}
-          <div className="space-y-8">
+        <div className="space-y-8 lg:mt-[140px]">
 
             {/* Darshan & Aarti */}
-            <div className={`bg-white rounded-2xl p-6 ${glow}`}>
-              <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
+          <div className={`bg-white rounded-2xl p-6 ${glow}`}>
+         <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
 
-              <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
+    <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
 
               {temple.aartiTimings && (
-                <div className="mt-3">
-                  <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
+      <div className="mt-3">
+        <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
 
-                  <div className="space-y-1 text-gray-800">
-                    <div className="flex items-center gap-2"><IconClock /> <strong>Morning:</strong> {temple.aartiTimings.morning || "-"}</div>
-                    <div className="flex items-center gap-2"><IconClock /> <strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}</div>
-                    <div className="flex items-center gap-2"><IconClock /> <strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}</div>
-                  </div>
-                </div>
-              )}
+        <div className="space-y-1 text-gray-800">
+          <div className="flex items-center gap-2"><IconClock /> <strong>Morning:</strong> {temple.aartiTimings.morning || "-"}</div>
+          <div className="flex items-center gap-2"><IconClock /> <strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}</div>
+          <div className="flex items-center gap-2"><IconClock /> <strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}</div>
+        </div>
+      </div>
+    )}
 
               <LabelValue label="Special Pooja Info" value={getText(temple.specialPoojaInfo)} />
-            </div>
+  </div>
 
-            {/* Visitor Information */}
-            <div className={`bg-white rounded-2xl p-6 ${glow}`}>
-              <h3 className="text-lg font-semibold text-orange-700 mb-3">Visitor Information</h3>
+           {/* Visitor Information */}
+  <div className={`bg-white rounded-2xl p-6 ${glow}`}>
+    <h3 className="text-lg font-semibold text-orange-700 mb-3">Visitor Information</h3>
 
-              <LabelValue label="Dress Code" value={getText(temple.dressCode)} />
-              <LabelValue label="Entry Rules" value={getText(temple.entryRules)} />
-              {prohibitedItemsStr && <LabelValue label="Prohibited Items" value={prohibitedItemsStr} />}
+    <LabelValue label="Dress Code" value={getText(temple.dressCode)} />
+    <LabelValue label="Entry Rules" value={getText(temple.entryRules)} />
+    {prohibitedItemsStr && <LabelValue label="Prohibited Items" value={prohibitedItemsStr} />}
 
-              <p className="text-gray-800 mt-2">
-                <strong>Locker Facility:</strong> {temple.lockerFacility ? "Available" : "Not Available"}
-              </p>
-            </div>
+    <p className="text-gray-800 mt-2">
+      <strong>Locker Facility:</strong> {temple.lockerFacility ? "Available" : "Not Available"}
+    </p>
+  </div>
 
           </div>
         </div>
@@ -331,40 +313,11 @@ export default function TempleView() {
           </Section>
         ) : null}
 
-        {/* ---------------------------------------------------------- */}
-        {/* FOOTER */}
-        {/* ---------------------------------------------------------- */}
-        <div className="mt-10 bg-white rounded-2xl p-6 shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-
-            <p className="text-gray-700">
-              <strong>Published:</strong> {temple.published ? "Yes" : "No"}
-            </p>
-
-            {temple.updatedAt && (
-              <p className="text-gray-600">
-                Updated: {new Date(temple.updatedAt).toLocaleString()}
-              </p>
-            )}
-
-            <div className="flex items-center gap-3">
-              <Link to={`/temples/${temple._id}/edit`} className="bg-white border px-4 py-2 rounded-lg text-sm hover:shadow-md">
-                Edit
-              </Link>
-              <a
-                href={`mailto:info@yourtemple.org?subject=Booking for ${encodeURIComponent(getText(temple.name))}`}
-                className="bg-orange-600 text-white px-4 py-2 text-sm rounded-lg hover:shadow-lg"
-              >
-                Request Booking
-              </a>
-            </div>
-
-          </div>
-        </div>
+        
+        
 
       </div>
 
-      <ScrollingBorder flipped />
     </div>
   );
 }
