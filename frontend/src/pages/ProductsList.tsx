@@ -92,7 +92,7 @@ export default function PujasList() {
       <h1
         className="text-5xl font-[Marcellus] font-bold drop-shadow-sm leading-tight"
         style={{
-          color: "#b34a00", // Devotional warm saffron tone
+          color: "#b34a00",
           marginTop: "0px",
           paddingTop: "0px",
         }}
@@ -103,8 +103,8 @@ export default function PujasList() {
       <ul
         className="space-y-3 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
         style={{
-          marginTop: "14px",
-          color: "#5a4636", // Softer spiritual brown tone
+          marginTop: "12px",
+          color: "#5a4636",
         }}
       >
         <li>Every product is chosen with purity and devotion.</li>
@@ -125,6 +125,7 @@ export default function PujasList() {
         src="/product.png"
         alt="Devotional Products Artwork"
         className="w-[360px] md:w-[460px] lg:w-[540px] drop-shadow-xl"
+        style={{ marginTop: "0px", paddingTop: "0px" }}
       />
     </div>
   </div>
