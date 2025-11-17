@@ -1,29 +1,26 @@
 // E:\devalayaum\frontend\src\pages\DonationView.tsx
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-// Razorpay loader
+// Load Razorpay script safely
 const loadRazorpayScript = (): Promise<boolean> =>
   new Promise((resolve) => {
-    if (
-      document.querySelector(
-        'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-      )
-    ) {
-      resolve(true);
-      return;
-    }
+    const existing = document.querySelector(
+      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+    );
+    if (existing) return resolve(true);
+
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
     script.onload = () => resolve(true);
     script.onerror = () => resolve(false);
     document.body.appendChild(script);
   });
 
-// Minimal, safe types for Razorpay (no `any`)
+// Razorpay types (NO ANY)
 declare global {
   interface RazorpayInstance {
     open: () => void;
@@ -50,83 +47,72 @@ interface Donation {
 
 export default function DonationView() {
   const { id } = useParams<{ id: string }>();
+
   const [donation, setDonation] = useState<Donation | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const backendURL = import.meta.env.VITE_API_URL;
-  const lang = i18n.language || "en";
 
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
   const [amount, setAmount] = useState<number | "">("");
   const [error, setError] = useState("");
 
-  const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
+  const backendURL = import.meta.env.VITE_API_URL;
+  const lang = i18n.language || "en";
+
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
+
+  const glow = "shadow-[0_10px_30px_rgba(140,85,40,0.18)]";
 
   useEffect(() => {
-    const fetchDonation = async () => {
+    const loadDonation = async () => {
       try {
         const res = await axios.get(`${backendURL}/api/donations/${id}`);
         setDonation(res.data);
       } catch (err) {
-        // safe logging for unknown errors
-        if (err instanceof Error) console.error("Error fetching donation:", err.message);
-        else console.error("Error fetching donation:", err);
+        console.error("Error loading donation:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchDonation();
+    loadDonation();
   }, [id, backendURL]);
 
-  if (loading) return <p className="text-center mt-10">Loading Donation...</p>;
-  if (!donation) return <p className="text-center mt-10">Donation not found.</p>;
+  if (loading) return <div className="pt-24 text-center">Loading...</div>;
+  if (!donation) return <div className="pt-24 text-center">Donation not found.</div>;
 
   const suggestedAmounts = [51, 101, 501, 1001];
-  const glow = "shadow-[0_10px_30px_rgba(140,85,40,0.15)] shadow-orange-200/40";
 
+  // -------- HANDLE PAYMENT ----------
   const handleDonate = async () => {
     setError("");
 
-    if (!fullName.trim()) {
-      setError("Please enter your full name");
-      return;
-    }
-    if (!mobile.trim()) {
-      setError("Please enter your mobile/WhatsApp number");
-      return;
-    }
-    if (!amount || Number(amount) < 1) {
-      setError("Please enter a valid amount (minimum ₹1)");
-      return;
-    }
+    if (!fullName.trim()) return setError("Please enter your full name.");
+    if (!mobile.trim()) return setError("Please enter your mobile number.");
+    if (!amount || Number(amount) < 1)
+      return setError("Please enter a valid donation amount.");
 
-    const scriptLoaded = await loadRazorpayScript();
-    if (!scriptLoaded) {
-      setError("Failed to load Razorpay. Check internet connection.");
-      return;
-    }
+    const loaded = await loadRazorpayScript();
+    if (!loaded) return setError("Failed to load Razorpay");
 
     try {
-      const createRes = await axios.post(`${backendURL}/api/payments/create-order`, {
+      // CREATE ORDER
+      const create = await axios.post(`${backendURL}/api/payments/create-order`, {
         donationId: donation._id,
         fullName,
         mobile,
         amount,
       });
 
-      // safely extract expected properties
-      const orderId = (createRes.data && (createRes.data as Record<string, unknown>).orderId) as string | undefined;
-      const orderAmount = (createRes.data && (createRes.data as Record<string, unknown>).amount) as number | undefined;
-      const currency = (createRes.data && (createRes.data as Record<string, unknown>).currency) as string | undefined;
+      const data = create.data as Record<string, unknown>;
+
+      const orderId = data.orderId as string;
+      const orderAmount = data.amount as number;
+      const currency = data.currency as string;
 
       if (!orderId || !orderAmount || !currency) {
-        setError("Payment initialization failed (invalid server response).");
-        console.error("Invalid create-order response:", createRes.data);
-        return;
+        return setError("Server returned invalid order data.");
       }
 
-      // build options as a plain Record<string, unknown>
       const options: Record<string, unknown> = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: orderAmount,
@@ -134,26 +120,19 @@ export default function DonationView() {
         name: "Devalayaum",
         description: `Donation: ${t(donation.donationName)}`,
         order_id: orderId,
-        handler: (response: Record<string, unknown>) => {
-          // narrow the handler response safely before using
-          const rpOrderId = typeof response?.razorpay_order_id === "string" ? response.razorpay_order_id : undefined;
-          const rpPaymentId = typeof response?.razorpay_payment_id === "string" ? response.razorpay_payment_id : undefined;
-          const rpSignature = typeof response?.razorpay_signature === "string" ? response.razorpay_signature : undefined;
 
-          if (!rpOrderId || !rpPaymentId || !rpSignature) {
-            // something unexpected from Razorpay
-            console.error("Unexpected Razorpay response:", response);
-            alert("Payment processed but response was unexpected. Please contact support.");
-            return;
-          }
+        handler: (resp: Record<string, unknown>) => {
+          const rOrderId = resp["razorpay_order_id"];
+          const rPaymentId = resp["razorpay_payment_id"];
+          const rSignature = resp["razorpay_signature"];
 
-          // verify with backend
+          // VERIFY PAYMENT
           (async () => {
             try {
               await axios.post(`${backendURL}/api/payments/verify`, {
-                orderId: rpOrderId,
-                paymentId: rpPaymentId,
-                signature: rpSignature,
+                orderId: rOrderId,
+                paymentId: rPaymentId,
+                signature: rSignature,
                 fullName,
                 mobile,
                 amount,
@@ -163,144 +142,146 @@ export default function DonationView() {
 
               alert("🙏 Thank you! Your donation was successful.");
               window.location.href = "/donors";
-            } catch (verifyErr) {
-              if (verifyErr instanceof Error) console.error("Verification failed:", verifyErr.message);
-              else console.error("Verification failed:", verifyErr);
-              alert("Payment succeeded but verification failed.");
+            } catch (err) {
+              console.error("Verify Err:", err);
+              alert("Payment success, but verification failed.");
             }
           })();
         },
-        prefill: {
-          name: fullName,
-          contact: mobile,
-        },
+
+        prefill: { name: fullName, contact: mobile },
         theme: { color: "#b34a00" },
       };
 
-      // instantiate Razorpay (window.Razorpay typed above) and open
-      // using the runtime constructor signature we declared
-      // TypeScript knows window.Razorpay exists because of our global declaration
-      // (may still be undefined at runtime if the script failed; we checked earlier)
-      // cast is safe here because the constructor expects Record<string, unknown>
-      // (no use of `any` anywhere)
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore - runtime constructor from Razorpay script
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      if (err instanceof Error) {
-        console.error("Error during payment:", err.message);
-      } else {
-        console.error("Error during payment:", err);
-      }
-      setError("Payment initialization failed.");
+      console.error("Payment error:", err);
+      setError("Payment failed. Try again.");
     }
   };
 
+  // ------------------- UI -------------------
   return (
-    <div className="pt-24 pb-20 px-6 md:px-20 bg-gradient-to-b from-[#fff5dd] via-[#fffaf2] to-white min-h-screen">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-4xl md:text-5xl font-[Marcellus] text-[#b34a00] font-bold leading-tight">
-            {t(donation.donationName)}
-          </h1>
-          <p className="text-gray-700 text-lg mt-2 font-[Poppins]">
-            <span className="font-semibold text-orange-900">{t(donation.templeName)}</span>
-          </p>
-          <p className="text-gray-600 mt-1">{t(donation.address)}</p>
-          <p className="mt-4 text-gray-700 italic text-[17px]">{t(donation.shortDetails)}</p>
+    <div className="pt-24 pb-20 bg-gradient-to-b from-[#fff4d9] via-[#fff9f1] to-white min-h-screen px-6">
+
+      {/* ---------------- HEADER ---------------- */}
+      <div className="max-w-6xl mx-auto text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-[Marcellus] text-[#b34a00] font-bold">
+          {t(donation.donationName)}
+        </h1>
+
+        <p className="text-gray-700 text-lg mt-2 font-[Poppins]">
+          <span className="font-semibold text-orange-900">{t(donation.templeName)}</span>
+        </p>
+
+        <p className="text-gray-600 text-lg">{t(donation.address)}</p>
+
+        <p className="mt-4 text-gray-700 italic text-xl">{t(donation.shortDetails)}</p>
+      </div>
+
+      {/* ----------------  IMAGE + DETAILS  ---------------- */}
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+
+        {/* IMAGE LEFT */}
+        <div className={`rounded-3xl bg-white overflow-hidden ${glow} p-4`}>
+          <img
+            src={donation.thumbnail}
+            alt={t(donation.donationName)}
+            className="w-full h-[380px] object-cover rounded-2xl"
+          />
         </div>
 
-        {/* Centered Image */}
-        <div className="flex justify-center">
-          <div className={`rounded-3xl bg-white overflow-hidden ${glow} p-4 max-w-3xl w-full`}>
-            <img
-              src={donation.thumbnail}
-              alt={t(donation.donationName)}
-              className="w-full h-[360px] object-cover rounded-2xl"
-            />
-          </div>
-        </div>
+        {/* DETAILS RIGHT */}
+        <div className="space-y-8">
 
-        {/* Details */}
-        <div className="mt-10 space-y-10 max-w-3xl mx-auto">
           <section>
-            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-3">About This Donation</h2>
+            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-2">
+              About This Donation
+            </h2>
             <p className="text-gray-700 leading-relaxed">{t(donation.description)}</p>
           </section>
 
           <section>
-            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-3">Temple Details</h2>
+            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-2">
+              Temple Details
+            </h2>
             <p className="text-gray-700 leading-relaxed">{t(donation.templeDetails)}</p>
           </section>
 
           <section>
-            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-3">Benefits of Donating</h2>
+            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-2">
+              Benefits of Donating
+            </h2>
             <p className="text-gray-700 leading-relaxed">{t(donation.benefits)}</p>
           </section>
 
           <section>
-            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-3">Summary</h2>
+            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-2">
+              Summary
+            </h2>
             <p className="text-gray-700 leading-relaxed">{t(donation.summary)}</p>
           </section>
         </div>
+      </div>
 
-        {/* Donation Form at Bottom */}
-        <div className={`mt-12 p-8 rounded-3xl bg-white ${glow} max-w-3xl mx-auto`}>
-          <h3 className="text-2xl font-[Merriweather] text-[#8a3c0f] mb-6 text-center">Make a Donation</h3>
+      {/* ----------------  DONATION FORM BOTTOM  ---------------- */}
+      <div className={`max-w-3xl mx-auto mt-16 p-8 rounded-3xl bg-white ${glow}`}>
 
-          {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+        <h3 className="text-3xl font-[Merriweather] text-[#b34a00] text-center mb-6">
+          Make a Donation
+        </h3>
 
-          <input
-            type="text"
-            className="w-full border p-3 rounded-lg mb-4"
-            placeholder="Full Name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-          />
+        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
 
-          <input
-            type="text"
-            className="w-full border p-3 rounded-lg mb-4"
-            placeholder="Mobile / WhatsApp Number"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-          />
+        <input
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Full Name"
+          className="w-full border p-3 rounded-xl mb-4"
+        />
 
-          <div className="flex flex-wrap gap-3 mb-4 justify-center">
-            {suggestedAmounts.map((amt) => (
-              <button
-                key={amt}
-                onClick={() => setAmount(amt)}
-                className={`px-5 py-2 rounded-full font-semibold border transition 
-                  ${
-                    amount === amt
-                      ? "bg-[#b34a00] text-white border-[#b34a00]"
-                      : "bg-white text-[#b34a00] border-[#b34a00] hover:bg-[#fff3e2]"
-                  }`}
-              >
-                ₹{amt}
-              </button>
-            ))}
-          </div>
+        <input
+          type="text"
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          placeholder="Mobile / WhatsApp Number"
+          className="w-full border p-3 rounded-xl mb-4"
+        />
 
-          <input
-            type="number"
-            min={1}
-            className="w-full border p-3 rounded-lg mb-6"
-            placeholder="Enter custom amount"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
-          />
-
-          <button
-            onClick={handleDonate}
-            className="w-full bg-[#b34a00] hover:bg-[#8a3c0f] text-white py-3 rounded-xl text-lg font-semibold transition"
-          >
-            Donate Now
-          </button>
+        {/* Suggested Amounts */}
+        <div className="flex flex-wrap justify-center gap-3 mb-4">
+          {suggestedAmounts.map((amt) => (
+            <button
+              key={amt}
+              onClick={() => setAmount(amt)}
+              className={`px-5 py-2 rounded-full border font-semibold 
+                ${amount === amt
+                  ? "bg-[#b34a00] text-white border-[#b34a00]"
+                  : "bg-white text-[#b34a00] border-[#b34a00] hover:bg-[#fff0e0]"
+                }`}
+            >
+              ₹{amt}
+            </button>
+          ))}
         </div>
+
+        <input
+          type="number"
+          min={1}
+          value={amount}
+          onChange={(e) => setAmount(Number(e.target.value))}
+          placeholder="Enter custom amount"
+          className="w-full border p-3 rounded-xl mb-6"
+        />
+
+        <button
+          onClick={handleDonate}
+          className="w-full bg-[#b34a00] hover:bg-[#8a3c0f] text-white text-lg font-semibold py-3 rounded-xl"
+        >
+          Donate Now
+        </button>
       </div>
     </div>
   );
