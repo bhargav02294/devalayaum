@@ -2,60 +2,41 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-// Convert hex → rgba
-function hexToRgba(hex: string, alpha = 1) {
-  if (!hex) return `rgba(0,0,0,${alpha})`;
-  const h = hex.replace("#", "");
-  const bigint = parseInt(
-    h.length === 3 ? h.split("").map((c) => c + c).join("") : h,
-    16
-  );
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
 export default function Hero() {
   const slides = [
     {
       title: "Discover Sacred Temples",
       text: "Explore ancient temples and divine places across India.",
-      btnText: "Explore Temples",
+      btn: "Explore Temples",
       link: "/temples",
-      color: "#2E1503",
       img: "/herotemple.png",
     },
     {
       title: "Book Authentic Pujas",
-      text: "Perform rituals conducted by experienced, verified priests.",
-      btnText: "Book Puja",
+      text: "Perform rituals conducted by experienced verified priests.",
+      btn: "Book Puja",
       link: "/pujas",
-      color: "#3B1A03",
       img: "/heropuja.png",
     },
     {
       title: "Support with Donation",
       text: "Help temples, trusts and seva activities flourish.",
-      btnText: "Donate Now",
+      btn: "Donate Now",
       link: "/donate",
-      color: "#4A1B02",
       img: "/herodonation.png",
     },
     {
       title: "Spiritual Products",
-      text: "Pure malas, idols, yantras and sacred items at your doorstep.",
-      btnText: "Shop Now",
+      text: "Pure malas, idols and sacred items delivered to your home.",
+      btn: "Shop Now",
       link: "/products",
-      color: "#2A0F0F",
       img: "/heroproduct.png",
     },
     {
       title: "Aarti, Katha & Mantra",
-      text: "Read and listen to sacred Aartis, Kathas and divine Mantras.",
-      btnText: "View Collection",
+      text: "Read and listen to Aartis, Kathas and divine Mantras.",
+      btn: "View Collection",
       link: "/aartis",
-      color: "#1A1A1A",
       img: "/heroaarti.png",
     },
   ];
@@ -64,113 +45,77 @@ export default function Hero() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((s) => (s + 1) % slides.length);
+      setCurrent((p) => (p + 1) % slides.length);
     }, 6000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="relative w-full h-[75vh] md:h-[80vh] overflow-hidden select-none">
+    <div className="relative w-full h-[70vh] md:h-[80vh] overflow-hidden">
 
-      {slides.map((s, index) => {
-        const isActive = index === current;
+      {slides.map((s, i) => (
+        <div
+          key={i}
+          className={`absolute inset-0 transition-opacity duration-700
+          ${current === i ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+        >
 
-        const strong = hexToRgba(s.color, 0.97);
-        const transparent = "rgba(0,0,0,0)";
+          {/* FULL IMAGE */}
+          <img
+            src={s.img}
+            alt={s.title}
+            className="w-full h-full object-cover"
+          />
 
-        const blendStyle = {
-          background: `linear-gradient(
-            to right,
-            ${strong} 0%,
-            ${strong} 42%,
-            ${hexToRgba(s.color, 0.55)} 48%,
-            ${transparent} 60%
-          )`,
-        };
+          {/* TEXT BOX – FIXED SAME PLACE FOR ALL */}
+          <div className="absolute left-[6%] top-[25%] md:left-[10%] md:top-[30%] 
+                          max-w-xl select-none">
 
-        const diagonalStyle = {
-          background:
-            "linear-gradient(115deg, rgba(0,0,0,0.20) 0%, transparent 55%)",
-        };
-
-        return (
-          <div
-            key={index}
-            className={`absolute inset-0 flex transition-opacity duration-[950ms] ${
-              isActive ? "opacity-100 z-10" : "opacity-0 z-0"
-            }`}
-          >
-            {/* LEFT TEXT SECTION */}
-            <div
-              className="w-[40%] h-full flex items-center px-10 md:px-16 relative"
-              style={{ backgroundColor: s.color }}
+            {/* TITLE – MARCELLUS */}
+            <h1
+              className="text-4xl md:text-5xl font-bold text-white drop-shadow-xl"
+              style={{ fontFamily: "'Marcellus', serif" }}
             >
-              <div className="max-w-lg">
+              {s.title}
+            </h1>
 
-                {/* MAIN TITLE — MARCELLUS */}
-                <h1
-                  className="text-4xl md:text-5xl text-white font-bold leading-tight drop-shadow-lg"
-                  style={{ fontFamily: "'Marcellus', serif" }}
-                >
-                  {s.title}
-                </h1>
+            {/* DESCRIPTION – MERRIWEATHER */}
+            <p
+              className="mt-4 text-lg md:text-xl text-gray-200 leading-relaxed drop-shadow-lg"
+              style={{ fontFamily: "'Merriweather', serif" }}
+            >
+              {s.text}
+            </p>
 
-                {/* SHORT DETAILS — MERRIWEATHER */}
-                <p
-                  className="mt-4 text-gray-200 text-lg md:text-xl leading-relaxed"
-                  style={{ fontFamily: "'Merriweather', serif" }}
-                >
-                  {s.text}
-                </p>
-
-                {/* BUTTON — PREMIUM GOLDEN STYLE */}
-                <Link
-                  to={s.link}
-                  className="
-                    mt-7 inline-block
-                    px-8 py-2.5
-                    rounded-full text-lg text-white font-[Merriweather]
-                    bg-gradient-to-r from-orange-600 to-orange-700
-                    hover:from-orange-700 hover:to-orange-800
-                    shadow-[0_5px_25px_rgba(255,145,80,0.45)]
-                    transition-all
-                  "
-                >
-                  {s.btnText}
-                </Link>
-
-              </div>
-            </div>
-
-            {/* RIGHT IMAGE SECTION */}
-            <div className="w-[60%] h-full relative">
-              <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                style={{
-                  backgroundImage: `url(${s.img})`,
-                  filter: "brightness(0.96)",
-                }}
-              />
-
-              <div className="absolute inset-0" style={blendStyle}></div>
-              <div className="absolute inset-0" style={diagonalStyle}></div>
-            </div>
+            {/* PREMIUM BUTTON */}
+            <Link
+              to={s.link}
+              className="
+                inline-block mt-6 px-8 py-3 rounded-full text-white text-lg font-[Merriweather]
+                bg-gradient-to-r from-orange-600 to-orange-700
+                hover:from-orange-700 hover:to-orange-800
+                shadow-[0_5px_25px_rgba(255,145,80,0.45)]
+                transition-all
+              "
+            >
+              {s.btn}
+            </Link>
           </div>
-        );
-      })}
 
-      {/* SLIDE INDICATORS */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+        </div>
+      ))}
+
+      {/* INDICATORS */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-30">
         {slides.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrent(idx)}
-            className={`w-3 h-3 rounded-full transition-all ${
-              idx === current
-                ? "bg-orange-500 scale-125 shadow-lg"
-                : "bg-white/60 hover:bg-white"
-            }`}
-          ></button>
+            className={`w-3 h-3 rounded-full transition-all
+              ${idx === current
+                ? "bg-orange-500 scale-125"
+                : "bg-white/60 hover:bg-white"}`}
+          />
         ))}
       </div>
     </div>
