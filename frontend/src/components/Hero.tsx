@@ -67,7 +67,7 @@ export default function Hero() {
           />
 
           {/* FIXED TEXT CONTAINER (Uniform alignment) */}
-          <div className="absolute top-[20%] md:top-[24%] left-[5%] md:left-[10%] max-w-xl text-left select-none">
+          <div className="absolute top-[20%] md:top-[24%] left-[8%] md:left-[10%] max-w-xl text-left select-none">
 
             {/* TITLE */}
             <h1
