@@ -1,5 +1,5 @@
 // src/pages/PujaView.tsx
-// PROFESSIONAL PREMIUM PUJA VIEW PAGE — FINAL VERSION
+// PROFESSIONAL PREMIUM PUJA VIEW PAGE — PERFECTLY MATCHED TO TEMPLE PAGE
 
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
@@ -41,7 +41,7 @@ interface Puja {
 type PujaPackage = NonNullable<Puja["packages"]>[number];
 
 /* ----------------------------------------------------------
-   Main Component
+   Main Page
 ---------------------------------------------------------- */
 export default function PujaView() {
   const { id } = useParams<{ id: string }>();
@@ -59,7 +59,7 @@ export default function PujaView() {
   /* Load Merriweather */
   useEffect(() => {
     const href =
-      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap";
+      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap";
     if (!document.querySelector(`link[href="${href}"]`)) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -72,7 +72,7 @@ export default function PujaView() {
   useEffect(() => {
     axios
       .get(`${backendURL}/api/pujas/${id}`)
-      .then(res => setPuja(res.data))
+      .then((res) => setPuja(res.data))
       .catch(() => setPuja(null))
       .finally(() => setLoading(false));
   }, [id, backendURL]);
@@ -97,7 +97,7 @@ export default function PujaView() {
   if (gallery.length === 0) gallery.push("/puja-placeholder.jpg");
 
   const mainImg = hoverPreview || gallery[activeIndex];
-  const glow = "shadow-[0_4px_18px_rgba(200,140,70,0.18)]";
+  const glow = "shadow-[0_4px_20px_rgba(255,153,51,0.18)]";
 
   /* Smooth Scroll */
   const scrollTo = (id: string) => {
@@ -107,20 +107,24 @@ export default function PujaView() {
   };
 
   return (
-    <div className="pt-20 pb-20 bg-gradient-to-b from-[#fff8ec] via-[#fffdf9] to-white min-h-screen">
+    <div
+      className="pt-20 pb-20"
+      style={{ background: "linear-gradient(to bottom, #fff7e3, #fffdf8, #ffffff)" }}
+    >
       <div className="max-w-7xl mx-auto px-6">
 
         {/* -------------------------------------- */}
-        {/* MAIN TITLE */}
+        {/* MAIN PUJA TITLE - EXACT TEMPLE STYLE */}
         {/* -------------------------------------- */}
-        <h1 className="text-3xl lg:text-4xl font-[Marcellus] text-orange-400 font-bold">
+        <h1 className="mt-4 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
           {t(puja.name)}
         </h1>
 
-        <p className="text-gray-600 mt-2"
-           style={{ fontFamily: "'Merriweather', serif" }}>
-          {puja.category}
-          {puja.subCategory ? ` › ${puja.subCategory}` : ""}
+        <p
+          className="text-gray-700 mt-2"
+          style={{ fontFamily: "'Merriweather', serif" }}
+        >
+          {puja.category} {puja.subCategory ? `› ${puja.subCategory}` : ""}
         </p>
 
         {/* -------------------------------------- */}
@@ -128,17 +132,13 @@ export default function PujaView() {
         {/* -------------------------------------- */}
         <div className="flex justify-center mt-8 mb-14">
           <div className={`rounded-3xl overflow-hidden bg-white p-4 w-full max-w-3xl ${glow}`}>
-
-            {/* Main Image Box */}
-            <div className="h-[230px] md:h-[280px] lg:h-[320px] flex justify-center items-center 
-                            bg-gradient-to-b from-white to-[#fff3e2] rounded-xl relative">
+            <div className="h-[240px] md:h-[300px] lg:h-[340px] flex justify-center items-center bg-gradient-to-b from-white via-[#fff4dd] to-white rounded-xl relative">
               <img src={mainImg} className="max-w-full max-h-full object-contain" />
 
               {puja.videoUrl && (
                 <button
                   onClick={() => setVideoOpen(true)}
-                  className="absolute bottom-3 right-3 px-4 py-2 text-sm rounded-full 
-                             bg-white/90 text-orange-700 shadow hover:bg-white"
+                  className="absolute bottom-3 right-3 px-4 py-2 text-sm rounded-full bg-white/90 text-orange-700 shadow hover:bg-white"
                   style={{ fontFamily: "'Merriweather', serif" }}
                 >
                   ▶ Play Video
@@ -146,18 +146,18 @@ export default function PujaView() {
               )}
             </div>
 
-            {/* Thumbnails */}
-            <div className="p-3 flex gap-3 overflow-x-auto bg-[#fffaf5] rounded-xl mt-4 justify-center">
+            {/* THUMBNAILS */}
+            <div className="p-4 flex gap-4 overflow-x-auto bg-[#fffaf5] rounded-xl mt-4 justify-center">
               {gallery.map((src, idx) => (
                 <button
                   key={idx}
                   onMouseEnter={() => setHoverPreview(src)}
                   onMouseLeave={() => setHoverPreview(null)}
                   onClick={() => setActiveIndex(idx)}
-                  className={`rounded-xl overflow-hidden transition-all 
-                    ${idx === activeIndex ? "ring-2 ring-orange-300 scale-105" : "hover:scale-105"}
-                  `}
-                  style={{ width: 100, height: 68 }}
+                  className={`rounded-xl overflow-hidden transition-all ${
+                    idx === activeIndex ? "ring-2 ring-orange-300 scale-105 shadow" : "hover:scale-105"
+                  }`}
+                  style={{ width: 100, height: 70 }}
                 >
                   <img src={src} className="w-full h-full object-cover" />
                 </button>
@@ -171,20 +171,19 @@ export default function PujaView() {
         {/* QUICK NAV BUTTONS */}
         {/* -------------------------------------- */}
         <div className="flex flex-wrap gap-2 mb-10 justify-start">
-          {[ 
+          {[
             ["overview", "Overview"],
             ["benefits", "Benefits"],
             ["procedure", "Procedure"],
-            ["mantra", "Mantra"],
-            ["materials", "Materials"],
+            ["mantra", "Main Mantra"],
+            ["materials", "Materials Required"],
             ["availability", "Availability"],
             ["packages", "Puja Packages"],
           ].map(([target, label]) => (
             <button
               key={target}
               onClick={() => scrollTo(target)}
-              className={`px-4 py-1.5 text-sm rounded-full bg-white shadow hover:bg-orange-50 transition 
-                          text-gray-700 ${glow}`}
+              className={`rounded-full px-4 py-1.5 text-sm bg-white shadow hover:bg-orange-50 text-gray-700 transition ${glow}`}
               style={{ fontFamily: "'Merriweather', serif" }}
             >
               {label}
@@ -193,15 +192,14 @@ export default function PujaView() {
         </div>
 
         {/* -------------------------------------- */}
-        {/* SECTIONS */}
+        {/* SECTIONS (MATCH TEMPLE PAGE EXACTLY) */}
         {/* -------------------------------------- */}
 
         <Section id="overview" title="Overview">
           <p>{t(puja.description)}</p>
           {puja.whyPerform && (
             <p className="mt-3">
-              <span className="text-orange-600 font-semibold">Why Perform:</span>{" "}
-              {t(puja.whyPerform)}
+              <span className="text-lg font-semibold text-orange-700">Why Perform:</span> {t(puja.whyPerform)}
             </p>
           )}
         </Section>
@@ -215,7 +213,7 @@ export default function PujaView() {
         </Section>
 
         <Section id="mantra" title="Main Mantra">
-          <p className="italic text-gray-800">{t(puja.mantra)}</p>
+          <p className="italic">{t(puja.mantra)}</p>
         </Section>
 
         <Section id="materials" title="Materials Required">
@@ -233,16 +231,13 @@ export default function PujaView() {
             <p>Not specified.</p>
           )}
 
-          {puja.placesDescription && (
-            <p className="mt-2">{t(puja.placesDescription)}</p>
-          )}
+          {puja.placesDescription && <p className="mt-2">{t(puja.placesDescription)}</p>}
         </Section>
 
-        {/* Packages */}
         <Section id="packages" title="Puja Packages">
           {puja.packages?.length ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {puja.packages.map(pkg => (
+              {puja.packages.map((pkg) => (
                 <PujaPackageCard key={pkg.key} pkg={pkg} pujaId={puja._id} />
               ))}
             </div>
@@ -261,7 +256,7 @@ export default function PujaView() {
 }
 
 /* ----------------------------------------------------------
-   Section Component (Small + Merriweather)
+   Section = EXACT Temple Section Style
 ---------------------------------------------------------- */
 interface SectionProps {
   id?: string;
@@ -273,14 +268,14 @@ function Section({ id, title, children }: SectionProps) {
   return (
     <section id={id} className="mt-12">
       <h2
-        className="text-[18px] font-semibold text-orange-500 mb-2"
+        className="text-2xl text-orange-800 font-semibold mb-4"
         style={{ fontFamily: "'Merriweather', serif" }}
       >
         {title}
       </h2>
 
       <div
-        className="text-gray-600 leading-relaxed"
+        className="text-gray-700 leading-relaxed"
         style={{ fontFamily: "'Merriweather', serif" }}
       >
         {children}
@@ -290,7 +285,7 @@ function Section({ id, title, children }: SectionProps) {
 }
 
 /* ----------------------------------------------------------
-   Puja Package Card
+   Package Card — Fonts & Colors matched perfectly
 ---------------------------------------------------------- */
 interface PujaPackageCardProps {
   pkg: PujaPackage;
@@ -298,38 +293,30 @@ interface PujaPackageCardProps {
 }
 
 function PujaPackageCard({ pkg, pujaId }: PujaPackageCardProps) {
-  const tx = (o?: Record<string, string>) =>
-    o?.[i18n.language] || o?.en || "";
+  const tx = (o?: Record<string, string>) => o?.[i18n.language] || o?.en || "";
 
   return (
-    <div className="p-6 bg-white rounded-2xl shadow">
+    <div className={`p-6 rounded-2xl bg-white ${"shadow-[0_4px_20px_rgba(255,153,51,0.18)]"}`}>
       <h3
-        className="text-lg font-semibold text-orange-700"
+        className="text-lg font-semibold text-orange-700 mb-1"
         style={{ fontFamily: "'Merriweather', serif" }}
       >
         {tx(pkg.title)}
       </h3>
 
-      <p className="text-2xl font-bold text-gray-800 mt-2">
+      <p className="text-2xl font-bold text-gray-800 mt-1">
         ₹{pkg.discountPrice || pkg.price}
         {pkg.discountPrice && pkg.price && (
-          <span className="ml-2 text-sm text-gray-500 line-through">
-            ₹{pkg.price}
-          </span>
+          <span className="ml-2 text-sm text-gray-500 line-through">₹{pkg.price}</span>
         )}
       </p>
 
-      {pkg.details && (
-        <p className="mt-2 text-gray-600">{tx(pkg.details)}</p>
-      )}
-
-      {pkg.benefits && (
-        <p className="mt-2 text-gray-600 italic">{tx(pkg.benefits)}</p>
-      )}
+      {pkg.details && <p className="mt-2 text-gray-700">{tx(pkg.details)}</p>}
+      {pkg.benefits && <p className="mt-2 text-gray-700 italic">{tx(pkg.benefits)}</p>}
 
       <Link
         to={`/pujas/${pujaId}/book/${pkg.key}`}
-        className="mt-5 block text-center bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700"
+        className="mt-5 block text-center bg-orange-700 text-white py-2 rounded-lg hover:bg-orange-800"
         style={{ fontFamily: "'Merriweather', serif" }}
       >
         Book Now
@@ -339,7 +326,7 @@ function PujaPackageCard({ pkg, pujaId }: PujaPackageCardProps) {
 }
 
 /* ----------------------------------------------------------
-   Video Popup Component
+   Video Popup — Clean
 ---------------------------------------------------------- */
 interface VideoPopupProps {
   url: string;
@@ -354,7 +341,7 @@ function VideoPopup({ url, onClose }: VideoPopupProps) {
     >
       <div
         className="bg-white rounded-xl w-full max-w-4xl overflow-hidden"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-end p-3">
           <button onClick={onClose}>✕</button>
