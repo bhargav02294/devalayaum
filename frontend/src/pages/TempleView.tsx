@@ -178,9 +178,10 @@ export default function TempleView() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2">
-            <h1 className="mt-4 text-3xl lg:text-5xl font-[Marcellus] text-orange-700 font-bold">
-              {getText(temple.name)}
-            </h1>
+           <h1 className="mt-4 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
+  {getText(temple.name)}
+</h1>
+
 
             <p className="text-gray-700 mt-3 flex items-center gap-2">
               <IconLocation />
@@ -188,11 +189,8 @@ export default function TempleView() {
             </p>
 
             {/* Gallery */}
-            {/* Gallery */}
-<div className={`mt-8 rounded-3xl overflow-hidden bg-white ${glow}`}>
-
-  {/* Smaller Main Image */}
-  <div className="relative h-[420px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff4dd] to-white">
+            <div className={`mt-8 rounded-3xl overflow-hidden bg-white ${glow}`}>
+  <div className="relative h-[260px] md:h-[320px] lg:h-[360px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff4dd] to-white">
     <img
       src={displayImage}
       alt="temple"
@@ -200,36 +198,30 @@ export default function TempleView() {
     />
   </div>
 
-  {/* Smaller Thumbnails */}
-  <div className="p-4 flex gap-4 overflow-x-auto bg-gradient-to-r from-white to-[#fff8ec]">
-    {images.map((src, idx) => {
-      const active = idx === activeImage;
-      return (
-        <button
-          key={idx}
-          onMouseEnter={() => setHoverImage(src)}
-          onMouseLeave={() => setHoverImage(null)}
-          onClick={() => setActiveImage(idx)}
-          className={`
-            rounded-xl overflow-hidden transition-all 
-            ${active
-              ? "ring-2 ring-orange-300 scale-105 shadow-[0_4px_15px_rgba(255,153,51,0.35)]"
-              : "hover:scale-105"
-            }
-          `}
-          style={{
-            width: active ? 150 : 105,
-            height: active ? 95 : 65,
-          }}
-        >
-          <img src={src} className="w-full h-full object-cover" />
-        </button>
-      );
-    })}
-  </div>
 
-</div>
+              
 
+              <div className="p-4 flex gap-4 overflow-x-auto bg-gradient-to-r from-white to-[#fff8ec]">
+                {images.map((src, idx) => {
+                  const active = idx === activeImage;
+                  return (
+                    <button
+                      key={idx}
+                      onMouseEnter={() => setHoverImage(src)}
+                      onMouseLeave={() => setHoverImage(null)}
+                      onClick={() => setActiveImage(idx)}
+                      className={`
+                        rounded-xl overflow-hidden transition-all 
+                        ${active ? "ring-2 ring-orange-300 scale-105 shadow-[0_4px_15px_rgba(255,153,51,0.35)]" : "hover:scale-105"}
+                      `}
+                      style={{ width: active ? 170 : 120, height: active ? 110 : 75 }}
+                    >
+                      <img src={src} className="w-full h-full object-cover" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           {/* Right column: Darshan card */}
