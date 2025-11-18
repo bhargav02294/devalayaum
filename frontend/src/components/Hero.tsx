@@ -70,7 +70,7 @@ export default function Hero() {
           {/* FIXED TEXT CONTAINER (LEFT SIDE) */}
           <div className="
             absolute 
-            top-[22%] md:top-[26%] 
+            top-[42%] md:top-[46%] 
             left-[5%] md:left-[7%]
             w-[90%] md:w-[40%]
             text-left
