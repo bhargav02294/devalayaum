@@ -1,11 +1,17 @@
 // src/pages/ProductView.tsx
-// PREMIUM SPIRITUAL PRODUCT PAGE — AMAZON STYLE + DEVOTIONAL THEME
+// PREMIUM SPIRITUAL PRODUCT PAGE — CLEAN LUXURY LAYOUT + TEMPLE THEME
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-// --- Razorpay option / response types (kept strongly typed) ----
+/* ------------------ Razorpay Types ------------------ */
+interface RazorpayResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
 interface RazorpayOptions {
   key: string;
   amount: number;
@@ -17,22 +23,17 @@ interface RazorpayOptions {
   prefill?: { name?: string; contact?: string; email?: string };
   theme?: { color?: string };
 }
-interface RazorpayResponse {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-}
 interface RazorpayInstance {
   open: () => void;
 }
 
-// --- Razorpay Loader -------------------------------------------------
+/* ---------------- Razorpay Loader ------------------- */
 const loadRazorpayScript = (): Promise<boolean> =>
   new Promise((resolve) => {
-    const existing = document.querySelector(
+    const exists = document.querySelector(
       'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
     );
-    if (existing) return resolve(true);
+    if (exists) return resolve(true);
 
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -42,12 +43,11 @@ const loadRazorpayScript = (): Promise<boolean> =>
     document.body.appendChild(script);
   });
 
-// --- Product type ---------------------------------------------------
+/* ---------------- Product Interface ----------------- */
 interface Product {
   _id: string;
   name: Record<string, string>;
   description: Record<string, string>;
-  material: string;
   spiritualBenefit: Record<string, string>;
   deityAssociated: Record<string, string>;
   mantra: Record<string, string>;
@@ -55,55 +55,59 @@ interface Product {
   subCategory?: string;
   price: number;
   discountPrice?: number;
+  material: string;
+  size?: string;
+  dimensions?: string;
   images?: string[];
   thumbnail?: string;
   videoUrl?: string;
-  dimensions?: string;
-  size?: string;
 }
 
-// --- Component ------------------------------------------------------
+/* ----------------------------------------------------
+   MAIN COMPONENT
+---------------------------------------------------- */
 export default function ProductView() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [hoverPreview, setHoverPreview] = useState<string | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
 
   const backendURL = import.meta.env.VITE_API_URL;
-  const navigate = useNavigate();
   const lang = i18n.language || "en";
-  const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
-  // Load product from API
+  /* Load Product */
   useEffect(() => {
-    const fetchItem = async () => {
+    const load = async () => {
       try {
         const res = await axios.get<Product>(`${backendURL}/api/products/${id}`);
         setProduct(res.data);
-      } catch (err) {
-        console.error("Product load failed:", err);
+      } catch (e) {
+        console.error("Product load failed:", e);
       } finally {
         setLoading(false);
       }
     };
-    fetchItem();
+    load();
   }, [id, backendURL]);
 
-  if (loading) return <p className="pt-24 text-center">Loading...</p>;
-  if (!product) return <p className="pt-24 text-center text-gray-600">Product not found.</p>;
+  if (loading) return <p className="pt-24 text-center">Loading…</p>;
+  if (!product) return <p className="pt-24 text-center text-gray-600">Product not found</p>;
 
-  // Gallery
+  /* Build Gallery */
   const gallery = [...(product.images || [])];
-  if (product.thumbnail && !gallery.includes(product.thumbnail)) {
+  if (product.thumbnail && !gallery.includes(product.thumbnail))
     gallery.unshift(product.thumbnail);
-  }
   if (gallery.length === 0) gallery.push("/placeholder.jpg");
-  const mainImage = hoverPreview || gallery[activeImageIndex];
 
-  // Buy handler with safe typed constructor retrieval
+  const mainImg = hoverPreview || gallery[activeIndex];
+
+  /* Handle Buy Now */
   const handleBuy = async () => {
     const token = localStorage.getItem("USER_TOKEN");
     const userId = localStorage.getItem("USER_ID");
@@ -114,32 +118,32 @@ export default function ProductView() {
       return;
     }
 
-    const ok = await loadRazorpayScript();
-    if (!ok) {
-      alert("Unable to load Razorpay script. Check your network.");
+    const loaded = await loadRazorpayScript();
+    if (!loaded) {
+      alert("Failed to load Razorpay. Check internet.");
       return;
     }
 
     try {
       const amount = product.discountPrice || product.price;
-      // Create order on backend
-      const orderRes = await axios.post(`${backendURL}/api/product-payments/create-order`, {
+
+      const res = await axios.post(`${backendURL}/api/product-payments/create-order`, {
         productId: product._id,
-        amount,
         userId,
+        amount,
       });
 
-      const { orderId, amount: orderAmount, currency } = orderRes.data;
+      const { orderId, amount: finalAmount, currency } = res.data;
 
-      // Build strongly typed options
       const options: RazorpayOptions = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: orderAmount,
+        amount: finalAmount,
         currency,
         name: "Devalayaum Store",
         description: t(product.name),
         order_id: orderId,
-        handler: async function (resp: RazorpayResponse) {
+
+        handler: async (resp: RazorpayResponse) => {
           try {
             await axios.post(`${backendURL}/api/product-payments/verify`, {
               orderId: resp.razorpay_order_id,
@@ -148,61 +152,65 @@ export default function ProductView() {
             });
             alert("🙏 Payment Successful!");
             navigate("/order-success");
-          } catch (err) {
-            console.error("Verification failed:", err);
-            alert("Payment succeeded but verification failed. Please contact support.");
+          } catch (e) {
+            console.error("Verification failed:", e);
+            alert("Payment succeeded but verification failed.");
           }
         },
+
         prefill: { email: localStorage.getItem("auth_email") || "" },
+
         theme: { color: "#c46a1e" },
       };
 
-      // SAFELY get constructor from window without using `any`
-      const maybeRazorpayCtor = (window as unknown as {
-        Razorpay?: { new (opts: RazorpayOptions): RazorpayInstance };
-      }).Razorpay;
+      const ctor = (window as unknown as { Razorpay?: new (o: RazorpayOptions) => RazorpayInstance })
+        .Razorpay;
 
-      if (!maybeRazorpayCtor) {
-        alert("Razorpay SDK not available. Please try again later.");
+      if (!ctor) {
+        alert("Razorpay SDK not ready.");
         return;
       }
 
-      const rzp = new maybeRazorpayCtor(options);
-      rzp.open();
-    } catch (err) {
-      console.error("Payment initialization failed:", err);
-      alert("Payment failed to start. Please try again.");
+      new ctor(options).open();
+    } catch (e) {
+      console.error("Payment failed:", e);
+      alert("Payment could not be initiated.");
     }
   };
 
-  const glow = "shadow-[0_10px_30px_rgba(180,110,40,0.18)]";
+  const glow = "shadow-[0_6px_20px_rgba(200,130,50,0.20)]";
 
+  /* ----------------------------------------------------
+     UI START
+  ---------------------------------------------------- */
   return (
     <div className="pt-24 pb-20 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6">
+
         <Link to="/products" className="text-orange-700 hover:underline mb-4 block">
           ← Back to Products
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* LEFT: gallery */}
+
+          {/* ---------------- LEFT: FIXED IMAGE SECTION ---------------- */}
           <div>
             <div className={`rounded-3xl overflow-hidden bg-white ${glow}`}>
-              <div className="h-[520px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2]">
-                <img src={mainImage} alt={t(product.name)} className="max-w-full max-h-full object-contain" />
+              <div className="h-[420px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2]">
+                <img src={mainImg} className="max-w-full max-h-full object-contain" />
               </div>
 
-              <div className="p-4 flex gap-4 overflow-x-auto bg-[#fffaf5] justify-center">
-                {gallery.map((src, idx) => (
+              <div className="p-4 flex gap-4 overflow-x-auto bg-[#fffaf4] justify-center">
+                {gallery.map((src, i) => (
                   <button
-                    key={idx}
+                    key={i}
                     onMouseEnter={() => setHoverPreview(src)}
                     onMouseLeave={() => setHoverPreview(null)}
-                    onClick={() => setActiveImageIndex(idx)}
+                    onClick={() => setActiveIndex(i)}
                     className={`rounded-xl overflow-hidden transition-all ${
-                      idx === activeImageIndex ? "ring-2 ring-orange-400 scale-105" : "hover:scale-105"
+                      i === activeIndex ? "ring-2 ring-orange-400 scale-105" : "hover:scale-105"
                     }`}
-                    style={{ width: 110, height: 80 }}
+                    style={{ width: 105, height: 72 }}
                   >
                     <img src={src} className="w-full h-full object-cover" />
                   </button>
@@ -211,59 +219,109 @@ export default function ProductView() {
             </div>
 
             {product.videoUrl && (
-              <div className="mt-4">
-                <button onClick={() => setVideoOpen(true)} className="bg-white border px-4 py-2 rounded-lg shadow hover:bg-orange-50">
-                  ▶ Watch Product Video
-                </button>
-              </div>
+              <button
+                onClick={() => setVideoOpen(true)}
+                className="mt-4 bg-white border px-4 py-2 rounded-lg hover:bg-orange-50 shadow"
+              >
+                ▶ Watch Product Video
+              </button>
             )}
           </div>
 
-          {/* RIGHT: info */}
+          {/* ---------------- RIGHT: PRODUCT DETAILS ---------------- */}
           <div>
-            <h1 className="text-4xl font-[Marcellus] text-orange-900 font-bold mb-2">{t(product.name)}</h1>
+            {/* TITLE */}
+            <h1 className="mt-4 text-3xl lg:text-4xl font-[Marcellus] text-orange-700 font-bold">
+              {t(product.name)}
+            </h1>
 
-            <p className="text-gray-700 mb-1">Category: {product.category}</p>
-            {product.subCategory && <p className="text-gray-700 mb-1">Subcategory: {product.subCategory}</p>}
+            <p className="text-gray-600 mt-2 font-[Merriweather]">
+              Category: {product.category}
+            </p>
+            {product.subCategory && (
+              <p className="text-gray-600 font-[Merriweather]">
+                Subcategory: {product.subCategory}
+              </p>
+            )}
 
-            <div className="mt-4 p-4 bg-[#fff6e9] border border-orange-200 rounded-xl">
-              <span className="text-3xl font-bold text-orange-800">₹{product.discountPrice || product.price}</span>
-              {product.discountPrice && <span className="ml-3 text-gray-500 line-through text-lg">₹{product.price}</span>}
+            {/* PRICE BOX — LUXURY STYLE */}
+            <div className="mt-6 p-5 bg-[#fff6e9] border border-orange-200 rounded-2xl relative">
 
-              <div className="mt-3">
-                <button onClick={handleBuy} className="bg-orange-700 text-white px-6 py-3 rounded-xl hover:bg-orange-800 shadow-md">
+              {/* Strike Price TOP-LEFT */}
+              {product.discountPrice && (
+                <span className="absolute top-3 left-3 text-gray-500 line-through font-[Merriweather]">
+                  ₹{product.price}
+                </span>
+              )}
+
+              {/* Main Price */}
+              <span className="text-4xl font-[Merriweather] font-bold text-orange-900">
+                ₹{product.discountPrice || product.price}
+              </span>
+
+              {/* BUY BUTTON — GOLDEN GLOW */}
+              <div className="mt-5">
+                <button
+                  onClick={handleBuy}
+                  className="w-full py-3 rounded-xl text-white text-lg font-[Merriweather] 
+                    bg-gradient-to-r from-orange-600 to-orange-700 
+                    hover:from-orange-700 hover:to-orange-800
+                    shadow-[0_5px_25px_rgba(255,140,60,0.5)]
+                    transition-all"
+                >
                   🛒 Buy Now
                 </button>
               </div>
             </div>
 
-            <div className="mt-8">
-              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-2">Description</h2>
-              <p className="text-gray-700 leading-relaxed">{t(product.description)}</p>
+            {/* SECTION: DESCRIPTION */}
+            <div className="mt-10">
+              <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
+                Description
+              </h2>
+              <p className="text-gray-700 leading-relaxed font-[Merriweather]">
+                {t(product.description)}
+              </p>
             </div>
 
+            {/* SECTION: SPIRITUAL BENEFITS */}
             {product.spiritualBenefit && (
-              <div className="mt-6">
-                <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-2">Spiritual Benefits</h2>
-                <p className="text-gray-700">{t(product.spiritualBenefit)}</p>
+              <div className="mt-8">
+                <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
+                  Spiritual Benefits
+                </h2>
+                <p className="text-gray-700 font-[Merriweather]">
+                  {t(product.spiritualBenefit)}
+                </p>
               </div>
             )}
 
+            {/* SECTION: DEITY ASSOCIATED */}
             {product.deityAssociated && (
-              <div className="mt-6">
-                <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-2">Associated Deity</h2>
-                <p className="text-gray-700">{t(product.deityAssociated)}</p>
+              <div className="mt-8">
+                <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
+                  Associated Deity
+                </h2>
+                <p className="text-gray-700 font-[Merriweather]">
+                  {t(product.deityAssociated)}
+                </p>
               </div>
             )}
 
+            {/* SECTION: MANTRA */}
             {product.mantra && (
-              <div className="mt-6">
-                <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-2">Mantra</h2>
-                <p className="italic text-gray-800">"{t(product.mantra)}"</p>
+              <div className="mt-8">
+                <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
+                  Mantra
+                </h2>
+                <p className="italic text-gray-900 font-[Merriweather]">
+                  "{t(product.mantra)}"
+                </p>
               </div>
             )}
 
-            <div className="mt-6 space-y-1 text-gray-700">
+            {/* MATERIAL / SIZE */}
+            <div className="mt-8 text-gray-700 font-[Merriweather] space-y-1">
               {product.material && <p><strong>Material:</strong> {product.material}</p>}
               {product.size && <p><strong>Size:</strong> {product.size}</p>}
               {product.dimensions && <p><strong>Dimensions:</strong> {product.dimensions}</p>}
@@ -272,17 +330,27 @@ export default function ProductView() {
         </div>
       </div>
 
-      {/* Video modal */}
+      {/* VIDEO MODAL */}
       {videoOpen && product.videoUrl && (
-        <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50" onClick={() => setVideoOpen(false)}>
-          <div className="bg-white rounded-xl w-full max-w-4xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50"
+          onClick={() => setVideoOpen(false)}
+        >
+          <div
+            className="bg-white rounded-xl w-full max-w-4xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-end p-3">
               <button onClick={() => setVideoOpen(false)}>✕</button>
             </div>
 
             <div className="aspect-video">
               {(product.videoUrl.includes("youtube") || product.videoUrl.includes("youtu.be")) ? (
-                <iframe className="w-full h-full" src={product.videoUrl.replace("watch?v=", "embed/")} allowFullScreen />
+                <iframe
+                  className="w-full h-full"
+                  src={product.videoUrl.replace("watch?v=", "embed/")}
+                  allowFullScreen
+                />
               ) : (
                 <video src={product.videoUrl} controls className="w-full h-full bg-black" />
               )}
