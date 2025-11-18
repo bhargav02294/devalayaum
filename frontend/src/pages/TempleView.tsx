@@ -224,6 +224,12 @@ export default function TempleView() {
             </div>
           </div>
 
+
+          <Section id="about" title="About the Temple">
+          {getText(temple.about)}
+        </Section>
+
+
           {/* Right column: Darshan card */}
           <div className="space-y-7 lg:mt-[140px]">
             <div className={`bg-white rounded-2xl p-6 ${glow}`}>
@@ -263,10 +269,7 @@ export default function TempleView() {
 
             
         {/* Full-width sections */}
-        <Section id="about" title="About the Temple">
-          {getText(temple.about)}
-        </Section>
-
+        
         <Section id="religion" title="Religious & Historical Information">
           <LabelValue label="Main Deity" value={getText(temple.mainDeity)} />
           <LabelValue label="Deity Description" value={getText(temple.deityDescription)} />
