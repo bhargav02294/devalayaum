@@ -188,7 +188,7 @@ export default function ProductView() {
       <div className="max-w-7xl mx-auto px-6">
 
         <Link to="/products" className="text-orange-700 hover:underline mb-4 block">
-          ← Back to Products
+        
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -260,18 +260,25 @@ export default function ProductView() {
   </p>
 
   {/* Premium Golden Button */}
-  <div className="mt-4">
-    <button
-      onClick={handleBuy}
-      className="w-full py-2.5 rounded-xl text-white text-base font-[Merriweather]
+  <div className="mt-4 flex justify-start">
+  <button
+    onClick={handleBuy}
+    className="
+      px-6 py-2
+      rounded-xl
+      text-white text-[15px] font-[Merriweather]
       bg-gradient-to-r from-orange-500 to-orange-600
       hover:from-orange-600 hover:to-orange-700
       shadow-[0_4px_18px_rgba(255,150,70,0.45)]
-      transition-all"
-    >
-      🛒 Buy Now
-    </button>
-  </div>
+      transition-all
+      w-[40%]   /* NEW: Small premium width */
+      min-w-[140px] /* ensures it never becomes too small */
+    "
+  >
+    Buy Now
+  </button>
+</div>
+
 </div>
 
 
