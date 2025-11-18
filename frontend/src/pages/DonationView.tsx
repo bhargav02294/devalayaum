@@ -209,7 +209,7 @@ export default function DonationView() {
       {/* PAGE HEADER */}
       {/* ---------------------------------- */}
       <div className="max-w-6xl mx-auto mb-10 px-4">
-        <h1 className="text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
+        <h1 className="mt-8 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
           {t(donation.donationName)}
         </h1>
 
@@ -341,15 +341,18 @@ export default function DonationView() {
 ---------------------------------------------------------- */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section>
+    <section className="mt-12">
       <h2
-        className="text-2xl text-orange-800 font-semibold mb-2"
+        className="text-2xl text-orange-800 font-semibold mb-4"
         style={{ fontFamily: "'Merriweather', serif" }}
       >
         {title}
       </h2>
 
-      <p className="text-gray-700 leading-relaxed" style={{ fontFamily: "'Merriweather', serif" }}>
+      <p
+        className="text-gray-700 leading-relaxed"
+        style={{ fontFamily: "'Merriweather', serif" }}
+      >
         {children}
       </p>
     </section>
