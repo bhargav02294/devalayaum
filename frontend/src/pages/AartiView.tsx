@@ -1,4 +1,6 @@
 // src/pages/AartiView.tsx
+// PREMIUM AARTI / MANTRA / KATHA VIEW PAGE — MATCHED WITH TEMPLE + PUJA THEME
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -26,7 +28,19 @@ export default function AartiView() {
   const getText = (field?: Record<string, string>) =>
     field?.[lang] || field?.en || "";
 
-  const glow = "shadow-[0_10px_30px_rgba(255,140,60,0.22)]";
+  const glow = "shadow-[0_6px_22px_rgba(255,145,60,0.22)]";
+
+  // Load Merriweather dynamically
+  useEffect(() => {
+    const href =
+      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap";
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      document.head.appendChild(link);
+    }
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -44,40 +58,47 @@ export default function AartiView() {
 
   if (loading)
     return (
-      <p className="text-center mt-20 text-orange-700 text-lg font-medium">
+      <p className="text-center mt-24 text-orange-700 text-lg font-semibold">
         Loading…
       </p>
     );
 
   if (!item)
     return (
-      <p className="text-center mt-20 text-red-600 text-lg">Item not found</p>
+      <p className="text-center mt-24 text-red-600 text-lg">Item not found</p>
     );
 
   return (
-    <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e6] via-white to-white min-h-screen">
+    <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
       <div className="max-w-4xl mx-auto">
 
         {/* BACK BUTTON */}
-        <Link to="/aartis" className="text-orange-700 hover:underline">
+        <Link
+          to="/aartis"
+          className="text-orange-700 hover:text-orange-900 underline"
+          style={{ fontFamily: "'Merriweather', serif" }}
+        >
           ← Back to Aartis
         </Link>
 
         {/* HEADER SECTION */}
         <div className="mt-6 text-center">
-          <h1 className="text-4xl font-[Marcellus] text-orange-900 font-bold">
+          <h1 className="text-3xl lg:text-4xl font-[Marcellus] text-orange-800 font-bold">
             {getText(item.title)}
           </h1>
 
-          <p className="text-gray-600 mt-1 text-sm tracking-wide capitalize">
+          <p
+            className="text-gray-600 mt-1 text-sm capitalize tracking-wide"
+            style={{ fontFamily: "'Merriweather', serif" }}
+          >
             📜 {item.type}
           </p>
         </div>
 
-        {/* IMAGE (Small + Glow + No Border) */}
+        {/* IMAGE */}
         {item.image && (
           <div className="flex justify-center mt-8">
-            <div className={`rounded-3xl overflow-hidden ${glow} bg-white p-3`}>
+            <div className={`rounded-3xl overflow-hidden bg-white p-4 ${glow}`}>
               <img
                 src={item.image}
                 alt={getText(item.title)}
@@ -87,25 +108,34 @@ export default function AartiView() {
           </div>
         )}
 
-        {/* CONTENT SECTIONS */}
-        <div className="mt-12 space-y-10">
+        {/* CONTENT BOX */}
+        <div className="mt-12 space-y-12">
 
           {/* DESCRIPTION */}
           {item.description && (
             <section>
-              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-3">
+              <h2
+                className="text-[18px] font-semibold text-orange-600 mb-3"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
                 Description
               </h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              <p
+                className="text-gray-700 leading-relaxed"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
                 {getText(item.description)}
               </p>
             </section>
           )}
 
-          {/* MAIN CONTENT (Aarti/Katha/Mantra text) */}
+          {/* MAIN CONTENT */}
           {item.content && (
             <section>
-              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-3">
+              <h2
+                className="text-[18px] font-semibold text-orange-600 mb-3"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
                 {item.type === "mantra"
                   ? "Mantra"
                   : item.type === "katha"
@@ -113,19 +143,28 @@ export default function AartiView() {
                   : "Aarti Text"}
               </h2>
 
-              <p className="text-gray-900 leading-relaxed whitespace-pre-line text-lg">
+              <p
+                className="text-gray-900 leading-relaxed whitespace-pre-line text-lg"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
                 {getText(item.content)}
               </p>
             </section>
           )}
 
-          {/* MEANING (Only for Mantra) */}
+          {/* MEANING */}
           {item.type === "mantra" && item.meaning && (
             <section>
-              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-3">
+              <h2
+                className="text-[18px] font-semibold text-orange-600 mb-3"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
                 Meaning
               </h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              <p
+                className="text-gray-700 leading-relaxed whitespace-pre-line"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
                 {getText(item.meaning)}
               </p>
             </section>
@@ -134,13 +173,17 @@ export default function AartiView() {
           {/* RELATED TEMPLE */}
           {typeof item.temple === "object" && item.temple?.name && (
             <section>
-              <h2 className="text-2xl font-[Merriweather] text-orange-800 mb-2">
+              <h2
+                className="text-[18px] font-semibold text-orange-600 mb-2"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
                 Related Temple
               </h2>
 
               <Link
                 to={`/temple/${item.temple._id}`}
                 className="text-orange-700 underline hover:text-orange-900 text-lg"
+                style={{ fontFamily: "'Merriweather', serif" }}
               >
                 🛕 {getText(item.temple.name)}
               </Link>
