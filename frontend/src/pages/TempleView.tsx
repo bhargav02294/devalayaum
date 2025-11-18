@@ -4,9 +4,6 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-// --------------------------------------------------------------
-// Interfaces
-// --------------------------------------------------------------
 interface Temple {
   _id: string;
   name: Record<string, string>;
@@ -45,9 +42,7 @@ interface Temple {
   updatedAt?: string;
 }
 
-// --------------------------------------------------------------
-// Icons
-// --------------------------------------------------------------
+/* Icons */
 function IconClock({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -76,37 +71,52 @@ function IconTemple({ size = 20 }: { size?: number }) {
   );
 }
 
-// --------------------------------------------------------------
-// Helpers
-// --------------------------------------------------------------
+/* Helpers */
 const useLang = () => {
   const lang = i18n.language || "en";
   const getText = (f?: Record<string, string>) => f?.[lang] || f?.en || "";
   return { lang, getText };
 };
 
+/**
+ * LabelValue updated:
+ * - label styled as requested (text-lg, font-semibold, orange)
+ * - value uses Merriweather inline style to ensure font loads
+ */
 function LabelValue({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
-    <div className="mb-3">
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-gray-800 font-medium">{value}</p>
+    <div className="mb-6">
+      <p className="text-lg font-semibold text-orange-700 mb-1">{label}</p>
+      <p className="text-gray-800" style={{ fontFamily: "'Merriweather', serif", lineHeight: 1.7 }}>
+        {value}
+      </p>
     </div>
   );
 }
 
+/**
+ * Section component that enforces Merriweather on its heading and body.
+ * We use inline style for fontFamily to guarantee the font is applied
+ * (since Tailwind config may not include Merriweather).
+ */
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
     <section id={id} className="mt-12">
-      <h3 className="text-2xl font-[Merriweather] text-orange-800 font-semibold mb-4">{title}</h3>
-      <div className="text-gray-700 leading-relaxed font-[Merriweather]">{children}</div>
+      <h3
+        className="text-2xl text-orange-800 font-semibold mb-4"
+        style={{ fontFamily: "'Merriweather', serif" }}
+      >
+        {title}
+      </h3>
+      <div className="text-gray-700 leading-relaxed" style={{ fontFamily: "'Merriweather', serif" }}>
+        {children}
+      </div>
     </section>
   );
 }
 
-// --------------------------------------------------------------
-// MAIN COMPONENT
-// --------------------------------------------------------------
+/* MAIN COMPONENT */
 export default function TempleView() {
   const { id } = useParams<{ id: string }>();
   const { getText } = useLang();
@@ -118,10 +128,20 @@ export default function TempleView() {
 
   const backendURL = import.meta.env.VITE_API_URL;
 
+  // Inject Merriweather font link into head once
+  useEffect(() => {
+    const href = "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap";
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      document.head.appendChild(link);
+    }
+  }, []);
+
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-
     axios
       .get<Temple>(`${backendURL}/api/temples/${id}`)
       .then(res => setTemple(res.data))
@@ -159,19 +179,13 @@ export default function TempleView() {
   const glow = "shadow-[0_4px_20px_rgba(255,153,51,0.18)]";
 
   return (
-    <div className="pt-20 pb-20"
-      style={{ background: "linear-gradient(to bottom, #fff7e3, #fffdf8, #ffffff)" }}>
-
+    <div
+      className="pt-20 pb-20"
+      style={{ background: "linear-gradient(to bottom, #fff7e3, #fffdf8, #ffffff)" }}
+    >
       <div className="max-w-7xl mx-auto px-6">
-
-        {/* ---------------------------------- */}
-        {/* FIRST ROW: LEFT + RIGHT */}
-        {/* ---------------------------------- */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-
-          {/* LEFT COLUMN */}
           <div className="lg:col-span-2">
-
             <h1 className="mt-6 text-4xl lg:text-5xl font-[Marcellus] text-orange-900 font-bold flex items-center gap-4">
               <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
                 <IconTemple />
@@ -184,9 +198,8 @@ export default function TempleView() {
               <span className="font-medium text-gray-800">{getText(temple.location)}</span>
             </p>
 
-            {/* GALLERY */}
+            {/* Gallery */}
             <div className={`mt-8 rounded-3xl overflow-hidden bg-white ${glow}`}>
-
               <div className="relative h-[520px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff4dd] to-white">
                 <img
                   src={displayImage}
@@ -215,13 +228,11 @@ export default function TempleView() {
                   );
                 })}
               </div>
-
             </div>
           </div>
 
-          {/* RIGHT COLUMN – DARSHAN CARD */}
+          {/* Right column: Darshan card */}
           <div className="space-y-7 lg:mt-[140px]">
-
             <div className={`bg-white rounded-2xl p-6 ${glow}`}>
               <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
 
@@ -232,23 +243,25 @@ export default function TempleView() {
                   <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
 
                   <div className="space-y-1 text-gray-800">
-                    <div className="flex items-center gap-2"><IconClock /> <strong>Morning:</strong> {temple.aartiTimings.morning || "-"}</div>
-                    <div className="flex items-center gap-2"><IconClock /> <strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}</div>
-                    <div className="flex items-center gap-2"><IconClock /> <strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}</div>
+                    <div className="flex items-center gap-2">
+                      <IconClock /> <strong>Morning:</strong> {temple.aartiTimings.morning || "-"}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <IconClock /> <strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <IconClock /> <strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}
+                    </div>
                   </div>
                 </div>
               )}
 
               <LabelValue label="Special Pooja Info" value={getText(temple.specialPoojaInfo)} />
             </div>
-
           </div>
         </div>
 
-        {/* ---------------------------------- */}
-        {/* FULL WIDTH SECTIONS */}
-        {/* ---------------------------------- */}
-
+        {/* Full-width sections */}
         <Section id="about" title="About the Temple">
           {getText(temple.about)}
         </Section>
@@ -260,26 +273,16 @@ export default function TempleView() {
           <LabelValue label="History" value={getText(temple.history)} />
           <LabelValue label="Architecture" value={getText(temple.architecture)} />
           <LabelValue label="Builder / Trust" value={getText(temple.builderOrTrust)} />
-          <LabelValue label="Consecration Date" value={temple.consecrationDate} />
+          <LabelValue label="Consecration Date" value={temple.consecrationDate || ""} />
         </Section>
 
-        {/* ---------------------------------- */}
-        {/* UPDATED VISITOR INFORMATION SECTION */}
-        {/* ---------------------------------- */}
-
+        {/* Visitor Information (simple text section using Merriweather) */}
         <Section id="visitor" title="Visitor Information">
           <LabelValue label="Dress Code" value={getText(temple.dressCode)} />
           <LabelValue label="Entry Rules" value={getText(temple.entryRules)} />
           {prohibitedItemsStr && <LabelValue label="Prohibited Items" value={prohibitedItemsStr} />}
-          <LabelValue
-            label="Locker Facility"
-            value={temple.lockerFacility ? "Available" : "Not Available"}
-          />
+          <LabelValue label="Locker Facility" value={temple.lockerFacility ? "Available" : "Not Available"} />
         </Section>
-
-        {/* ---------------------------------- */}
-        {/* TRAVEL & CONNECTIVITY */}
-        {/* ---------------------------------- */}
 
         <Section id="travel" title="Travel & Connectivity">
           <LabelValue label="How to Reach" value={getText(temple.howToReach)} />
@@ -293,14 +296,17 @@ export default function TempleView() {
             <div className="space-y-3">
               {temple.nearbyPlaces.map((p, i) => (
                 <div key={i} className="p-3 bg-orange-50 rounded-xl hover:bg-orange-100 transition">
-                  <p className="font-medium text-gray-900">{getText(p.name)}</p>
-                  <p className="text-gray-700 text-sm">{getText(p.description)}</p>
+                  <p className="font-medium text-gray-900" style={{ fontFamily: "'Merriweather', serif" }}>
+                    {getText(p.name)}
+                  </p>
+                  <p className="text-gray-700 text-sm" style={{ fontFamily: "'Merriweather', serif" }}>
+                    {getText(p.description)}
+                  </p>
                 </div>
               ))}
             </div>
           </Section>
         ) : null}
-
       </div>
     </div>
   );
