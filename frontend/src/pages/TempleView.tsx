@@ -222,13 +222,15 @@ export default function TempleView() {
                 })}
               </div>
             </div>
-          </div>
 
-
-          <Section id="about" title="About the Temple">
+            <Section id="about" title="About the Temple">
           {getText(temple.about)}
         </Section>
 
+          </div>
+
+
+          
 
           {/* Right column: Darshan card */}
           <div className="space-y-7 lg:mt-[140px]">
