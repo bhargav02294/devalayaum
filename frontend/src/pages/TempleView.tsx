@@ -61,15 +61,7 @@ function IconLocation({ size = 16 }: { size?: number }) {
   );
 }
 
-function IconTemple({ size = 20 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M3 11h18" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M5 11v7h14v-7" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M7 11V6l5-3 5 3v5" stroke="currentColor" strokeWidth="1.4" />
-    </svg>
-  );
-}
+
 
 /* Helpers */
 const useLang = () => {
@@ -186,17 +178,7 @@ export default function TempleView() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2">
-            <h1 className="mt-6 text-4xl lg:text-5xl font-[Marcellus] text-orange-900 font-bold flex items-center gap-4">
-              <span className="bg-orange-50 p-3 rounded-full border border-orange-100 shadow-inner">
-                <IconTemple />
-              </span>
-              {getText(temple.name)}
-            </h1>
-
-            <p className="text-gray-700 mt-3 flex items-center gap-2">
-              <IconLocation />
-              <span className="font-medium text-gray-800">{getText(temple.location)}</span>
-            </p>
+            
 
             {/* Gallery */}
             <div className={`mt-8 rounded-3xl overflow-hidden bg-white ${glow}`}>
@@ -207,6 +189,16 @@ export default function TempleView() {
                   className="max-w-full max-h-full object-contain drop-shadow-[0_4px_20px_rgba(255,153,51,0.25)]"
                 />
               </div>
+
+
+              <h1 className="mt-4 text-4xl lg:text-5xl font-[Marcellus] text-orange-800 font-bold flex items-center gap-4">
+              {getText(temple.name)}
+            </h1>
+
+            <p className="text-gray-700 mt-3 flex items-center gap-2">
+              <IconLocation />
+              <span className="font-medium text-gray-800">{getText(temple.location)}</span>
+            </p>
 
               <div className="p-4 flex gap-4 overflow-x-auto bg-gradient-to-r from-white to-[#fff8ec]">
                 {images.map((src, idx) => {
