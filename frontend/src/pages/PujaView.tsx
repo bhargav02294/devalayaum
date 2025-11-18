@@ -171,7 +171,7 @@ export default function PujaView() {
         {/* QUICK NAV BUTTONS */}
         {/* -------------------------------------- */}
         <div className="flex flex-wrap gap-2 mb-10 justify-start">
-          {[
+          {[ 
             ["overview", "Overview"],
             ["benefits", "Benefits"],
             ["procedure", "Procedure"],
