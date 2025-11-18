@@ -191,14 +191,7 @@ export default function TempleView() {
               </div>
 
 
-              <h1 className="mt-4 text-4xl lg:text-5xl font-[Marcellus] text-orange-800 font-bold flex items-center gap-4">
-              {getText(temple.name)}
-            </h1>
-
-            <p className="text-gray-700 mt-3 flex items-center gap-2">
-              <IconLocation />
-              <span className="font-medium text-gray-800">{getText(temple.location)}</span>
-            </p>
+              
 
               <div className="p-4 flex gap-4 overflow-x-auto bg-gradient-to-r from-white to-[#fff8ec]">
                 {images.map((src, idx) => {
@@ -258,6 +251,16 @@ export default function TempleView() {
           </div>
         </div>
 
+
+<h1 className="mt-4 text-4xl lg:text-5xl font-[Marcellus] text-orange-800 font-bold">
+              {getText(temple.name)}
+            </h1>
+
+            <p className="text-gray-700 mt-3 flex items-center gap-2">
+              <IconLocation />
+              <span className="font-medium text-gray-800">{getText(temple.location)}</span>
+            </p>
+            
         {/* Full-width sections */}
         <Section id="about" title="About the Temple">
           {getText(temple.about)}
