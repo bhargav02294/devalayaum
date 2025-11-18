@@ -116,7 +116,7 @@ export default function PujaView() {
         {/* -------------------------------------- */}
         {/* MAIN PUJA TITLE - EXACT TEMPLE STYLE */}
         {/* -------------------------------------- */}
-        <h1 className="mt-4 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
+        <h1 className="mt-6 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
           {t(puja.name)}
         </h1>
 

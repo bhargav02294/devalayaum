@@ -1,11 +1,13 @@
-// E:\devalayaum\frontend\src\pages\DonationView.tsx
-
+// src/pages/DonationView.tsx
+// FINAL PREMIUM DONATION PAGE — Matching Temple Fonts & Darker Theme
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-// Load Razorpay script safely
+/* ----------------------------------------------------------
+   Load Razorpay Script
+---------------------------------------------------------- */
 const loadRazorpayScript = (): Promise<boolean> =>
   new Promise((resolve) => {
     const existing = document.querySelector(
@@ -20,7 +22,7 @@ const loadRazorpayScript = (): Promise<boolean> =>
     document.body.appendChild(script);
   });
 
-// Razorpay types (NO ANY)
+/* Razorpay Types */
 declare global {
   interface RazorpayInstance {
     open: () => void;
@@ -31,6 +33,9 @@ declare global {
   }
 }
 
+/* ----------------------------------------------------------
+   Types
+---------------------------------------------------------- */
 interface Donation {
   _id: string;
   thumbnail: string;
@@ -45,6 +50,23 @@ interface Donation {
   price: number;
 }
 
+type CreateOrderResponse = {
+  orderId: string;
+  amount: number;
+  currency: string;
+};
+
+type RazorpayHandlerResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type AnyRecord = Record<string, unknown>;
+
+/* ----------------------------------------------------------
+   Main Component
+---------------------------------------------------------- */
 export default function DonationView() {
   const { id } = useParams<{ id: string }>();
 
@@ -54,27 +76,41 @@ export default function DonationView() {
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
   const [amount, setAmount] = useState<number | "">("");
+
   const [error, setError] = useState("");
 
   const backendURL = import.meta.env.VITE_API_URL;
   const lang = i18n.language || "en";
-
   const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
-  const glow = "shadow-[0_10px_30px_rgba(140,85,40,0.18)]";
+  // Darker glow than puja page
+  const glow = "shadow-[0_6px_25px_rgba(110,60,20,0.22)]";
 
+  /* Load Merriweather font */
   useEffect(() => {
-    const loadDonation = async () => {
+    const href =
+      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap";
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      document.head.appendChild(link);
+    }
+  }, []);
+
+  /* Fetch Donation Data */
+  useEffect(() => {
+    const load = async () => {
       try {
         const res = await axios.get(`${backendURL}/api/donations/${id}`);
         setDonation(res.data);
-      } catch (err) {
-        console.error("Error loading donation:", err);
+      } catch {
+        setDonation(null);
       } finally {
         setLoading(false);
       }
     };
-    loadDonation();
+    load();
   }, [id, backendURL]);
 
   if (loading) return <div className="pt-24 text-center">Loading...</div>;
@@ -82,77 +118,77 @@ export default function DonationView() {
 
   const suggestedAmounts = [51, 101, 501, 1001];
 
-  // -------- HANDLE PAYMENT ----------
+  /* ----------------------------------------------------------
+     Handle Payment (typed)
+  ---------------------------------------------------------- */
   const handleDonate = async () => {
     setError("");
 
     if (!fullName.trim()) return setError("Please enter your full name.");
     if (!mobile.trim()) return setError("Please enter your mobile number.");
-    if (!amount || Number(amount) < 1)
-      return setError("Please enter a valid donation amount.");
+    if (!amount || Number(amount) < 1) return setError("Please enter a valid donation amount.");
 
     const loaded = await loadRazorpayScript();
-    if (!loaded) return setError("Failed to load Razorpay");
+    if (!loaded) return setError("Failed to load Razorpay.");
 
     try {
-      // CREATE ORDER
-      const create = await axios.post(`${backendURL}/api/payments/create-order`, {
+      // Create order on server. Expect CreateOrderResponse
+      const create = await axios.post<CreateOrderResponse>(`${backendURL}/api/payments/create-order`, {
         donationId: donation._id,
         fullName,
         mobile,
         amount,
       });
 
-      const data = create.data as Record<string, unknown>;
+      const data = create.data;
 
-      const orderId = data.orderId as string;
-      const orderAmount = data.amount as number;
-      const currency = data.currency as string;
-
-      if (!orderId || !orderAmount || !currency) {
+      // Validate server response
+      if (!data || !data.orderId || !data.amount || !data.currency) {
         return setError("Server returned invalid order data.");
       }
 
-      const options: Record<string, unknown> = {
+      const options: AnyRecord = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: orderAmount,
-        currency,
+        amount: data.amount,
+        currency: data.currency,
         name: "Devalayaum",
         description: `Donation: ${t(donation.donationName)}`,
-        order_id: orderId,
+        order_id: data.orderId,
 
-        handler: (resp: Record<string, unknown>) => {
-          const rOrderId = resp["razorpay_order_id"];
-          const rPaymentId = resp["razorpay_payment_id"];
-          const rSignature = resp["razorpay_signature"];
+        // typed handler
+        handler: async (resp: RazorpayHandlerResponse) => {
+          const rOrderId = resp.razorpay_order_id;
+          const rPaymentId = resp.razorpay_payment_id;
+          const rSignature = resp.razorpay_signature;
 
-          // VERIFY PAYMENT
-          (async () => {
-            try {
-              await axios.post(`${backendURL}/api/payments/verify`, {
-                orderId: rOrderId,
-                paymentId: rPaymentId,
-                signature: rSignature,
-                fullName,
-                mobile,
-                amount,
-                templeName: t(donation.templeName),
-                donationName: t(donation.donationName),
-              });
+          // Verify payment on server
+          try {
+            await axios.post(`${backendURL}/api/payments/verify`, {
+              orderId: rOrderId,
+              paymentId: rPaymentId,
+              signature: rSignature,
+              fullName,
+              mobile,
+              amount,
+              templeName: t(donation.templeName),
+              donationName: t(donation.donationName),
+            });
 
-              alert("🙏 Thank you! Your donation was successful.");
-              window.location.href = "/donors";
-            } catch (err) {
-              console.error("Verify Err:", err);
-              alert("Payment success, but verification failed.");
-            }
-          })();
+            alert("🙏 Thank you! Your donation was successful.");
+            window.location.href = "/donors";
+          } catch (err) {
+            console.error("Verify Err:", err);
+            alert("Payment succeeded but verification failed. Please contact support.");
+          }
         },
 
         prefill: { name: fullName, contact: mobile },
-        theme: { color: "#b34a00" },
+        theme: { color: "#8a3c0f" },
       };
 
+      // Open Razorpay
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore - window.Razorpay constructor signature handled via global declaration above
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
@@ -161,138 +197,161 @@ export default function DonationView() {
     }
   };
 
-  // ------------------- UI -------------------
+  /* ----------------------------------------------------------
+     UI
+  ---------------------------------------------------------- */
   return (
-    <div className="pt-24 pb-20 bg-gradient-to-b from-[#fff4d9] via-[#fff9f1] to-white min-h-screen px-6">
+    <div
+      className="pt-24 pb-20 min-h-screen"
+      style={{ background: "linear-gradient(to bottom, #fff4d9, #fffaf2, #ffffff)" }}
+    >
+      {/* ---------------------------------- */}
+      {/* PAGE HEADER */}
+      {/* ---------------------------------- */}
+      <div className="max-w-6xl mx-auto mb-10 px-4">
+        <h1 className="text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
+          {t(donation.donationName)}
+        </h1>
 
-      {/* ---------------- HEADER ---------------- */}
-<div className="max-w-6xl mx-auto mb-10 px-2 md:px-0">
-  <h1 className="text-4xl md:text-5xl font-[Marcellus] text-[#b34a00] font-bold text-left">
-    {t(donation.donationName)}
-  </h1>
+        <p
+          className="text-gray-800 text-lg mt-2"
+          style={{ fontFamily: "'Merriweather', serif" }}
+        >
+          <span className="font-semibold text-orange-800">
+            {t(donation.templeName)}
+          </span>
+        </p>
 
-  <p className="text-gray-700 text-lg mt-2 font-[Poppins] text-left">
-    <span className="font-semibold text-orange-900">
-      {t(donation.templeName)}
-    </span>
-  </p>
+        <p
+          className="text-gray-700 text-lg"
+          style={{ fontFamily: "'Merriweather', serif" }}
+        >
+          {t(donation.address)}
+        </p>
 
-  <p className="text-gray-600 text-lg text-left">{t(donation.address)}</p>
+        <p
+          className="mt-4 text-gray-800 italic text-xl"
+          style={{ fontFamily: "'Merriweather', serif" }}
+        >
+          {t(donation.shortDetails)}
+        </p>
+      </div>
 
-  <p className="mt-4 text-gray-700 italic text-xl text-left">
-    {t(donation.shortDetails)}
-  </p>
-</div>
+      {/* ---------------------------------- */}
+      {/* IMAGE + DETAILS */}
+      {/* ---------------------------------- */}
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 px-4">
+        {/* IMAGE */}
+        <div className={`rounded-3xl bg-white overflow-hidden p-4 ${glow}`}>
+          <img
+            src={donation.thumbnail}
+            alt={t(donation.donationName)}
+            className="w-full h-[360px] object-cover rounded-2xl"
+          />
+        </div>
 
-{/* ---------------- IMAGE + DETAILS ---------------- */}
-<div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-start px-2 md:px-0">
-
-  {/* IMAGE LEFT */}
-  <div className={`rounded-3xl bg-white overflow-hidden ${glow} p-4`}>
-    <img
-      src={donation.thumbnail}
-      alt={t(donation.donationName)}
-      className="w-full h-[380px] object-cover rounded-2xl"
-    />
-  </div>
-
-
-        {/* DETAILS RIGHT */}
+        {/* DETAILS */}
         <div className="space-y-8">
-
-          <section>
-            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-2">
-              About This Donation
-            </h2>
-            <p className="text-gray-700 leading-relaxed">{t(donation.description)}</p>
-          </section>
-
-          <section>
-            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-2">
-              Temple Details
-            </h2>
-            <p className="text-gray-700 leading-relaxed">{t(donation.templeDetails)}</p>
-          </section>
-
-          <section>
-            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-2">
-              Benefits of Donating
-            </h2>
-            <p className="text-gray-700 leading-relaxed">{t(donation.benefits)}</p>
-          </section>
-
-          <section>
-            <h2 className="text-3xl font-[Merriweather] text-[#8a3c0f] mb-2">
-              Summary
-            </h2>
-            <p className="text-gray-700 leading-relaxed">{t(donation.summary)}</p>
-          </section>
+          <Section title="About This Donation">{t(donation.description)}</Section>
+          <Section title="Temple Details">{t(donation.templeDetails)}</Section>
+          <Section title="Benefits of Donating">{t(donation.benefits)}</Section>
+          <Section title="Summary">{t(donation.summary)}</Section>
         </div>
       </div>
 
-      {/* ----------------  DONATION FORM BOTTOM  ---------------- */}
-      {/* ----------------  DONATION FORM BOTTOM  ---------------- */}
-<div className={`max-w-6xl mx-auto mt-16 px-2 md:px-0`}>
-  <div className={`md:w-1/2 p-8 rounded-3xl bg-white ${glow}`}>
+      {/* ---------------------------------- */}
+      {/* DONATION FORM */}
+      {/* ---------------------------------- */}
+      <div className="max-w-6xl mx-auto mt-16 px-4">
+        <div className={`md:w-1/2 p-8 rounded-3xl bg-white ${glow}`}>
+          <h3
+            className="text-2xl text-orange-800 font-semibold mb-6"
+            style={{ fontFamily: "'Merriweather', serif" }}
+          >
+            Make a Donation
+          </h3>
 
-    <h3 className="text-3xl font-[Merriweather] text-[#b34a00] mb-6">
-      Make a Donation
-    </h3>
+          {error && <p className="text-red-600 mb-4">{error}</p>}
 
-    {error && <p className="text-red-600 mb-4">{error}</p>}
+          <input
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Full Name"
+            className="w-full border p-3 rounded-xl mb-4"
+            style={{ fontFamily: "'Merriweather', serif" }}
+          />
 
-    <input
-      type="text"
-      value={fullName}
-      onChange={(e) => setFullName(e.target.value)}
-      placeholder="Full Name"
-      className="w-full border p-3 rounded-xl mb-4"
-    />
+          <input
+            type="text"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            placeholder="Mobile / WhatsApp Number"
+            className="w-full border p-3 rounded-xl mb-4"
+            style={{ fontFamily: "'Merriweather', serif" }}
+          />
 
-    <input
-      type="text"
-      value={mobile}
-      onChange={(e) => setMobile(e.target.value)}
-      placeholder="Mobile / WhatsApp Number"
-      className="w-full border p-3 rounded-xl mb-4"
-    />
+          {/* SUGGESTED AMOUNTS */}
+          <div className="flex flex-wrap gap-3 mb-4">
+            {suggestedAmounts.map((amt) => (
+              <button
+                key={amt}
+                onClick={() => setAmount(amt)}
+                className={`px-5 py-2 rounded-full font-semibold border
+                  ${
+                    amount === amt
+                      ? "bg-[#8a3c0f] text-white border-[#8a3c0f]"
+                      : "bg-white text-[#8a3c0f] border-[#8a3c0f] hover:bg-[#fff1e8]"
+                  }
+                `}
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
+                ₹{amt}
+              </button>
+            ))}
+          </div>
 
-    {/* Suggested Amounts */}
-    <div className="flex flex-wrap gap-3 mb-4">
-      {suggestedAmounts.map((amt) => (
-        <button
-          key={amt}
-          onClick={() => setAmount(amt)}
-          className={`px-5 py-2 rounded-full border font-semibold 
-            ${
-              amount === amt
-                ? "bg-[#b34a00] text-white border-[#b34a00]"
-                : "bg-white text-[#b34a00] border-[#b34a00] hover:bg-[#fff0e0]"
-            }`}
-        >
-          ₹{amt}
-        </button>
-      ))}
+          {/* CUSTOM AMOUNT */}
+          <input
+            type="number"
+            min={1}
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+            placeholder="Enter custom amount"
+            className="w-full border p-3 rounded-xl mb-6"
+            style={{ fontFamily: "'Merriweather', serif" }}
+          />
+
+          {/* DONATE BUTTON */}
+          <button
+            onClick={handleDonate}
+            className="w-full bg-[#8a3c0f] hover:bg-[#5e290d] text-white text-lg font-semibold py-3 rounded-xl"
+            style={{ fontFamily: "'Merriweather', serif" }}
+          >
+            Donate Now
+          </button>
+        </div>
+      </div>
     </div>
+  );
+}
 
-    <input
-      type="number"
-      min={1}
-      value={amount}
-      onChange={(e) => setAmount(Number(e.target.value))}
-      placeholder="Enter custom amount"
-      className="w-full border p-3 rounded-xl mb-6"
-    />
+/* ----------------------------------------------------------
+   Section Component (Temple Style)
+---------------------------------------------------------- */
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h2
+        className="text-2xl text-orange-800 font-semibold mb-2"
+        style={{ fontFamily: "'Merriweather', serif" }}
+      >
+        {title}
+      </h2>
 
-    <button
-      onClick={handleDonate}
-      className="w-full bg-[#b34a00] hover:bg-[#8a3c0f] text-white text-lg font-semibold py-3 rounded-xl"
-    >
-      Donate Now
-    </button>
-
-  </div>
-</div>
-    </div>
+      <p className="text-gray-700 leading-relaxed" style={{ fontFamily: "'Merriweather', serif" }}>
+        {children}
+      </p>
+    </section>
   );
 }
