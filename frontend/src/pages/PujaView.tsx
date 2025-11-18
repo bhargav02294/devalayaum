@@ -1,28 +1,29 @@
 // src/pages/PujaView.tsx
-// PREMIUM PUJA VIEWER — Updated UI to match TempleView fonts & styling
+// PROFESSIONAL PREMIUM PUJA VIEW PAGE — FINAL VERSION
 
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
+/* ----------------------------------------------------------
+   Interfaces
+---------------------------------------------------------- */
 interface Puja {
   _id: string;
   name: Record<string, string>;
   category: string;
   subCategory?: string;
+
   image?: string;
   images?: string[];
   videoUrl?: string;
 
-  deityAssociated?: Record<string, string>;
   description?: Record<string, string>;
   whyPerform?: Record<string, string>;
   benefits?: Record<string, string>;
   procedure?: Record<string, string>;
   mantra?: Record<string, string>;
-  duration?: string;
   materialsRequired?: Record<string, string>;
   availableAt?: Record<string, string>[];
   placesDescription?: Record<string, string>;
@@ -39,6 +40,9 @@ interface Puja {
 
 type PujaPackage = NonNullable<Puja["packages"]>[number];
 
+/* ----------------------------------------------------------
+   Main Component
+---------------------------------------------------------- */
 export default function PujaView() {
   const { id } = useParams<{ id: string }>();
   const lang = i18n.language || "en";
@@ -46,25 +50,16 @@ export default function PujaView() {
 
   const [puja, setPuja] = useState<Puja | null>(null);
   const [loading, setLoading] = useState(true);
-
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoverPreview, setHoverPreview] = useState<string | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
 
-  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
+  const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
 
-  useEffect(() => {
-    axios
-      .get(`${backendURL}/api/pujas/${id}`)
-      .then((res) => setPuja(res.data))
-      .catch(() => setPuja(null))
-      .finally(() => setLoading(false));
-  }, [id, backendURL]);
-
-  // Load Merriweather font dynamically
+  /* Load Merriweather */
   useEffect(() => {
     const href =
-      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap";
+      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap";
     if (!document.querySelector(`link[href="${href}"]`)) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -73,59 +68,77 @@ export default function PujaView() {
     }
   }, []);
 
+  /* Fetch Puja */
+  useEffect(() => {
+    axios
+      .get(`${backendURL}/api/pujas/${id}`)
+      .then(res => setPuja(res.data))
+      .catch(() => setPuja(null))
+      .finally(() => setLoading(false));
+  }, [id, backendURL]);
+
   if (loading)
     return (
-      <div className="pt-24 flex justify-center text-lg text-gray-500">
+      <div className="pt-24 flex justify-center text-gray-500 text-lg">
         Loading Puja…
       </div>
     );
 
   if (!puja)
     return (
-      <div className="pt-24 flex justify-center text-lg text-red-600">
+      <div className="pt-24 flex justify-center text-red-600 text-lg">
         Puja not found.
       </div>
     );
 
-  // Build gallery
+  /* Build Gallery */
   const gallery = [...(puja.images || [])];
   if (puja.image && !gallery.includes(puja.image)) gallery.unshift(puja.image);
   if (gallery.length === 0) gallery.push("/puja-placeholder.jpg");
 
   const mainImg = hoverPreview || gallery[activeIndex];
+  const glow = "shadow-[0_4px_18px_rgba(200,140,70,0.18)]";
 
+  /* Smooth Scroll */
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
     window.scrollTo({ top: el.offsetTop - 90, behavior: "smooth" });
   };
 
-  const glow = "shadow-[0_6px_18px_rgba(170,120,60,0.25)]";
-
   return (
     <div className="pt-20 pb-20 bg-gradient-to-b from-[#fff8ec] via-[#fffdf9] to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6">
-        
-        {/* PAGE TITLE */}
-        <h1 className="mt-4 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
+
+        {/* -------------------------------------- */}
+        {/* MAIN TITLE */}
+        {/* -------------------------------------- */}
+        <h1 className="text-3xl lg:text-4xl font-[Marcellus] text-orange-400 font-bold">
           {t(puja.name)}
         </h1>
 
-        <p className="text-gray-700 mb-6" style={{ fontFamily: "'Merriweather', serif" }}>
-          {puja.category} {puja.subCategory ? `› ${puja.subCategory}` : ""}
+        <p className="text-gray-600 mt-2"
+           style={{ fontFamily: "'Merriweather', serif" }}>
+          {puja.category}
+          {puja.subCategory ? ` › ${puja.subCategory}` : ""}
         </p>
 
+        {/* -------------------------------------- */}
         {/* IMAGE SECTION */}
-        <div className="flex justify-center mt-6 mb-12">
-          <div className={`rounded-3xl overflow-hidden bg-white p-4 ${glow} w-full max-w-3xl`}>
-            
-            <div className="h-[240px] md:h-[300px] lg:h-[340px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2] relative rounded-xl">
+        {/* -------------------------------------- */}
+        <div className="flex justify-center mt-8 mb-14">
+          <div className={`rounded-3xl overflow-hidden bg-white p-4 w-full max-w-3xl ${glow}`}>
+
+            {/* Main Image Box */}
+            <div className="h-[230px] md:h-[280px] lg:h-[320px] flex justify-center items-center 
+                            bg-gradient-to-b from-white to-[#fff3e2] rounded-xl relative">
               <img src={mainImg} className="max-w-full max-h-full object-contain" />
 
               {puja.videoUrl && (
                 <button
                   onClick={() => setVideoOpen(true)}
-                  className="absolute bottom-4 right-4 bg-white/90 text-[#8a3c0f] px-4 py-2 rounded-full shadow font-medium"
+                  className="absolute bottom-3 right-3 px-4 py-2 text-sm rounded-full 
+                             bg-white/90 text-orange-700 shadow hover:bg-white"
                   style={{ fontFamily: "'Merriweather', serif" }}
                 >
                   ▶ Play Video
@@ -133,7 +146,7 @@ export default function PujaView() {
               )}
             </div>
 
-            {/* THUMBNAILS */}
+            {/* Thumbnails */}
             <div className="p-3 flex gap-3 overflow-x-auto bg-[#fffaf5] rounded-xl mt-4 justify-center">
               {gallery.map((src, idx) => (
                 <button
@@ -141,9 +154,9 @@ export default function PujaView() {
                   onMouseEnter={() => setHoverPreview(src)}
                   onMouseLeave={() => setHoverPreview(null)}
                   onClick={() => setActiveIndex(idx)}
-                  className={`overflow-hidden rounded-xl transition-all ${
-                    idx === activeIndex ? "ring-2 ring-[#d9a06a] scale-105" : "hover:scale-105"
-                  }`}
+                  className={`rounded-xl overflow-hidden transition-all 
+                    ${idx === activeIndex ? "ring-2 ring-orange-300 scale-105" : "hover:scale-105"}
+                  `}
                   style={{ width: 100, height: 68 }}
                 >
                   <img src={src} className="w-full h-full object-cover" />
@@ -154,8 +167,10 @@ export default function PujaView() {
           </div>
         </div>
 
-        {/* QUICK LINK BUTTONS */}
-        <div className="flex flex-wrap gap-3 mb-10 mt-10">
+        {/* -------------------------------------- */}
+        {/* QUICK NAV BUTTONS */}
+        {/* -------------------------------------- */}
+        <div className="flex flex-wrap gap-2 mb-10 justify-start">
           {[
             ["overview", "Overview"],
             ["benefits", "Benefits"],
@@ -163,12 +178,13 @@ export default function PujaView() {
             ["mantra", "Mantra"],
             ["materials", "Materials"],
             ["availability", "Availability"],
-            ["packages", "Packages"],
-          ].map(([sec, label]) => (
+            ["packages", "Puja Packages"],
+          ].map(([target, label]) => (
             <button
-              key={sec}
-              onClick={() => scrollTo(sec)}
-              className={`px-5 py-2 rounded-full bg-white text-gray-800 hover:bg-[#fff3e2] transition shadow-md ${glow}`}
+              key={target}
+              onClick={() => scrollTo(target)}
+              className={`px-4 py-1.5 text-sm rounded-full bg-white shadow hover:bg-orange-50 transition 
+                          text-gray-700 ${glow}`}
               style={{ fontFamily: "'Merriweather', serif" }}
             >
               {label}
@@ -176,12 +192,16 @@ export default function PujaView() {
           ))}
         </div>
 
+        {/* -------------------------------------- */}
         {/* SECTIONS */}
+        {/* -------------------------------------- */}
+
         <Section id="overview" title="Overview">
           <p>{t(puja.description)}</p>
           {puja.whyPerform && (
-            <p className="mt-4">
-              <strong>Why Perform:</strong> {t(puja.whyPerform)}
+            <p className="mt-3">
+              <span className="text-orange-600 font-semibold">Why Perform:</span>{" "}
+              {t(puja.whyPerform)}
             </p>
           )}
         </Section>
@@ -195,7 +215,7 @@ export default function PujaView() {
         </Section>
 
         <Section id="mantra" title="Main Mantra">
-          <p className="text-gray-900 italic">{t(puja.mantra)}</p>
+          <p className="italic text-gray-800">{t(puja.mantra)}</p>
         </Section>
 
         <Section id="materials" title="Materials Required">
@@ -213,13 +233,16 @@ export default function PujaView() {
             <p>Not specified.</p>
           )}
 
-          {puja.placesDescription && <p className="mt-3">{t(puja.placesDescription)}</p>}
+          {puja.placesDescription && (
+            <p className="mt-2">{t(puja.placesDescription)}</p>
+          )}
         </Section>
 
+        {/* Packages */}
         <Section id="packages" title="Puja Packages">
           {puja.packages?.length ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {puja.packages.map((pkg) => (
+              {puja.packages.map(pkg => (
                 <PujaPackageCard key={pkg.key} pkg={pkg} pujaId={puja._id} />
               ))}
             </div>
@@ -227,6 +250,7 @@ export default function PujaView() {
             <p>No packages available.</p>
           )}
         </Section>
+
       </div>
 
       {videoOpen && puja.videoUrl && (
@@ -236,7 +260,9 @@ export default function PujaView() {
   );
 }
 
-/* SECTION COMPONENT */
+/* ----------------------------------------------------------
+   Section Component (Small + Merriweather)
+---------------------------------------------------------- */
 interface SectionProps {
   id?: string;
   title: string;
@@ -247,47 +273,63 @@ function Section({ id, title, children }: SectionProps) {
   return (
     <section id={id} className="mt-12">
       <h2
-        className="text-3xl text-orange-800 font-semibold mb-4"
+        className="text-[18px] font-semibold text-orange-500 mb-2"
         style={{ fontFamily: "'Merriweather', serif" }}
       >
         {title}
       </h2>
 
-      <div className="text-gray-700 leading-relaxed" style={{ fontFamily: "'Merriweather', serif" }}>
+      <div
+        className="text-gray-600 leading-relaxed"
+        style={{ fontFamily: "'Merriweather', serif" }}
+      >
         {children}
       </div>
     </section>
   );
 }
 
-/* PUJA PACKAGE CARD */
+/* ----------------------------------------------------------
+   Puja Package Card
+---------------------------------------------------------- */
 interface PujaPackageCardProps {
   pkg: PujaPackage;
   pujaId: string;
 }
 
 function PujaPackageCard({ pkg, pujaId }: PujaPackageCardProps) {
-  const tLocal = (o?: Record<string, string>) => o?.[i18n.language] || o?.en || "";
+  const tx = (o?: Record<string, string>) =>
+    o?.[i18n.language] || o?.en || "";
 
   return (
-    <div className={`p-6 rounded-2xl bg-white shadow-md`}>
-      <h3 className="text-xl font-bold text-orange-800" style={{ fontFamily: "'Merriweather', serif" }}>
-        {tLocal(pkg.title)}
+    <div className="p-6 bg-white rounded-2xl shadow">
+      <h3
+        className="text-lg font-semibold text-orange-700"
+        style={{ fontFamily: "'Merriweather', serif" }}
+      >
+        {tx(pkg.title)}
       </h3>
 
-      <p className="text-2xl font-semibold text-gray-900 mt-2">
+      <p className="text-2xl font-bold text-gray-800 mt-2">
         ₹{pkg.discountPrice || pkg.price}
         {pkg.discountPrice && pkg.price && (
-          <span className="text-sm text-gray-500 line-through ml-2">₹{pkg.price}</span>
+          <span className="ml-2 text-sm text-gray-500 line-through">
+            ₹{pkg.price}
+          </span>
         )}
       </p>
 
-      {pkg.details && <p className="mt-2 text-gray-700">{tLocal(pkg.details)}</p>}
-      {pkg.benefits && <p className="mt-2 text-gray-700 italic">{tLocal(pkg.benefits)}</p>}
+      {pkg.details && (
+        <p className="mt-2 text-gray-600">{tx(pkg.details)}</p>
+      )}
+
+      {pkg.benefits && (
+        <p className="mt-2 text-gray-600 italic">{tx(pkg.benefits)}</p>
+      )}
 
       <Link
         to={`/pujas/${pujaId}/book/${pkg.key}`}
-        className="mt-6 block text-center bg-orange-700 text-white px-4 py-2 rounded-lg hover:bg-orange-800"
+        className="mt-5 block text-center bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700"
         style={{ fontFamily: "'Merriweather', serif" }}
       >
         Book Now
@@ -296,7 +338,9 @@ function PujaPackageCard({ pkg, pujaId }: PujaPackageCardProps) {
   );
 }
 
-/* VIDEO POPUP */
+/* ----------------------------------------------------------
+   Video Popup Component
+---------------------------------------------------------- */
 interface VideoPopupProps {
   url: string;
   onClose: () => void;
@@ -304,20 +348,27 @@ interface VideoPopupProps {
 
 function VideoPopup({ url, onClose }: VideoPopupProps) {
   return (
-    <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50"
+      onClick={onClose}
+    >
       <div
         className="bg-white rounded-xl w-full max-w-4xl overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-end p-3">
           <button onClick={onClose}>✕</button>
         </div>
 
         <div className="aspect-video">
-          {url.includes("youtube") || url.includes("youtu.be") ? (
-            <iframe className="w-full h-full" src={url.replace("watch?v=", "embed/")} allowFullScreen />
+          {url.includes("youtube") ? (
+            <iframe
+              className="w-full h-full"
+              src={url.replace("watch?v=", "embed/")}
+              allowFullScreen
+            />
           ) : (
-            <video src={url} controls className="w-full h-full bg-black" />
+            <video src={url} controls className="w-full h-full" />
           )}
         </div>
       </div>
