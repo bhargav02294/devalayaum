@@ -244,35 +244,36 @@ export default function ProductView() {
               </p>
             )}
 
-            {/* PRICE BOX — LUXURY STYLE */}
-            <div className="mt-6 p-5 bg-[#fff6e9] border border-orange-200 rounded-2xl relative">
+           {/* PRICE BOX — LUXURY STYLE (FIXED) */}
+<div className="mt-6 p-5 bg-[#fff6e9] border border-orange-200 rounded-2xl relative">
 
-              {/* Strike Price TOP-LEFT */}
-              {product.discountPrice && (
-                <span className="absolute top-3 left-3 text-gray-500 line-through font-[Merriweather]">
-                  ₹{product.price}
-                </span>
-              )}
+  {/* Strike Price — Clean Above Main Price */}
+  {product.discountPrice && (
+    <p className="text-sm text-gray-500 line-through font-[Merriweather] mb-1">
+      ₹{product.price}
+    </p>
+  )}
 
-              {/* Main Price */}
-              <span className="text-4xl font-[Merriweather] font-bold text-orange-900">
-                ₹{product.discountPrice || product.price}
-              </span>
+  {/* Main Price — Slightly Smaller */}
+  <p className="text-3xl font-[Merriweather] font-bold text-orange-900">
+    ₹{product.discountPrice || product.price}
+  </p>
 
-              {/* BUY BUTTON — GOLDEN GLOW */}
-              <div className="mt-5">
-                <button
-                  onClick={handleBuy}
-                  className="w-full py-3 rounded-xl text-white text-lg font-[Merriweather] 
-                    bg-gradient-to-r from-orange-600 to-orange-700 
-                    hover:from-orange-700 hover:to-orange-800
-                    shadow-[0_5px_25px_rgba(255,140,60,0.5)]
-                    transition-all"
-                >
-                  🛒 Buy Now
-                </button>
-              </div>
-            </div>
+  {/* Premium Golden Button */}
+  <div className="mt-4">
+    <button
+      onClick={handleBuy}
+      className="w-full py-2.5 rounded-xl text-white text-base font-[Merriweather]
+      bg-gradient-to-r from-orange-500 to-orange-600
+      hover:from-orange-600 hover:to-orange-700
+      shadow-[0_4px_18px_rgba(255,150,70,0.45)]
+      transition-all"
+    >
+      🛒 Buy Now
+    </button>
+  </div>
+</div>
+
 
             {/* SECTION: DESCRIPTION */}
             <div className="mt-10">
