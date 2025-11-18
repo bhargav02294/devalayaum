@@ -234,7 +234,12 @@ export default function TempleView() {
           {/* Right column: Darshan card */}
           <div className="space-y-7 lg:mt-[140px]">
             <div className={`bg-white rounded-2xl p-6 ${glow}`}>
-              <h3 className="text-lg font-semibold text-orange-700 mb-3">Darshan & Aarti</h3>
+<h3
+  className="text-2xl text-orange-800 font-semibold mb-4"
+  style={{ fontFamily: "'Merriweather', serif" }}
+>
+  Darshan & Aarti
+</h3>
 
               <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
 
