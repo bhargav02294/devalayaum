@@ -1,13 +1,28 @@
 // Footer.tsx
+import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Twitter, Youtube } from "lucide-react";
 import i18n from "../i18n";
 
 export default function Footer() {
-  const lang = i18n.language || "en";
+  // 🔥 Local state — forces re-render when language changes
+  const [lang, setLang] = useState(i18n.language || "en");
 
-  // 🌍 Multi-language words
+  useEffect(() => {
+    // When language changes → update local state → re-render instantly
+    const handler = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", handler);
+
+    return () => {
+      i18n.off("languageChanged", handler);
+    };
+  }, []);
+
+  // Translation helper
+  const t = (obj: Record<string, string>) => obj[lang] || obj["en"];
+
+  // 🌍 Footer Text
   const text = {
     quickLinks: {
       en: "Quick Links",
@@ -67,127 +82,56 @@ export default function Footer() {
     },
   };
 
-  const t = (obj: Record<string, string>) => obj[lang] ?? obj["en"];
-
   return (
     <footer className="relative bg-gradient-to-b from-[#fff3e0] to-white text-gray-800 pt-12 pb-6 mt-20 border-t border-orange-300/40">
 
-      {/* Small top glow line */}
+      {/* TOP LINE SOFT GLOW */}
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-orange-400/50 to-transparent"></div>
 
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* ⭐ Logo Section */}
+        {/* LOGO SECTION */}
         <div className="text-center mb-10">
           <img
             src={logo}
             alt="Devalayaum Logo"
             className="w-20 h-20 mx-auto rounded-full shadow-lg border-2 border-white"
           />
-
           <h3 className="mt-3 text-2xl font-bold text-orange-700 tracking-wide font-[Judson]">
             Devalayaum
           </h3>
-
           <p className="text-gray-600 max-w-lg mx-auto mt-1 text-sm leading-relaxed">
             {t(text.aboutLine)}
           </p>
         </div>
 
-        {/* ⭐ 4 Columns */}
+        {/* 4 COLUMNS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center md:text-left">
 
-          {/* Column 1 */}
-          {/* 📍 Column 1 – Quick Links */}
-<div>
-  <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
-    {t(text.quickLinks)}
-  </h4>
+          {/* QUICK LINKS */}
+          <div>
+            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+              {t(text.quickLinks)}
+            </h4>
+            <ul className="space-y-2 text-sm">
+              {[
+                [{ en: "Home", hi: "होम", mr: "मुख्यपृष्ठ", ta: "முகப்பு", te: "హోమ్", bn: "হোম" }, "/"],
+                [{ en: "Temples" , hi:"मंदिर",mr:"मंदिरे",ta:"கோயில்கள்",te:"దేవాలయాలు",bn:"মন্দির"}, "/temples"],
+                [{ en: "Pujas", hi: "पूजा", mr: "पूजा", ta:"பூஜைகள்",te:"పూజలు",bn:"পূজা"}, "/pujas"],
+                [{ en: "Aarti / Katha", hi: "आरती / कथा", mr:"आरती / कथा", ta:"ஆரத்தி / கதை",te:"ఆర్తి / కథ",bn:"আরতি / কথা"}, "/aarti"],
+                [{ en: "Chadhava", hi:"चढ़ावा",mr:"चढावा",ta:"படையல்",te:"చడావా",bn:"চাদাভা"}, "/donations"],
+                [{ en: "Products", hi: "उत्पाद", mr:"उत्पादने",ta:"பொருட்கள்",te:"ఉత్పత్తులు",bn:"পণ্য"}, "/products"],
+              ].map(([label, link]) => (
+                <li key={link as string}>
+                  <Link to={link as string} className="text-gray-700 hover:text-orange-700 transition">
+                    {t(label as Record<string, string>)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-  <ul className="space-y-2 text-sm">
-
-    {[
-      {
-        label: {
-          en: "Home",
-          hi: "होम",
-          mr: "मुख्यपृष्ठ",
-          ta: "முகப்பு",
-          te: "హోమ్",
-          bn: "হোম",
-        },
-        link: "/",
-      },
-      {
-        label: {
-          en: "Temples",
-          hi: "मंदिर",
-          mr: "मंदिरे",
-          ta: "கோயில்கள்",
-          te: "దేవాలయాలు",
-          bn: "মন্দির",
-        },
-        link: "/temples",
-      },
-      {
-        label: {
-          en: "Pujas",
-          hi: "पूजा",
-          mr: "पूजा",
-          ta: "பூஜைகள்",
-          te: "పూజలు",
-          bn: "পূজা",
-        },
-        link: "/pujas",
-      },
-      {
-        label: {
-          en: "Aarti / Katha",
-          hi: "आरती / कथा",
-          mr: "आरती / कथा",
-          ta: "ஆரத்தி / கதை",
-          te: "ఆర్తి / కథ",
-          bn: "আরতি / কথা",
-        },
-        link: "/aarti",
-      },
-      {
-        label: {
-          en: "Chadhava",
-          hi: "चढ़ावा",
-          mr: "चढावा",
-          ta: "படையல்",
-          te: "చడావా",
-          bn: "চাদাভা",
-        },
-        link: "/donations",
-      },
-      {
-        label: {
-          en: "Products",
-          hi: "उत्पाद",
-          mr: "उत्पादने",
-          ta: "பொருட்கள்",
-          te: "ఉత్పత్తులు",
-          bn: "পণ্য",
-        },
-        link: "/products",
-      },
-    ].map((item) => (
-      <li key={item.link}>
-        <Link
-          to={item.link}
-          className="text-gray-700 hover:text-orange-700 transition"
-        >
-          {t(item.label)}
-        </Link>
-      </li>
-    ))}
-  </ul>
-</div>
-
-
-          {/* Column 2 */}
+          {/* POLICIES */}
           <div>
             <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
               {t(text.policies)}
@@ -199,7 +143,7 @@ export default function Footer() {
                 ["Shipping Policy", "/shipping"],
                 ["Cancellation & Refunds", "/cancellation-refund"],
               ].map(([name, link]) => (
-                <li key={name}>
+                <li key={link}>
                   <Link to={link} className="text-gray-700 hover:text-orange-700 transition">
                     {name}
                   </Link>
@@ -208,7 +152,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3 */}
+          {/* FOLLOW US */}
           <div>
             <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
               {t(text.followUs)}
@@ -222,7 +166,7 @@ export default function Footer() {
             <p className="text-xs text-gray-500">{t(text.dailyUpdates)}</p>
           </div>
 
-          {/* Column 4 */}
+          {/* CONTACT */}
           <div>
             <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
               {t(text.contactUs)}
@@ -237,10 +181,11 @@ export default function Footer() {
 
         </div>
 
-        {/* Bottom Line */}
+        {/* BOTTOM */}
         <div className="text-center mt-10 pt-4 border-t border-orange-200">
           <p className="text-sm text-gray-700">
-            © {new Date().getFullYear()} <span className="font-semibold text-orange-700">Devalayaum</span>. All rights reserved.
+            © {new Date().getFullYear()}{" "}
+            <span className="font-semibold text-orange-700">Devalayaum</span>. All rights reserved.
           </p>
         </div>
 
