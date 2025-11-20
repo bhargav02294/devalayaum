@@ -2,65 +2,197 @@
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Twitter, Youtube } from "lucide-react";
+import i18n from "../i18n";
 
 export default function Footer() {
-  return (
-    <footer className="relative bg-gradient-to-b from-[#fff6eb] to-white text-gray-800 pt-20 pb-10 mt-28 border-t border-orange-300/40">
+  const lang = i18n.language || "en";
 
-      {/* ✨ Soft Top Divider */}
-      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-orange-400/50 to-transparent"></div>
+  // 🌍 Multi-language words
+  const text = {
+    quickLinks: {
+      en: "Quick Links",
+      hi: "त्वरित लिंक",
+      mr: "जलद दुवे",
+      ta: "விரைவு இணைப்புகள்",
+      te: "త్వరిత లింకులు",
+      bn: "দ্রুত লিঙ্ক",
+    },
+    policies: {
+      en: "Policies",
+      hi: "नीतियाँ",
+      mr: "धोरणे",
+      ta: "கொள்கைகள்",
+      te: "పాలసీలు",
+      bn: "নীতিমালা",
+    },
+    followUs: {
+      en: "Follow Us",
+      hi: "हमें फ़ॉलो करें",
+      mr: "आम्हाला फॉलो करा",
+      ta: "எங்களை பின்தொடரவும்",
+      te: "మమ్మల్ని అనుసరించండి",
+      bn: "আমাদের অনুসরণ করুন",
+    },
+    contactUs: {
+      en: "Contact Us",
+      hi: "संपर्क करें",
+      mr: "आमच्याशी संपर्क साधा",
+      ta: "எங்களை தொடர்பு கொள்ள",
+      te: "మమ్మల్ని సంప్రదించండి",
+      bn: "যোগাযোগ করুন",
+    },
+    aboutLine: {
+      en: "Your trusted spiritual platform for Temples, Pujas, Donations, Aartis, and Divine Products.",
+      hi: "मंदिर, पूजा, दान, आरती और पवित्र उत्पादों के लिए आपका विश्वसनीय आध्यात्मिक प्लेटफ़ॉर्म।",
+      mr: "मंदिरे, पूजा, दान, आरती आणि पवित्र वस्तूंसाठी तुमचा विश्वासार्ह आध्यात्मिक प्लॅटफॉर्म.",
+      ta: "கோயில்கள், பூஜைகள், தானங்கள், ஆரத்தி மற்றும் தெய்வீக பொருட்களுக்கான உங்கள் நம்பகமான ஆன்மீக தளம்.",
+      te: "దేవాలయాలు, పూజలు, దానాలు, ఆర్తులు, దైవిక ఉత్పత్తుల కోసం మీ నమ్మదగిన ఆధ్యాత్మిక వేదిక.",
+      bn: "মন্দির, পূজা, দান, আরতি ও পবিত্র পণ্যের জন্য আপনার বিশ্বস্ত আধ্যাত্মিক প্ল্যাটফর্ম।",
+    },
+    dailyUpdates: {
+      en: "Daily spiritual updates",
+      hi: "दैनिक आध्यात्मिक अपडेट",
+      mr: "दैनिक आध्यात्मिक अपडेट",
+      ta: "தினசரி ஆன்மீக புதுப்பிப்பு",
+      te: "దైనందిన ఆధ్యాత్మిక అప్డేట్స్",
+      bn: "প্রতিদিন আধ্যাত্মিক আপডেট",
+    },
+    whatsapp: {
+      en: "WhatsApp Support: 9 AM – 7 PM",
+      hi: "व्हाट्सऐप सहायता: सुबह 9 से शाम 7 बजे तक",
+      mr: "व्हाट्सअॅप समर्थन: सकाळी 9 ते संध्याकाळी 7",
+      ta: "வாட்ஸ்அப் ஆதரவு: காலை 9 – மாலை 7",
+      te: "వాట్సాప్ సహాయం: ఉదయం 9 – సాయంత్రం 7",
+      bn: "হোয়াটসঅ্যাপ সহায়তা: সকাল ৯ – সন্ধ্যা ৭",
+    },
+  };
+
+  const t = (obj: Record<string, string>) => obj[lang] ?? obj["en"];
+
+  return (
+    <footer className="relative bg-gradient-to-b from-[#fff3e0] to-white text-gray-800 pt-12 pb-6 mt-20 border-t border-orange-300/40">
+
+      {/* Small top glow line */}
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-orange-400/50 to-transparent"></div>
 
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* 🔱 Logo Section */}
-        <div className="text-center mb-12">
+        {/* ⭐ Logo Section */}
+        <div className="text-center mb-10">
           <img
             src={logo}
             alt="Devalayaum Logo"
-            className="w-24 h-24 mx-auto rounded-full shadow-xl border-4 border-white"
+            className="w-20 h-20 mx-auto rounded-full shadow-lg border-2 border-white"
           />
 
-          <h3 className="mt-4 text-2xl font-bold text-orange-700 tracking-wide font-[Judson]">
+          <h3 className="mt-3 text-2xl font-bold text-orange-700 tracking-wide font-[Judson]">
             Devalayaum
           </h3>
 
-          <p className="text-gray-600 max-w-xl mx-auto mt-2 leading-relaxed">
-            Your trusted spiritual platform for Temples, Pujas, Donations, Aartis, and Divine Products.
+          <p className="text-gray-600 max-w-lg mx-auto mt-1 text-sm leading-relaxed">
+            {t(text.aboutLine)}
           </p>
         </div>
 
-        {/* 📌 Main Footer Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mt-10 text-center md:text-left">
+        {/* ⭐ 4 Columns */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center md:text-left">
 
+          {/* Column 1 */}
           {/* 📍 Column 1 – Quick Links */}
-          <div>
-            <h4 className="text-xl font-semibold text-orange-700 mb-4 font-[Judson]">Quick Links</h4>
-            <ul className="space-y-3 text-sm">
-              {[
-                ["Home", "/"],
-                ["Temples", "/temples"],
-                ["Pujas", "/pujas"],
-                ["Aarti / Katha", "/aarti"],
-                ["Donate", "/donations"],
-                ["Products", "/products"],
-              ].map(([name, link]) => (
-                <li key={name}>
-                  <Link
-                    to={link}
-                    className="text-gray-700 hover:text-orange-700 transition relative group"
-                  >
-                    {name}
-                    <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+<div>
+  <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+    {t(text.quickLinks)}
+  </h4>
 
-          {/* 📍 Column 2 – Policies */}
+  <ul className="space-y-2 text-sm">
+
+    {[
+      {
+        label: {
+          en: "Home",
+          hi: "होम",
+          mr: "मुख्यपृष्ठ",
+          ta: "முகப்பு",
+          te: "హోమ్",
+          bn: "হোম",
+        },
+        link: "/",
+      },
+      {
+        label: {
+          en: "Temples",
+          hi: "मंदिर",
+          mr: "मंदिरे",
+          ta: "கோயில்கள்",
+          te: "దేవాలయాలు",
+          bn: "মন্দির",
+        },
+        link: "/temples",
+      },
+      {
+        label: {
+          en: "Pujas",
+          hi: "पूजा",
+          mr: "पूजा",
+          ta: "பூஜைகள்",
+          te: "పూజలు",
+          bn: "পূজা",
+        },
+        link: "/pujas",
+      },
+      {
+        label: {
+          en: "Aarti / Katha",
+          hi: "आरती / कथा",
+          mr: "आरती / कथा",
+          ta: "ஆரத்தி / கதை",
+          te: "ఆర్తి / కథ",
+          bn: "আরতি / কথা",
+        },
+        link: "/aarti",
+      },
+      {
+        label: {
+          en: "Chadhava",
+          hi: "चढ़ावा",
+          mr: "चढावा",
+          ta: "படையல்",
+          te: "చడావా",
+          bn: "চাদাভা",
+        },
+        link: "/donations",
+      },
+      {
+        label: {
+          en: "Products",
+          hi: "उत्पाद",
+          mr: "उत्पादने",
+          ta: "பொருட்கள்",
+          te: "ఉత్పత్తులు",
+          bn: "পণ্য",
+        },
+        link: "/products",
+      },
+    ].map((item) => (
+      <li key={item.link}>
+        <Link
+          to={item.link}
+          className="text-gray-700 hover:text-orange-700 transition"
+        >
+          {t(item.label)}
+        </Link>
+      </li>
+    ))}
+  </ul>
+</div>
+
+
+          {/* Column 2 */}
           <div>
-            <h4 className="text-xl font-semibold text-orange-700 mb-4 font-[Judson]">Policies</h4>
-            <ul className="space-y-3 text-sm">
+            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+              {t(text.policies)}
+            </h4>
+            <ul className="space-y-2 text-sm">
               {[
                 ["Terms & Conditions", "/terms"],
                 ["Privacy Policy", "/privacy"],
@@ -68,46 +200,45 @@ export default function Footer() {
                 ["Cancellation & Refunds", "/cancellation-refund"],
               ].map(([name, link]) => (
                 <li key={name}>
-                  <Link
-                    to={link}
-                    className="text-gray-700 hover:text-orange-700 transition relative group"
-                  >
+                  <Link to={link} className="text-gray-700 hover:text-orange-700 transition">
                     {name}
-                    <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-orange-600 transition-all duration-300 group-hover:w-full"></span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* 📍 Column 3 – Connect */}
+          {/* Column 3 */}
           <div>
-            <h4 className="text-xl font-semibold text-orange-700 mb-4 font-[Judson]">Follow Us</h4>
-            <div className="flex justify-center md:justify-start gap-5 mb-4">
-              <a href="#" className="hover:text-orange-700 transition transform hover:scale-110"><Instagram size={26} /></a>
-              <a href="#" className="hover:text-orange-700 transition transform hover:scale-110"><Facebook size={26} /></a>
-              <a href="#" className="hover:text-orange-700 transition transform hover:scale-110"><Twitter size={26} /></a>
-              <a href="#" className="hover:text-orange-700 transition transform hover:scale-110"><Youtube size={26} /></a>
+            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+              {t(text.followUs)}
+            </h4>
+            <div className="flex justify-center md:justify-start gap-4 mb-2">
+              <Instagram className="hover:text-orange-700 cursor-pointer" />
+              <Facebook className="hover:text-orange-700 cursor-pointer" />
+              <Twitter className="hover:text-orange-700 cursor-pointer" />
+              <Youtube className="hover:text-orange-700 cursor-pointer" />
             </div>
-            <p className="text-xs text-gray-500">Daily spiritual updates</p>
+            <p className="text-xs text-gray-500">{t(text.dailyUpdates)}</p>
           </div>
 
-          {/* 📍 Column 4 – Contact */}
+          {/* Column 4 */}
           <div>
-            <h4 className="text-xl font-semibold text-orange-700 mb-4 font-[Judson]">Contact Us</h4>
-            <ul className="text-sm space-y-2 text-gray-700">
+            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+              {t(text.contactUs)}
+            </h4>
+            <ul className="text-sm space-y-1 text-gray-700">
               <li>📍 Nashik, Maharashtra, India</li>
               <li>📧 contact@devalayaum.in</li>
               <li>📞 +91 9876543210</li>
             </ul>
-            <p className="text-xs mt-3 text-gray-500">
-              WhatsApp Support: 9 AM – 7 PM
-            </p>
+            <p className="text-xs mt-2 text-gray-500">{t(text.whatsapp)}</p>
           </div>
+
         </div>
 
-        {/* ✨ Bottom Section */}
-        <div className="text-center mt-16 pt-6 border-t border-orange-200/60">
+        {/* Bottom Line */}
+        <div className="text-center mt-10 pt-4 border-t border-orange-200">
           <p className="text-sm text-gray-700">
             © {new Date().getFullYear()} <span className="font-semibold text-orange-700">Devalayaum</span>. All rights reserved.
           </p>
