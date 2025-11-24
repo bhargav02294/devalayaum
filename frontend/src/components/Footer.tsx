@@ -67,7 +67,7 @@ export default function Footer() {
     whatsapp: {
       en: "WhatsApp Support: 9 AM – 7 PM",
       hi: "व्हाट्सऐप सहायता: सुबह 9 से शाम 7 बजे तक",
-      mr: "व्हाट्सअॅप समर्थन: सकाळी 9 ते संध्याकाळी 7",
+      mr: "व्हाट्सअप समर्थन: सकाळी 9 ते संध्याकाळी 7",
       ta: "வாட்ஸ்அப் ஆதரவு: காலை 9 – மாலை 7",
       te: "వాట్సాప్ సహాయం: ఉదయం 9 – సాయంత్రం 7",
       bn: "হোয়াটসঅ্যাপ সহায়তা: সকাল ৯ – সন্ধ্যা ৭",
@@ -178,11 +178,12 @@ export default function Footer() {
             </ul>
             
           </div>
-          <p className="text-xs mt-2 text-gray-500 font-[Poppins]">
-              {t(text.whatsapp)}
-            </p>
+          
 
         </div>
+        <p className="text-xs mt-2 text-gray-500 font-[Poppins]">
+              {t(text.whatsapp)}
+            </p>
 
         {/* BOTTOM AREA */}
         <div className="text-center mt-12 pt-5 border-t border-orange-200/60">
