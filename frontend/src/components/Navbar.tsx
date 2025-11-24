@@ -97,7 +97,7 @@ export default function Navbar() {
 
             {langOpen && (
               <div className="absolute right-0 w-40 mt-2 bg-white shadow-lg rounded-xl border overflow-hidden z-50">
-                {(["en", "hi", "mr",  {/*      "te", "ta", "bn"    LANGUAGE SWITCH */}] as LangCode[]).map((code) => (
+                {(["en", "hi", "mr"] as LangCode[]).map((code) => (
                   <button
                     key={code}
                     onClick={() => {
