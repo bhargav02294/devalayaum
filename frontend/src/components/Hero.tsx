@@ -1,10 +1,8 @@
-// src/components/Hero.tsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import i18n from "../i18n";
 
-type LangCode = "en" | "hi" | "mr" | "ta" | "te" | "bn";
-type LangText = Record<LangCode, string>;
+type LangText = Record<string, string>;
 
 interface Slide {
   title: LangText;
@@ -15,11 +13,13 @@ interface Slide {
 }
 
 export default function Hero() {
-  const lang = (i18n.language || "en") as LangCode;
-  const [, forceRerender] = useState(false);
+  const lang = i18n.language || "en";
+  const [, setRender] = useState(false);
+  const [current, setCurrent] = useState(0);
 
+  // Rerender on language change
   useEffect(() => {
-    const handler = () => forceRerender((v) => !v);
+    const handler = () => setRender((v) => !v);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
@@ -36,18 +36,18 @@ export default function Hero() {
       },
       text: {
         en: "Explore ancient temples & divine places across India.",
-        hi: "भारत के प्राचीन मंदिरों और दिव्य स्थलों का अन्वेषण करें।",
+        hi: "भारत भर के प्राचीन मंदिरों और दिव्य स्थानों का अन्वेषण करें।",
         mr: "भारतातील प्राचीन मंदिरे आणि पवित्र स्थळे शोधा.",
-        ta: "பண்டைய கோவில்களை இந்தியா முழுவதும் காணலாம்.",
+        ta: "இந்தியாவின் பண்டைய கோவில்களையும் தெய்வீக இடங்களையும் பார்க்கவும்.",
         te: "భారతదేశంలోని ప్రాచీన దేవాలయాలను అన్వేషించండి.",
-        bn: "ভারতের প্রাচীন মন্দিরগুলিকে অন্বেষণ করুন।",
+        bn: "ভারতের প্রাচীন মন্দির ও পবিত্র স্থানগুলি অন্বেষণ করুন।",
       },
       btn: {
         en: "Explore Temples",
         hi: "मंदिर देखें",
         mr: "मंदिर पहा",
         ta: "கோயில்களை பார்க்கவும்",
-        te: "దేవాలయాలను చూడండి",
+        te: "దేవాలయాలను సందర్శించండి",
         bn: "মন্দির দেখুন",
       },
       link: "/temples",
@@ -59,24 +59,24 @@ export default function Hero() {
         en: "Book Authentic Pujas",
         hi: "सत्य पूजा बुक करें",
         mr: "अस्सल पूजा बुक करा",
-        ta: "உண்மையான பூஜைகளைக் பதிவு செய்யுங்கள்",
+        ta: "உண்மையான பூஜைகளைப் பதிவு செய்யுங்கள்",
         te: "ప్రామాణిక పూజలను బుక్ చేయండి",
         bn: "আসল পূজা বুক করুন",
       },
       text: {
-        en: "Rituals performed by verified priests.",
-        hi: "सत्यापित पुजारियों द्वारा पूजा।",
-        mr: "प्रमाणित पुजार्‍यांकडून पूजा.",
-        ta: "சான்றளிக்கப்பட்ட பூஜாரிகள் செய்யும் பூஜை.",
+        en: "Perform rituals done by verified priests.",
+        hi: "सत्यापित पुजारियों द्वारा की गई पूजा करें।",
+        mr: "प्रमाणित पुजार्‍यांकडून पूजा करून घ्या.",
+        ta: "உறுதிப்படுத்தப்பட்ட பூஜாரிகள் செய்யும் பூஜைகள்.",
         te: "ధృవీకరించిన పూజారులు చేసే పూజలు.",
-        bn: "যাচাইকৃত পুরোহিতদের দ্বারা করা পূজা।",
+        bn: "যাচাইকৃত পুরোহিতদের দ্বারা সম্পন্ন পূজা।",
       },
       btn: {
         en: "Book Puja",
         hi: "पूजा बुक करें",
         mr: "पूजा बुक करा",
         ta: "பூஜை பதிவு",
-        te: "పూజ బుక్ చేయండి",
+        te: "పూజను బుక్ చేయండి",
         bn: "পূজা বুক করুন",
       },
       link: "/pujas",
@@ -88,16 +88,16 @@ export default function Hero() {
         en: "Support with Donation",
         hi: "दान से सहयोग करें",
         mr: "दानाने मदत करा",
-        ta: "நன்கொடை அளித்து உதவுங்கள்",
-        te: "దానం చేసి సహాయం చేయండి",
+        ta: "நன்கொடை அளித்து ஆதரிக்கவும்",
+        te: "దానం చేసి సహకరించండి",
         bn: "দান করে সহায়তা করুন",
       },
       text: {
-        en: "Help temples & seva activities flourish.",
-        hi: "मंदिर और सेवा गतिविधियों को बढ़ावा दें।",
-        mr: "मंदिरे आणि सेवा उपक्रमांना मदत करा.",
-        ta: "கோவில்களும் சேவைகளும் முன்னேற உதவுங்கள்.",
-        te: "దేవాలయాలు మరియు సేవా కార్యక్రమాలను ప్రోత్సహించండి.",
+        en: "Help temples, trusts & seva activities flourish.",
+        hi: "मंदिरों, ट्रस्ट और सेवा गतिविधियों को बढ़ने में मदद करें।",
+        mr: "मंदिर, ट्रस्ट आणि सेवा उपक्रमांना मदत करा.",
+        ta: "கோவில்கள் மற்றும் சேவை நடவடிக்கைகளுக்கு ஆதரவளிக்கவும்.",
+        te: "దేవాలయాలు మరియు సేవా కార్యక్రమాలకు సహాయపడండి.",
         bn: "মন্দির ও সেবামূলক কার্যক্রমকে সমর্থন করুন।",
       },
       btn: {
@@ -108,7 +108,7 @@ export default function Hero() {
         te: "ఇప్పుడే దానం చేయండి",
         bn: "এখনই দান করুন",
       },
-      link: "/donations",
+      link: "/donate",
       img: "/herodonation.png",
     },
 
@@ -122,12 +122,12 @@ export default function Hero() {
         bn: "আধ্যাত্মিক পণ্য",
       },
       text: {
-        en: "Pure malas, idols & pooja items.",
-        hi: "शुद्ध माला, मूर्तियां और पूजा सामग्री।",
-        mr: "शुद्ध माळा, मूर्ती आणि पूजा साहित्य.",
-        ta: "தூய மாலைகள், சிலைகள் மற்றும் பூஜை பொருட்கள்.",
-        te: "పవిత్ర మాలలు, విగ్రహాలు మరియు పూజా వస్తువులు.",
-        bn: "শুদ্ধ মালা, মূর্তি ও পূজা সামগ্রী।",
+        en: "Pure malas, idols & sacred items at your doorstep.",
+        hi: "शुद्ध माला, मूर्तियां और पवित्र वस्तुएं आपके घर तक।",
+        mr: "शुद्ध माळा, मूर्ती आणि पवित्र वस्तू.",
+        ta: "தூய மாலைகள், சிலைகள் மற்றும் பவித்திரப் பொருட்கள்.",
+        te: "పవిత్ర మాలలు, విగ్రహాలు మరియు ఆధ్యాత్మిక వస్తువులు.",
+        bn: "শুদ্ধ মালা, মূর্তি ও পবিত্র সামগ্রী।",
       },
       btn: {
         en: "Shop Now",
@@ -140,77 +140,106 @@ export default function Hero() {
       link: "/products",
       img: "/heroproduct.png",
     },
+
+    {
+      title: {
+        en: "Aarti & Katha",
+        hi: "आरती और कथा",
+        mr: "आरती आणि कथा",
+        ta: "ஆரத்தியும் கதையும்",
+        te: "ఆర్తి & కథ",
+        bn: "আরতি ও কথা",
+      },
+      text: {
+        en: "Read, listen & watch spiritual Aartis & Kathas.",
+        hi: "आध्यात्मिक आरती और कथा पढ़ें, सुनें और देखें।",
+        mr: "आध्यात्मिक आरती आणि कथा वाचा, ऐका आणि पाहा.",
+        ta: "ஆன்மீக ஆரத்தி மற்றும் கதைகளைக் கேட்டு பாருங்கள்.",
+        te: "ఆధ్యాత్మిక ఆర్తులు మరియు కథలు చదవండి, వినండి.",
+        bn: "আধ্যাত্মিক আরতি ও কথা পড়ুন, শুনুন, দেখুন।",
+      },
+      btn: {
+        en: "View Aarti",
+        hi: "आरती देखें",
+        mr: "आरती पहा",
+        ta: "ஆரத்தி பார்க்க",
+        te: "ఆర్తి చూడండి",
+        bn: "আরতি দেখুন",
+      },
+      link: "/aarti",
+      img: "/heroaarti.png",
+    },
   ];
 
-  const [current, setCurrent] = useState(0);
-
+  // Auto-slide
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((p) => (p + 1) % slides.length);
-    }, 5500);
+    }, 6000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="relative w-full h-[85vh] md:h-[92vh] overflow-hidden">
+    <div className="relative w-full h-[85vh] md:h-[100vh] overflow-hidden bg-black">
 
-      {slides.map((slide, index) => (
+      {slides.map((s, i) => (
         <div
-          key={index}
-          className={`absolute inset-0 transition-opacity duration-700 ${
-            current === index ? "opacity-100 z-10" : "opacity-0 z-0"
+          key={i}
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+            current === i ? "opacity-100 z-20" : "opacity-0 z-0"
           }`}
         >
-          {/* Background Image */}
+          {/* Image */}
           <img
-            src={slide.img}
-            alt={slide.title[lang]}
-            className="w-full h-full object-cover brightness-[0.65]"
+            src={s.img}
+            alt={s.title[lang]}
+            className="w-full h-full object-contain md:object-contain mx-auto"
           />
 
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent"></div>
+          {/* Overlay Gradient (for text readability) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
-          {/* TEXT AREA */}
-          <div
-            className="
-              absolute top-1/2 -translate-y-1/2 
-              left-[5%] md:left-[8%] 
-              max-w-[85%] md:max-w-[42%]
-            "
-          >
-            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight font-[Marcellus] drop-shadow-2xl">
-              {slide.title[lang]}
+          {/* Text */}
+          <div className="absolute left-6 top-[55%] md:top-[50%] -translate-y-1/2 max-w-[90%] md:max-w-[40%]">
+
+            <h1
+              className="text-4xl md:text-6xl font-bold text-white drop-shadow-2xl leading-tight"
+              style={{ fontFamily: "'Marcellus', serif" }}
+            >
+              {s.title[lang]}
             </h1>
 
-            <p className="mt-4 text-lg md:text-2xl text-gray-200 leading-relaxed font-[Merriweather]">
-              {slide.text[lang]}
+            <p
+              className="mt-4 text-lg md:text-2xl text-gray-200 leading-relaxed drop-shadow-xl"
+              style={{ fontFamily: "'Merriweather', serif" }}
+            >
+              {s.text[lang]}
             </p>
 
             <Link
-              to={slide.link}
-              className="
-                inline-block mt-6 px-8 py-3 md:px-10 md:py-4
-                rounded-full text-white text-lg md:text-xl
-                bg-gradient-to-r from-orange-600 to-yellow-500
-                shadow-[0_5px_35px_rgba(255,180,80,0.55)]
-                hover:scale-[1.05] transition-all font-[Merriweather]
-              "
+              to={s.link}
+              className="inline-block mt-6 px-8 py-3 rounded-full text-white text-lg
+              bg-gradient-to-r from-[#d58a2d] via-[#e0a03f] to-[#c97a1f]
+              hover:brightness-110 transition-all shadow-[0_5px_25px_rgba(255,180,80,0.55)]"
+              style={{ fontFamily: "'Merriweather', serif" }}
             >
-              {slide.btn[lang]}
+              {s.btn[lang]}
             </Link>
+
           </div>
         </div>
       ))}
 
       {/* Indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-30">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
             className={`w-3 h-3 rounded-full transition-all ${
-              current === i ? "bg-orange-500 scale-125" : "bg-white/50 hover:bg-white"
+              current === i
+                ? "bg-orange-500 scale-125"
+                : "bg-white/60 hover:bg-white"
             }`}
           ></button>
         ))}
