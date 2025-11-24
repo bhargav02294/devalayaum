@@ -1,4 +1,3 @@
-// Footer.tsx
 import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
@@ -6,23 +5,16 @@ import { Instagram, Facebook, Twitter, Youtube } from "lucide-react";
 import i18n from "../i18n";
 
 export default function Footer() {
-  // 🔥 Local state — forces re-render when language changes
   const [lang, setLang] = useState(i18n.language || "en");
 
   useEffect(() => {
-    // When language changes → update local state → re-render instantly
     const handler = (lng: string) => setLang(lng);
     i18n.on("languageChanged", handler);
-
-    return () => {
-      i18n.off("languageChanged", handler);
-    };
+    return () => i18n.off("languageChanged", handler);
   }, []);
 
-  // Translation helper
   const t = (obj: Record<string, string>) => obj[lang] || obj["en"];
 
-  // 🌍 Footer Text
   const text = {
     quickLinks: {
       en: "Quick Links",
@@ -83,47 +75,52 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gradient-to-b from-[#fff3e0] to-white text-gray-800 pt-12 pb-6 mt-20 border-t border-orange-300/40">
-
-      {/* TOP LINE SOFT GLOW */}
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-orange-400/50 to-transparent"></div>
+    <footer
+      className="relative mt-20 bg-gradient-to-b from-[#fff3e0] to-white 
+                 text-gray-800 pt-14 pb-8 border-t border-orange-200/50"
+    >
+      {/* Glow Divider */}
+      <div className="absolute top-0 w-full h-[3px] bg-gradient-to-r from-transparent via-orange-400/50 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* LOGO SECTION */}
-        <div className="text-center mb-10">
+        {/* LOGO + ABOUT */}
+        <div className="text-center mb-12">
           <img
             src={logo}
             alt="Devalayaum Logo"
-            className="w-20 h-20 mx-auto rounded-full shadow-lg border-2 border-white"
+            className="w-20 h-20 mx-auto rounded-full shadow-xl border-2 border-white"
           />
-          <h3 className="mt-3 text-2xl font-bold text-orange-700 tracking-wide font-[Judson]">
+          <h3 className="mt-3 text-2xl font-bold text-orange-700 tracking-wide font-[Marcellus]">
             Devalayaum
           </h3>
-          <p className="text-gray-600 max-w-lg mx-auto mt-1 text-sm leading-relaxed">
+          <p className="text-gray-600 max-w-xl mx-auto mt-2 text-sm font-[Poppins] leading-relaxed">
             {t(text.aboutLine)}
           </p>
         </div>
 
-        {/* 4 COLUMNS */}
+        {/* MAIN FOUR COLUMNS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center md:text-left">
 
           {/* QUICK LINKS */}
           <div>
-            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Marcellus]">
               {t(text.quickLinks)}
             </h4>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-sm font-[Poppins]">
               {[
-                [{ en: "Home", hi: "होम", mr: "मुख्यपृष्ठ", ta: "முகப்பு", te: "హోమ్", bn: "হোম" }, "/"],
-                [{ en: "Temples" , hi:"मंदिर",mr:"मंदिरे",ta:"கோயில்கள்",te:"దేవాలయాలు",bn:"মন্দির"}, "/temples"],
-                [{ en: "Pujas", hi: "पूजा", mr: "पूजा", ta:"பூஜைகள்",te:"పూజలు",bn:"পূজা"}, "/pujas"],
-                [{ en: "Aarti / Katha", hi: "आरती / कथा", mr:"आरती / कथा", ta:"ஆரத்தி / கதை",te:"ఆర్తి / కథ",bn:"আরতি / কথা"}, "/aarti"],
-                [{ en: "Chadhava", hi:"चढ़ावा",mr:"चढावा",ta:"படையல்",te:"చడావా",bn:"চাদাভা"}, "/donations"],
-                [{ en: "Products", hi: "उत्पाद", mr:"उत्पादने",ta:"பொருட்கள்",te:"ఉత్పత్తులు",bn:"পণ্য"}, "/products"],
+                [{ en: "Home" }, "/"],
+                [{ en: "Temples" }, "/temples"],
+                [{ en: "Pujas" }, "/pujas"],
+                [{ en: "Aarti / Katha" }, "/aarti"],
+                [{ en: "Chadhava" }, "/donations"],
+                [{ en: "Products" }, "/products"],
               ].map(([label, link]) => (
                 <li key={link as string}>
-                  <Link to={link as string} className="text-gray-700 hover:text-orange-700 transition">
+                  <Link
+                    to={link as string}
+                    className="hover:text-orange-700 transition"
+                  >
                     {t(label as Record<string, string>)}
                   </Link>
                 </li>
@@ -133,62 +130,68 @@ export default function Footer() {
 
           {/* POLICIES */}
           <div>
-            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Marcellus]">
               {t(text.policies)}
             </h4>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-sm font-[Poppins]">
               {[
                 ["Terms & Conditions", "/terms"],
                 ["Privacy Policy", "/privacy"],
                 ["Shipping Policy", "/shipping"],
-                ["Cancellation & Refunds", "/cancellation-refund"],
-              ].map(([name, link]) => (
+                ["Cancellation & Refund", "/cancellation-refund"],
+              ].map(([label, link]) => (
                 <li key={link}>
-                  <Link to={link} className="text-gray-700 hover:text-orange-700 transition">
-                    {name}
+                  <Link to={link} className="hover:text-orange-700 transition">
+                    {label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* FOLLOW US */}
+          {/* SOCIAL */}
           <div>
-            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Marcellus]">
               {t(text.followUs)}
             </h4>
-            <div className="flex justify-center md:justify-start gap-4 mb-2">
-              <Instagram className="hover:text-orange-700 cursor-pointer" />
-              <Facebook className="hover:text-orange-700 cursor-pointer" />
-              <Twitter className="hover:text-orange-700 cursor-pointer" />
-              <Youtube className="hover:text-orange-700 cursor-pointer" />
+            <div className="flex justify-center md:justify-start gap-4 text-gray-700">
+              {[Instagram, Facebook, Twitter, Youtube].map((Icon, i) => (
+                <Icon
+                  key={i}
+                  className="cursor-pointer hover:text-orange-700 transition"
+                />
+              ))}
             </div>
-            <p className="text-xs text-gray-500">{t(text.dailyUpdates)}</p>
+            <p className="text-xs text-gray-500 mt-2 font-[Poppins]">
+              {t(text.dailyUpdates)}
+            </p>
           </div>
 
           {/* CONTACT */}
           <div>
-            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Judson]">
+            <h4 className="text-lg font-semibold text-orange-700 mb-3 font-[Marcellus]">
               {t(text.contactUs)}
             </h4>
-            <ul className="text-sm space-y-1 text-gray-700">
+            <ul className="text-sm text-gray-700 space-y-1 font-[Poppins]">
               <li>📍 Nashik, Maharashtra, India</li>
               <li>📧 contact@devalayaum.in</li>
               <li>📞 +91 9876543210</li>
             </ul>
-            <p className="text-xs mt-2 text-gray-500">{t(text.whatsapp)}</p>
+            <p className="text-xs mt-2 text-gray-500 font-[Poppins]">
+              {t(text.whatsapp)}
+            </p>
           </div>
 
         </div>
 
-        {/* BOTTOM */}
-        <div className="text-center mt-10 pt-4 border-t border-orange-200">
-          <p className="text-sm text-gray-700">
+        {/* BOTTOM AREA */}
+        <div className="text-center mt-12 pt-5 border-t border-orange-200/60">
+          <p className="text-xs md:text-sm text-gray-700 font-[Poppins]">
             © {new Date().getFullYear()}{" "}
-            <span className="font-semibold text-orange-700">Devalayaum</span>. All rights reserved.
+            <span className="font-semibold text-orange-700">Devalayaum</span>.  
+            All Rights Reserved.
           </p>
         </div>
-
       </div>
     </footer>
   );

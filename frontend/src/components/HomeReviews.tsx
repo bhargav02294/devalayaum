@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import i18n from "../i18n";
 
 export default function HomeReviews() {
-  // 🔥 Language state updated instantly on click
   const [lang, setLang] = useState(i18n.language || "en");
 
+  // Update language instantly
   useEffect(() => {
     const handler = () => setLang(i18n.language);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
-  // 🌍 MULTILANGUAGE TEXT
+  // Multilingual Data
   const text = {
     heading: {
       en: "Devotee Reviews",
@@ -29,7 +29,6 @@ export default function HomeReviews() {
       te: "మా ప్రియమైన భక్తుల మాటలు",
       bn: "আমাদের প্রিয় ভক্তদের কথা",
     },
-    // Each review line in all languages
     reviews: [
       {
         name: "Ravi Sharma",
@@ -88,57 +87,71 @@ export default function HomeReviews() {
           bn: "একটি divine অভিজ্ঞতা। পূজা বুকিং খুব smooth ছিল।",
         },
       },
-
-      // ⭐ Continue same pattern for all remaining 12 reviews
     ],
   };
 
   const t = (obj: Record<string, string>) => obj[lang] ?? obj["en"];
 
-  // Duplicate for infinite scroll
-  const infiniteScroll = [...text.reviews, ...text.reviews];
+  // Duplicate list for continuous infinite scrolling
+  const infiniteScroll = [...text.reviews, ...text.reviews, ...text.reviews];
 
   return (
     <section
-      className="relative py-44 bg-cover bg-center"
+      className="relative py-32 md:py-44 bg-cover bg-center"
       style={{
         backgroundImage:
           "url('https://images.pexels.com/photos/1721747/pexels-photo-1721747.jpeg')",
       }}
     >
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/70"></div>
+      <div className="absolute inset-0 bg-black/75"></div>
 
       <div className="relative max-w-7xl mx-auto px-6">
-        {/* Section Title */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-extrabold text-white tracking-wide">
+        {/* Title */}
+        <div className="text-center mb-14 md:mb-20">
+          <h2 className="text-4xl md:text-5xl font-bold text-[#F8E5B8] tracking-wide drop-shadow-lg font-[Marcellus]">
             {t(text.heading)}
           </h2>
-          <p className="text-gray-300 mt-2 text-lg">{t(text.subheading)}</p>
+          <p className="text-gray-300 mt-3 text-lg md:text-xl font-[Poppins]">
+            {t(text.subheading)}
+          </p>
         </div>
 
-        {/* Infinite Scroll */}
-        <div className="overflow-hidden whitespace-nowrap py-8">
+        {/* Infinite Auto Slider */}
+        <div className="overflow-hidden whitespace-nowrap py-6 md:py-8">
           <div className="animate-scroll-slow inline-flex">
             {infiniteScroll.map((item, index) => (
               <div
                 key={index}
-                className="w-[380px] mx-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white shadow-lg hover:shadow-2xl transition-all duration-300"
+                className="w-[260px] sm:w-[340px] md:w-[380px] mx-4 bg-white/10 backdrop-blur-md border border-white/20 
+                rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300"
               >
-                <p className="text-gray-200 italic text-base leading-relaxed mb-6">
+                <p className="text-gray-200 italic text-sm sm:text-base md:text-lg leading-relaxed mb-6">
                   “{t(item.text)}”
                 </p>
 
-                <h3 className="text-xl font-semibold text-white">
+                <h3 className="text-lg md:text-xl font-semibold text-white font-[Marcellus]">
                   {item.name}
                 </h3>
 
-                <p className="text-sm text-gray-300">{t(item.location)}</p>
+                <p className="text-sm text-gray-300 font-[Poppins]">
+                  {t(item.location)}
+                </p>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Custom animation (CSS) */}
+        <style>{`
+          @keyframes scroll-slow {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-scroll-slow {
+            animation: scroll-slow 25s linear infinite;
+          }
+        `}</style>
       </div>
     </section>
   );
