@@ -1,7 +1,6 @@
-// Profile.tsx
+// Profile.tsx — Fully mobile-optimized and devotional styled
 import { useEffect, useState } from "react";
 import axios from "axios";
-
 
 type ProfileForm = {
   fullName: string;
@@ -13,7 +12,7 @@ type ProfileForm = {
 };
 
 export default function Profile() {
-const [form, setForm] = useState<ProfileForm>({
+  const [form, setForm] = useState<ProfileForm>({
     fullName: "",
     phone: "",
     gender: "",
@@ -21,14 +20,18 @@ const [form, setForm] = useState<ProfileForm>({
     address: "",
     pincode: "",
   });
+
   const [loading, setLoading] = useState(false);
-  const backendURL = import.meta.env.VITE_API_URL; // ✅ FIXED
+  const backendURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const token = localStorage.getItem("USER_TOKEN");
     if (!token) return;
+
     axios
-      .get(`${backendURL}/api/user/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .get(`${backendURL}/api/user/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         const d = res.data || {};
         setForm({
@@ -50,13 +53,16 @@ const [form, setForm] = useState<ProfileForm>({
       });
   }, [backendURL]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const token = localStorage.getItem("USER_TOKEN");
       await axios.put(`${backendURL}/api/user/update`, form, {
@@ -72,10 +78,22 @@ const [form, setForm] = useState<ProfileForm>({
   };
 
   return (
-    <div className="pt-24 min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50 flex justify-center">
-      <div className="max-w-2xl w-full bg-white p-6 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold text-orange-700 mb-4 text-center">🪔 Edit Profile</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div
+      className="pt-20 md:pt-24 min-h-screen flex justify-center px-5"
+      style={{
+        background:
+          "linear-gradient(to bottom right, #fff4cc, #fff8e7, #ffffff)",
+      }}
+    >
+      <div className="max-w-2xl w-full bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-orange-100 mt-4 mb-10">
+
+        {/* PAGE TITLE */}
+        <h2 className="text-3xl font-bold text-orange-700 mb-6 text-center font-[Marcellus]">
+          🪔 Edit Profile
+        </h2>
+
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           {[
             { label: "Full Name", name: "fullName", type: "text" },
             { label: "Mobile / WhatsApp", name: "phone", type: "text" },
@@ -84,24 +102,29 @@ const [form, setForm] = useState<ProfileForm>({
             { label: "Pincode", name: "pincode", type: "text" },
           ].map((f) => (
             <div key={f.name}>
-              <label className="block font-medium mb-1 text-gray-700">{f.label}</label>
+              <label className="block font-semibold mb-1 text-gray-700 font-[Poppins]">
+                {f.label}
+              </label>
               <input
                 type={f.type}
                 name={f.name}
-value={form[f.name as keyof ProfileForm] || ""}
+                value={form[f.name as keyof ProfileForm] || ""}
                 onChange={handleChange}
-                className="w-full border p-2 rounded"
+                className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:border-orange-600 text-base font-[Poppins]"
               />
             </div>
           ))}
 
+          {/* GENDER SELECT */}
           <div>
-            <label className="block font-medium mb-1 text-gray-700">Gender</label>
+            <label className="block font-semibold mb-1 text-gray-700 font-[Poppins]">
+              Gender
+            </label>
             <select
               name="gender"
               value={form.gender}
               onChange={handleChange}
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 p-3 rounded-xl focus:outline-none focus:border-orange-600 text-base font-[Poppins]"
             >
               <option value="">Select gender</option>
               <option>Male</option>
@@ -110,10 +133,11 @@ value={form[f.name as keyof ProfileForm] || ""}
             </select>
           </div>
 
+          {/* SAVE BUTTON */}
           <button
             type="submit"
             disabled={loading}
-            className="bg-orange-600 text-white w-full py-2 rounded-lg hover:bg-orange-700 font-semibold"
+            className="bg-orange-600 hover:bg-orange-700 text-white w-full py-3 rounded-xl text-lg font-semibold transition-all"
           >
             {loading ? "Saving..." : "Save Profile"}
           </button>

@@ -1,4 +1,3 @@
-// E:\devalayaum\frontend\src\pages\Donors.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -30,29 +29,65 @@ export default function Donors() {
     fetchDonors();
   }, [backendURL]);
 
-  if (loading) return <p className="text-center mt-20">Loading Donors...</p>;
+  if (loading)
+    return (
+      <p className="text-center mt-28 text-orange-700 text-xl font-semibold">
+        Loading Donors...
+      </p>
+    );
 
   return (
-    <div className="pt-24 pb-20 px-6 bg-gradient-to-br from-orange-50 to-yellow-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-orange-700 mb-8 text-center">🙏 Our Devoted Donors</h1>
-      <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-6">
+    <section
+      className="pt-24 pb-20 px-5 md:px-6 min-h-screen"
+      style={{
+        background:
+          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 25%, #ffffff 75%)",
+      }}
+    >
+
+      {/* PAGE TITLE */}
+      <h1 className="text-3xl md:text-4xl font-bold font-[Marcellus] text-orange-700 mb-8 text-center">
+        🙏 Our Devoted Donors
+      </h1>
+
+      {/* DONORS CONTAINER */}
+      <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-5 md:p-8 border border-orange-100">
+
         {donors.length === 0 ? (
-          <p className="text-center text-gray-600">No donations yet. Be the first to contribute!</p>
+          <p className="text-center text-gray-600 text-lg font-[Poppins]">
+            No donations yet. Be the first to contribute! 🕉️
+          </p>
         ) : (
           <ul className="divide-y divide-gray-200">
+
             {donors.map((d) => (
-              <li key={d._id} className="py-4 flex justify-between items-center">
+              <li
+                key={d._id}
+                className="py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
+              >
+                {/* LEFT SECTION */}
                 <div>
-                  <p className="font-semibold text-gray-800">{d.fullName}</p>
-                  <p className="text-sm text-gray-600">{d.templeName}</p>
-                  <p className="text-sm italic text-gray-500">{d.donationName}</p>
+                  <p className="font-semibold text-gray-800 text-lg font-[Poppins]">
+                    {d.fullName}
+                  </p>
+                  <p className="text-sm text-gray-600 font-[Poppins]">
+                    {d.templeName}
+                  </p>
+                  <p className="text-sm italic text-gray-500 font-[Poppins]">
+                    {d.donationName}
+                  </p>
                 </div>
-                <p className="text-lg font-bold text-orange-700">₹{d.amount}</p>
+
+                {/* AMOUNT */}
+                <p className="text-xl font-bold text-orange-700 font-[Marcellus]">
+                  ₹{d.amount}
+                </p>
               </li>
             ))}
+
           </ul>
         )}
       </div>
-    </div>
+    </section>
   );
 }

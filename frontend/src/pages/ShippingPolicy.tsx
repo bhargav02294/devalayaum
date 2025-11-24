@@ -1,98 +1,130 @@
-// E:\devalayaum\frontend\src\pages\ShippingPolicy.tsx
-
 export default function ShippingPolicy() {
   return (
-    <section className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-20 px-6">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-10 border border-orange-100">
-        <h1 className="text-4xl font-bold text-center text-orange-700 mb-8">
+    <section
+      className="min-h-screen py-20 md:py-24 px-5 md:px-6"
+      style={{
+        background:
+          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 30%, #ffffff 80%)",
+      }}
+    >
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 border border-orange-100">
+
+        {/* PAGE TITLE */}
+        <h1 className="text-3xl md:text-4xl font-bold text-center text-orange-700 mb-8 font-[Marcellus]">
           Shipping & Delivery Policy
         </h1>
 
-        <p className="text-gray-700 text-lg leading-relaxed mb-6">
-          At <span className="font-semibold text-orange-700">Devalayaum</span>,
-          we strive to ensure your devotional and spiritual products reach you
-          safely and promptly. This Shipping & Delivery Policy outlines our
-          shipping process, timelines, and related terms.
+        {/* INTRO */}
+        <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-6 font-[Poppins]">
+          At{" "}
+          <span className="font-semibold text-orange-700">Devalayaum</span>, we
+          ensure that your devotional and spiritual products are packed with
+          care and delivered to you safely. This Shipping & Delivery Policy
+          explains our shipping process and timelines.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">
+        {/* SECTION 1 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-3 font-[Marcellus]">
           1. Shipping Coverage
         </h2>
-        <p className="text-gray-700 leading-relaxed mb-5">
-          We currently ship our products across India via trusted courier
-          partners. International delivery will be introduced soon.
+        <p className="text-gray-700 leading-relaxed mb-5 font-[Poppins]">
+          We currently ship spiritual products across India through trusted
+          courier partners.  
+          <br />
+          International delivery will be introduced soon.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">
+        {/* SECTION 2 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-3 font-[Marcellus]">
           2. Order Processing Time
         </h2>
-        <p className="text-gray-700 leading-relaxed mb-5">
-          Orders are usually processed within <strong>1-3 business days</strong>.
-          During festivals, sales, or special campaigns, processing time may
-          extend slightly.
+        <p className="text-gray-700 leading-relaxed mb-5 font-[Poppins]">
+          Orders are usually processed within{" "}
+          <strong>1–3 business days</strong>.  
+          During festivals or large campaigns, processing time may increase
+          slightly.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">
+        {/* SECTION 3 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-3 font-[Marcellus]">
           3. Delivery Time
         </h2>
-        <p className="text-gray-700 leading-relaxed mb-5">
-          Delivery timelines vary based on your location:
+        <p className="text-gray-700 leading-relaxed mb-3 font-[Poppins]">
+          Delivery times based on your location:
         </p>
-        <ul className="list-disc list-inside text-gray-700 mb-5 space-y-2">
-          <li>Metro Cities: 3-5 business days</li>
-          <li>Other Cities: 5-8 business days</li>
-          <li>Remote Areas: 8-10 business days</li>
+        <ul className="list-disc list-inside text-gray-700 mb-5 space-y-1 font-[Poppins]">
+          <li>Metro Cities: 3–5 business days</li>
+          <li>Other Cities: 5–8 business days</li>
+          <li>Remote Areas: 8–10 business days</li>
         </ul>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">
+        {/* SECTION 4 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-3 font-[Marcellus]">
           4. Shipping Charges
         </h2>
-        <p className="text-gray-700 leading-relaxed mb-5">
+        <p className="text-gray-700 leading-relaxed mb-5 font-[Poppins]">
           Shipping is <strong>free</strong> for orders above ₹499.  
-          For orders below ₹499, a nominal shipping charge of ₹49 may apply.
+          <br />
+          Orders below ₹499 may include a small shipping fee of ₹49.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">
+        {/* SECTION 5 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-3 font-[Marcellus]">
           5. Order Tracking
         </h2>
-        <p className="text-gray-700 leading-relaxed mb-5">
-          Once your order is shipped, you’ll receive a tracking ID via email or
-          WhatsApp. You can use it to track your shipment directly on our courier
-          partner’s website.
+        <p className="text-gray-700 leading-relaxed mb-5 font-[Poppins]">
+          After your order is dispatched, you will receive a tracking link on
+          WhatsApp or email.  
+          You can track the shipment on the courier partner’s website.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">
+        {/* SECTION 6 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-3 font-[Marcellus]">
           6. Damaged or Lost Packages
         </h2>
-        <p className="text-gray-700 leading-relaxed mb-5">
-          If your package arrives damaged or is lost in transit, please contact us
-          within <strong>48 hours</strong> of delivery attempt at{" "}
-          <a href="mailto:contact@devalayaum.in" className="text-orange-700 font-medium hover:underline">
+        <p className="text-gray-700 leading-relaxed mb-5 font-[Poppins]">
+          If your package is damaged or lost in transit, please notify us within{" "}
+          <strong>48 hours</strong> at{" "}
+          <a
+            href="mailto:contact@devalayaum.in"
+            className="text-orange-700 font-medium hover:underline"
+          >
             contact@devalayaum.in
           </a>.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">
+        {/* SECTION 7 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-3 font-[Marcellus]">
           7. Returns & Refunds
         </h2>
-        <p className="text-gray-700 leading-relaxed mb-5">
-          We accept returns for damaged or defective items within <strong>7 days</strong> of
-          delivery. Please refer to our <a href="/terms" className="text-orange-700 font-medium hover:underline">Terms & Conditions</a> for full refund policies.
+        <p className="text-gray-700 leading-relaxed mb-5 font-[Poppins]">
+          Returns for damaged or defective items are accepted within{" "}
+          <strong>7 days</strong> of delivery.  
+          Please check our{" "}
+          <a
+            href="/terms"
+            className="text-orange-700 font-medium hover:underline"
+          >
+            Terms & Conditions
+          </a>{" "}
+          for detailed refund rules.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">
+        {/* SECTION 8 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-3 font-[Marcellus]">
           8. Contact Us
         </h2>
-        <p className="text-gray-700 leading-relaxed">
-          For any shipping or delivery related queries, please reach us at:
+        <p className="text-gray-700 leading-relaxed font-[Poppins]">
+          For shipping or delivery queries:
         </p>
-        <div className="mt-3 text-gray-700">
+        <div className="mt-3 text-gray-700 font-[Poppins]">
           📍 Nashik, Maharashtra, India <br />
           📧 contact@devalayaum.in <br />
           📞 +91 9876543210
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-10">
+        {/* FOOTER NOTE */}
+        <p className="text-center text-sm text-gray-500 mt-10 font-[Poppins]">
           Last updated on <strong>12 November 2025</strong>.
         </p>
       </div>

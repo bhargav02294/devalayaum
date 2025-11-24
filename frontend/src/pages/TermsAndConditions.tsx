@@ -1,53 +1,90 @@
 export default function TermsAndConditions() {
   return (
-    <section className="pt-28 pb-20 px-6 bg-gradient-to-b from-orange-50 to-white min-h-screen text-gray-800">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold text-orange-700 mb-8 text-center">
+    <section
+      className="pt-20 md:pt-28 pb-20 px-5 md:px-6 min-h-screen text-gray-800"
+      style={{
+        background:
+          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 30%, #ffffff 85%)",
+      }}
+    >
+      <div className="max-w-5xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-lg border border-orange-100">
+
+        {/* PAGE TITLE */}
+        <h1 className="text-3xl md:text-4xl font-bold text-orange-700 mb-6 text-center font-[Marcellus]">
           Terms & Conditions
         </h1>
 
-        <p className="text-gray-700 leading-relaxed mb-4">
-          Welcome to <span className="font-semibold text-orange-700">Devalayaum</span>. 
-          By accessing or using our platform, you agree to abide by the following terms and conditions.
-          Please read these carefully before making any donations, bookings, or purchases.
+        {/* INTRO PARAGRAPH */}
+        <p className="text-gray-700 leading-relaxed mb-5 text-base md:text-lg font-[Poppins]">
+          Welcome to{" "}
+          <span className="font-semibold text-orange-700">Devalayaum</span>.  
+          By accessing or using our platform, you agree to follow the terms and
+          conditions outlined below. Please read them carefully before using any
+          of our services, including donations, puja bookings, or spiritual product
+          purchases.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">1. Acceptance of Terms</h2>
-        <p className="text-gray-700 mb-4">
-          By using this website, you confirm that you are legally capable of entering into binding contracts and agree to comply with these terms.
+        {/* SECTION 1 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-2 font-[Marcellus]">
+          1. Acceptance of Terms
+        </h2>
+        <p className="text-gray-700 mb-4 font-[Poppins] leading-relaxed">
+          By using our website, you confirm that you are legally capable of entering
+          into binding contracts and agree to comply with all Terms & Conditions.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">2. Donations & Payments</h2>
-        <p className="text-gray-700 mb-4">
-          All donations made through our platform are processed via secure payment gateways like Razorpay.
-          Once a donation or booking is confirmed, it is non-refundable except in cases of transaction errors.
+        {/* SECTION 2 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-2 font-[Marcellus]">
+          2. Donations & Payments
+        </h2>
+        <p className="text-gray-700 mb-4 font-[Poppins] leading-relaxed">
+          All donations made through Devalayaum are processed through secure payment
+          systems, including Razorpay.  
+          Once a donation or puja booking is confirmed, it is{" "}
+          <strong>non-refundable</strong> except in the case of transaction errors.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">3. Temple Associations</h2>
-        <p className="text-gray-700 mb-4">
-          We partner with verified temples and trusts. However, the temple authorities are responsible 
-          for performing the pujas, rituals, or aartis as per their traditions.
+        {/* SECTION 3 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-2 font-[Marcellus]">
+          3. Temple Associations
+        </h2>
+        <p className="text-gray-700 mb-4 font-[Poppins] leading-relaxed">
+          We collaborate with verified temples and trusts. However, the performance
+          of rituals, pujas, or aartis is carried out directly by the temple
+          authorities as per their traditions, customs, and timing.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">4. User Conduct</h2>
-        <p className="text-gray-700 mb-4">
-          Users must not misuse the platform for unlawful purposes, post offensive content, 
-          or attempt to disrupt the services.
+        {/* SECTION 4 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-2 font-[Marcellus]">
+          4. User Conduct
+        </h2>
+        <p className="text-gray-700 mb-4 font-[Poppins] leading-relaxed">
+          Users agree not to misuse the platform, attempt unauthorized access,
+          upload harmful content, or engage in unlawful behavior. Any violation may
+          result in account suspension.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">5. Limitation of Liability</h2>
-        <p className="text-gray-700 mb-4">
-          Devalayaum will not be responsible for any indirect, incidental, or consequential damages 
-          arising from the use of this platform or delays in transactions.
+        {/* SECTION 5 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-2 font-[Marcellus]">
+          5. Limitation of Liability
+        </h2>
+        <p className="text-gray-700 mb-4 font-[Poppins] leading-relaxed">
+          Devalayaum is not liable for any indirect, incidental, or consequential
+          damages resulting from platform use, third-party errors, or ritual delays
+          by temple authorities.
         </p>
 
-        <h2 className="text-2xl font-semibold text-orange-700 mt-8 mb-3">6. Modifications</h2>
-        <p className="text-gray-700 mb-4">
-          We may update or revise these terms at any time. Continued use of the platform 
-          after such changes constitutes your acceptance of the new terms.
+        {/* SECTION 6 */}
+        <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-2 font-[Marcellus]">
+          6. Modifications
+        </h2>
+        <p className="text-gray-700 mb-4 font-[Poppins] leading-relaxed">
+          We may revise these Terms & Conditions at any time. Continuing to use the
+          platform after changes means you accept the updated terms.
         </p>
 
-        <p className="mt-10 text-sm text-gray-500 text-center">
+        {/* FOOTNOTE */}
+        <p className="mt-10 text-sm text-gray-500 text-center font-[Poppins]">
           Last updated on: {new Date().toLocaleDateString()}
         </p>
       </div>

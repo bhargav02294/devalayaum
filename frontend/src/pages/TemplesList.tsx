@@ -23,10 +23,8 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
             ? "url('/temple-border-flip.png?rev=4')"
             : "url('/temple-border.png?rev=4')",
           backgroundRepeat: "repeat-x",
-          backgroundSize: "330px auto",
-          height: "60px",
-          width: "300%",
-          opacity: 1,
+          backgroundSize: "260px auto",
+          height: "45px", // MOBILE OPTIMIZED ↓
         }}
       />
     </div>
@@ -57,106 +55,101 @@ export default function TemplesList() {
 
   return (
     <div
-      className="pt-24 pb-20"
+      className="pt-20 md:pt-24 pb-16"
       style={{
         background:
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
       }}
     >
+      {/* Top border */}
       <ScrollingBorder />
 
-<div className="max-w-7xl mx-auto px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
+      {/* TOP HERO SECTION */}
+      <div className="max-w-7xl mx-auto px-5 md:px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
 
-  {/* LEFT TEXT BLOCK */}
-  <div>
-    <h1
-      className="text-5xl font-bold text-[#b34a00] font-[Marcellus] drop-shadow-md leading-tight"
-      style={{ marginTop: "0px", paddingTop: "0px" }}
-    >
-      Devalayaum Temple Collection
-    </h1>
+        {/* LEFT TEXT */}
+        <div>
+          <h1 className="text-3xl md:text-5xl font-bold text-[#b34a00] font-[Marcellus] drop-shadow-md leading-tight">
+            Devalayaum Temple Collection
+          </h1>
 
-    <ul
-      className="mt-4 space-y-3 text-gray-700 text-xl font-[Poppins] leading-relaxed list-disc pl-5"
-      style={{ marginTop: "15px" }}
-    >
-      <li>Authentic history, stories, and significance of every holy shrine.</li>
-      <li>A spiritual guide to the temples that shape our devotion.</li>
-      <li>From Jyotirlingas to Shaktipeeths — experience the divine.</li>
-      <li>Explore real photos, legends, timings, and rituals of every temple.</li>
-      <li>Your digital journey to India’s most sacred places begins here.</li>
-      <li>Where faith meets information — temple details you can trust.</li>
-    </ul>
-  </div>
+          <ul className="mt-4 space-y-2 text-gray-700 text-base md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
+            <li>Authentic history and sacred significance of every shrine.</li>
+            <li>A spiritual guide to the divine temples of India.</li>
+            <li>From Jyotirlingas to Shaktipeeths — explore the holy sites.</li>
+            <li>Real photos, legends, timings, rituals & more.</li>
+            <li>Your digital journey to India’s sacred places begins here.</li>
+          </ul>
+        </div>
 
-  {/* RIGHT IMAGE BLOCK */}
-  <div className="flex justify-center lg:justify-end" style={{ marginTop: "0px", paddingTop: "0px" }}>
-    <img
-      src="/temple.png"
-      alt="Temple Decorative Artwork"
-      className="w-80 lg:w-[420px] drop-shadow-xl"
-      style={{ marginTop: "0px", paddingTop: "0px" }}
-    />
-  </div>
+        {/* RIGHT IMAGE */}
+        <div className="flex justify-center lg:justify-end">
+          <img
+            src="/temple.png"
+            alt="Temple Artwork"
+            className="w-52 md:w-80 lg:w-[420px] drop-shadow-xl"
+          />
+        </div>
 
-</div>
+      </div>
 
+      {/* Bottom Border */}
       <ScrollingBorder flipped />
 
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
+      {/* TEMPLES GRID */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 mt-10">
         {temples.length === 0 ? (
-          <p className="text-center text-gray-500 col-span-3">No temples found.</p>
+          <p className="text-center text-gray-500 col-span-3">
+            No temples found.
+          </p>
         ) : (
           temples.map((temple) => {
             const name = temple.name?.[lang] || temple.name?.en || "Untitled";
             const location = temple.location?.[lang] || temple.location?.en || "";
             const about =
-              temple.about?.[lang]?.slice(0, 140) ||
-              temple.about?.en?.slice(0, 140) ||
+              temple.about?.[lang]?.slice(0, 130) ||
+              temple.about?.en?.slice(0, 130) ||
               "";
 
             return (
               <Link
                 to={`/temples/${temple._id}`}
                 key={temple._id}
-                className="block rounded-2xl overflow-hidden"
+                className="block rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all bg-white"
               >
-                <div
-                  className="border rounded-2xl bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
-                >
-                  <div className="w-full h-56 bg-gray-100 overflow-hidden">
-                    {temple.images?.[0] ? (
-                      <img
-                        src={temple.images[0]}
-                        alt={name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-full flex items-center justify-center text-gray-500 italic">
-                        No Image
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">
-                        {name}
-                      </h2>
-
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <MapPin size={18} className="mr-1" />
-                        <span className="truncate max-w-[110px] text-left">
-                          {location}
-                        </span>
-                      </div>
-                      
+                {/* IMAGE */}
+                <div className="w-full h-48 md:h-56 bg-gray-100 overflow-hidden rounded-t-2xl">
+                  {temple.images?.[0] ? (
+                    <img
+                      src={temple.images[0]}
+                      alt={name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-gray-500 italic">
+                      No Image
                     </div>
+                  )}
+                </div>
 
-                    <p className="text-sm text-gray-700 leading-relaxed text-left font-[Poppins]">
-                      {about}...
-                    </p>
+                {/* TEXT */}
+                <div className="p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-900 text-left font-[Playfair]">
+                      {name}
+                    </h2>
+
+                    <div className="flex items-center text-gray-600 text-sm">
+                      <MapPin size={17} className="mr-1" />
+                      <span className="truncate max-w-[100px] md:max-w-[150px] text-left">
+                        {location}
+                      </span>
+                    </div>
                   </div>
+
+                  <p className="text-sm text-gray-700 leading-relaxed font-[Poppins]">
+                    {about}...
+                  </p>
                 </div>
               </Link>
             );
@@ -166,6 +159,3 @@ export default function TemplesList() {
     </div>
   );
 }
-
-
-
