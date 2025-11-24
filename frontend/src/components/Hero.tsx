@@ -17,14 +17,12 @@ export default function Hero() {
   const [, setRender] = useState(false);
   const [current, setCurrent] = useState(0);
 
-  // Re-render on language switch
   useEffect(() => {
     const handler = () => setRender((v) => !v);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
-  // SLIDES
   const slides: Slide[] = [
     {
       title: {
@@ -54,7 +52,6 @@ export default function Hero() {
       link: "/temples",
       img: "/herotemple.png",
     },
-
     {
       title: {
         en: "Book Authentic Pujas",
@@ -83,7 +80,6 @@ export default function Hero() {
       link: "/pujas",
       img: "/heropuja.png",
     },
-
     {
       title: {
         en: "Support with Donation",
@@ -112,7 +108,6 @@ export default function Hero() {
       link: "/donate",
       img: "/herodonation.png",
     },
-
     {
       title: {
         en: "Spiritual Products",
@@ -141,7 +136,6 @@ export default function Hero() {
       link: "/products",
       img: "/heroproduct.png",
     },
-
     {
       title: {
         en: "Aarti & Katha",
@@ -172,7 +166,7 @@ export default function Hero() {
     },
   ];
 
-  // AUTOPLAY
+  // Auto-slide interval
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((p) => (p + 1) % slides.length);
@@ -181,7 +175,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="relative w-full h-[45vh] md:h-[75vh] overflow-hidden bg-black">
+    <div className="relative w-full h-[85vh] md:h-[100vh] overflow-hidden bg-black">
 
       {slides.map((s, i) => (
         <div
@@ -190,55 +184,59 @@ export default function Hero() {
             current === i ? "opacity-100 z-20" : "opacity-0 z-0"
           }`}
         >
-          {/* IMAGE FULL SCREEN WITHOUT CROPPING */}
-          <div className="w-full h-full flex items-center justify-center bg-black">
-            <img
-              src={s.img}
-              alt=""
-              className="w-full h-full object-contain"
-            />
-          </div>
+          {/* FULL-WIDTH IMAGE FIX */}
+          <img
+            src={s.img}
+            alt={s.title[lang]}
+            className="w-full h-full object-cover"  /* ⭐ FIXED */
+          />
 
-          {/* GRADIENT FOR TEXT READABILITY */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
 
-          {/* TEXT BOX */}
-          <div className="
-            absolute top-1/2 left-6 -translate-y-1/2
-            max-w-[80%] md:max-w-[40%]
-          ">
-            <h1 className="text-2xl md:text-5xl font-bold text-white drop-shadow-2xl font-[Marcellus]">
+          {/* Text */}
+          <div className="absolute left-6 top-[55%] md:top-[50%] -translate-y-1/2 max-w-[90%] md:max-w-[40%]">
+
+            <h1
+              className="text-3xl md:text-6xl font-bold text-white drop-shadow-2xl leading-tight"
+              style={{ fontFamily: "'Marcellus', serif" }}
+            >
               {s.title[lang]}
             </h1>
 
-            <p className="mt-3 text-sm md:text-xl text-gray-200 font-[Merriweather]">
+            <p
+              className="mt-3 text-base md:text-2xl text-gray-200 leading-relaxed drop-shadow-xl"
+              style={{ fontFamily: "'Merriweather', serif" }}
+            >
               {s.text[lang]}
             </p>
 
             <Link
               to={s.link}
-              className="inline-block mt-5 px-5 py-2 md:px-8 md:py-3 text-sm md:text-lg rounded-full text-white
+              className="inline-block mt-5 px-6 py-2 md:px-8 md:py-3 rounded-full text-white text-base md:text-lg
               bg-gradient-to-r from-[#d58a2d] via-[#e0a03f] to-[#c97a1f]
               hover:brightness-110 transition-all shadow-[0_5px_25px_rgba(255,180,80,0.55)]"
+              style={{ fontFamily: "'Merriweather', serif" }}
             >
               {s.btn[lang]}
             </Link>
+
           </div>
         </div>
       ))}
 
-      {/* INDICATORS */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+      {/* Indicators */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-30">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all ${
+            className={`w-3 h-3 rounded-full transition-all ${
               current === i
                 ? "bg-orange-500 scale-125"
                 : "bg-white/60 hover:bg-white"
             }`}
-          ></button>
+          />
         ))}
       </div>
     </div>
