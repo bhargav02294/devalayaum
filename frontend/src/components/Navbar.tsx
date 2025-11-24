@@ -17,7 +17,6 @@ export default function Navbar() {
     setToken(Boolean(localStorage.getItem("USER_TOKEN")));
   }, []);
 
-  // Close language dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (langRef.current && !langRef.current.contains(e.target as Node)) {
@@ -28,7 +27,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close menu when clicking a link
   const closeMenu = () => setMenuOpen(false);
 
   const handleLogout = () => {
@@ -39,7 +37,6 @@ export default function Navbar() {
     navigate("/");
   };
 
-  // Multi-language menu text
   const menuText: Record<string, Record<string, string>> = {
     home: { en: "Home", hi: "होम", mr: "मुख्यपृष्ठ", ta: "முகப்பு", te: "హోమ్", bn: "হোম" },
     temples: { en: "Temples", hi: "मंदिर", mr: "मंदिरे", ta: "கோயில்கள்", te: "దేవాలయాలు", bn: "মন্দির" },
@@ -53,8 +50,9 @@ export default function Navbar() {
   const t = (obj: Record<string, string>) => obj[lang] || obj["en"];
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur shadow-md border-b border-orange-200/40">
-      <div className="max-w-7xl mx-auto h-[65px] flex items-center justify-between px-4">
+    <nav className="fixed top-0 left-0 w-full bg-white/95 backdrop-blur z-50 shadow-md border-b border-orange-200/40 h-[65px] flex items-center">
+      
+      <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-4">
 
         {/* LEFT — LOGO */}
         <Link to="/" className="flex items-center gap-3" onClick={closeMenu}>
@@ -64,16 +62,17 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* RIGHT — LANGUAGE + TOGGLE ICON */}
+        {/* RIGHT */}
         <div className="flex items-center gap-5">
 
-          {/* Desktop Language Dropdown */}
+          {/* Desktop Language Switch */}
           <div className="hidden md:block relative" ref={langRef}>
             <button
               onClick={() => setLangOpen(!langOpen)}
               className="flex items-center gap-1 text-gray-700 hover:text-orange-700"
             >
-              <Globe size={20} /> <span className="text-sm">{lang.toUpperCase()}</span>
+              <Globe size={20} />
+              <span className="text-sm">{lang.toUpperCase()}</span>
             </button>
 
             {langOpen && (
@@ -101,19 +100,19 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Toggle Button */}
+          {/* Mobile Toggle */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-gray-700"
           >
-            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            {menuOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
       </div>
 
-      {/* MOBILE MENU PANEL */}
+      {/* MOBILE MENU */}
       <div
-        className={`md:hidden bg-white border-t border-orange-200 shadow-xl transition-all duration-300 overflow-hidden ${
+        className={`md:hidden bg-white border-t border-orange-200 shadow-xl transition-all duration-300 overflow-hidden absolute top-[65px] left-0 w-full ${
           menuOpen ? "max-h-[600px] p-5" : "max-h-0 p-0"
         }`}
       >
@@ -139,7 +138,7 @@ export default function Navbar() {
             </li>
           ))}
 
-          {/* Mobile Language Selector */}
+          {/* Mobile Language */}
           <li>
             <select
               onChange={(e) => {
@@ -158,7 +157,7 @@ export default function Navbar() {
             </select>
           </li>
 
-          {/* Login / Logout / My Account */}
+          {/* Login / Logout */}
           {token ? (
             <>
               <button
@@ -191,7 +190,7 @@ export default function Navbar() {
       </div>
 
       {/* DESKTOP MENU */}
-      <div className="hidden md:flex items-center justify-center gap-8 py-3 text-gray-800 font-[Poppins]">
+      <div className="hidden md:flex items-center justify-center gap-8 font-[Poppins] text-gray-800 ml-auto mr-6">
         <Link to="/" className="hover:text-orange-700">{t(menuText.home)}</Link>
         <Link to="/temples" className="hover:text-orange-700">{t(menuText.temples)}</Link>
         <Link to="/pujas" className="hover:text-orange-700">{t(menuText.pujas)}</Link>
@@ -200,9 +199,8 @@ export default function Navbar() {
         <Link to="/aarti" className="hover:text-orange-700">{t(menuText.aarti)}</Link>
         <Link to="/donors" className="hover:text-orange-700">{t(menuText.donors)}</Link>
 
-        {/* Login / Logout Desktop */}
         {token ? (
-          <div className="flex items-center gap-5 ml-6">
+          <div className="flex items-center gap-5">
 
             <button
               onClick={() => navigate("/my-account")}
@@ -221,7 +219,7 @@ export default function Navbar() {
         ) : (
           <Link
             to="/login"
-            className="flex items-center gap-2 ml-6 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition"
+            className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition"
           >
             <LogIn size={18} /> Login
           </Link>
