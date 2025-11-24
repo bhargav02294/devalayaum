@@ -4,14 +4,12 @@ import i18n from "../i18n";
 export default function HomeReviews() {
   const [lang, setLang] = useState(i18n.language || "en");
 
-  // Update language instantly
   useEffect(() => {
     const handler = () => setLang(i18n.language);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
-  // Multilingual Data
   const text = {
     heading: {
       en: "Devotee Reviews",
@@ -92,7 +90,6 @@ export default function HomeReviews() {
 
   const t = (obj: Record<string, string>) => obj[lang] ?? obj["en"];
 
-  // Duplicate list for continuous infinite scrolling
   const infiniteScroll = [...text.reviews, ...text.reviews, ...text.reviews];
 
   return (
@@ -103,10 +100,11 @@ export default function HomeReviews() {
           "url('https://images.pexels.com/photos/1721747/pexels-photo-1721747.jpeg')",
       }}
     >
-      {/* Dark overlay */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black/75"></div>
 
       <div className="relative max-w-7xl mx-auto px-6">
+
         {/* Title */}
         <div className="text-center mb-14 md:mb-20">
           <h2 className="text-4xl md:text-5xl font-bold text-[#F8E5B8] tracking-wide drop-shadow-lg font-[Marcellus]">
@@ -117,16 +115,19 @@ export default function HomeReviews() {
           </p>
         </div>
 
-        {/* Infinite Auto Slider */}
+        {/* Auto Slider */}
         <div className="overflow-hidden whitespace-nowrap py-6 md:py-8">
           <div className="animate-scroll-slow inline-flex">
             {infiniteScroll.map((item, index) => (
               <div
                 key={index}
-                className="w-[260px] sm:w-[340px] md:w-[380px] mx-4 bg-white/10 backdrop-blur-md border border-white/20 
-                rounded-2xl p-6 text-white shadow-xl hover:shadow-2xl transition-all duration-300"
+                className="w-[260px] sm:w-[320px] md:w-[360px] mx-4 bg-white/10 
+                backdrop-blur-md border border-white/20 rounded-2xl p-5 
+                text-white shadow-xl hover:shadow-2xl transition-all duration-300 
+                overflow-hidden"
               >
-                <p className="text-gray-200 italic text-sm sm:text-base md:text-lg leading-relaxed mb-6">
+                <p className="text-gray-200 italic text-sm sm:text-base md:text-lg leading-relaxed 
+                  mb-6 whitespace-normal break-words">
                   “{t(item.text)}”
                 </p>
 
@@ -142,7 +143,7 @@ export default function HomeReviews() {
           </div>
         </div>
 
-        {/* Custom animation (CSS) */}
+        {/* Animation */}
         <style>{`
           @keyframes scroll-slow {
             0% { transform: translateX(0); }

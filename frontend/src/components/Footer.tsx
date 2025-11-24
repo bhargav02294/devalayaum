@@ -173,14 +173,14 @@ export default function Footer() {
               {t(text.contactUs)}
             </h4>
             <ul className="text-sm text-gray-700 space-y-1 font-[Poppins]">
-              <li>📍 Nashik, Maharashtra, India</li>
-              <li>📧 contact@devalayaum.in</li>
-              <li>📞 +91 9876543210</li>
+              <li>devalayaum@gmail.com</li>
+              <li>+91 76662 10342</li>
             </ul>
-            <p className="text-xs mt-2 text-gray-500 font-[Poppins]">
+            
+          </div>
+          <p className="text-xs mt-2 text-gray-500 font-[Poppins]">
               {t(text.whatsapp)}
             </p>
-          </div>
 
         </div>
 
