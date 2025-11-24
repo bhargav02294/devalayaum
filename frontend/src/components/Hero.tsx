@@ -1,7 +1,9 @@
+// src/components/Hero.tsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import i18n from "../i18n";
 
+// 🔥 Multilingual text type
 type LangText = Record<string, string>;
 
 interface Slide {
@@ -14,16 +16,17 @@ interface Slide {
 
 export default function Hero() {
   const lang = i18n.language || "en";
-  const [, setRender] = useState(false);
-  const [current, setCurrent] = useState(0);
 
-  // Rerender on language change
+  const [, setRender] = useState(false);
+
+  // 🔥 Re-render when language changes — realtime
   useEffect(() => {
     const handler = () => setRender((v) => !v);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
+  // 🌍 MULTILANGUAGE SLIDES
   const slides: Slide[] = [
     {
       title: {
@@ -171,46 +174,53 @@ export default function Hero() {
     },
   ];
 
+  const [current, setCurrent] = useState(0);
+
   // Auto-slide
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrent((p) => (p + 1) % slides.length);
+      setCurrent((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="relative w-full h-[85vh] md:h-[100vh] overflow-hidden bg-black">
-
+    <div className="relative w-full h-[78vh] md:h-[90vh] overflow-hidden">
       {slides.map((s, i) => (
         <div
           key={i}
-          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-            current === i ? "opacity-100 z-20" : "opacity-0 z-0"
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            i === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
-          {/* Image */}
-          <img
-            src={s.img}
-            alt={s.title[lang]}
-            className="w-full h-full object-contain md:object-contain mx-auto"
-          />
-
-          {/* Overlay Gradient (for text readability) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+          {/* Full Image */}
+          <div className="w-full h-full bg-black flex items-center justify-center">
+            <img
+              src={s.img}
+              alt={s.title[lang]}
+              className="w-full h-full object-contain"
+            />
+          </div>
 
           {/* Text */}
-          <div className="absolute left-6 top-[55%] md:top-[50%] -translate-y-1/2 max-w-[90%] md:max-w-[40%]">
-
+          <div
+            className="
+              absolute 
+              top-[43%] md:top-[45%] 
+              left-[5%] md:left-[7%]
+              w-[90%] md:w-[40%]
+              text-left
+            "
+          >
             <h1
-              className="text-4xl md:text-6xl font-bold text-white drop-shadow-2xl leading-tight"
+              className="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl"
               style={{ fontFamily: "'Marcellus', serif" }}
             >
               {s.title[lang]}
             </h1>
 
             <p
-              className="mt-4 text-lg md:text-2xl text-gray-200 leading-relaxed drop-shadow-xl"
+              className="mt-4 text-lg md:text-xl text-gray-200 leading-relaxed drop-shadow-xl"
               style={{ fontFamily: "'Merriweather', serif" }}
             >
               {s.text[lang]}
@@ -218,14 +228,19 @@ export default function Hero() {
 
             <Link
               to={s.link}
-              className="inline-block mt-6 px-8 py-3 rounded-full text-white text-lg
-              bg-gradient-to-r from-[#d58a2d] via-[#e0a03f] to-[#c97a1f]
-              hover:brightness-110 transition-all shadow-[0_5px_25px_rgba(255,180,80,0.55)]"
+              className="
+                inline-block mt-6 px-7 py-3 rounded-full text-white text-lg
+                bg-gradient-to-r from-[#d58a2d] via-[#e09f3e] to-[#c97a1f]
+                hover:from-[#c97a1f] hover:via-[#d58a2d] hover:to-[#e2a74b]
+                shadow-[0_5px_25px_rgba(255,180,80,0.55)]
+                border border-white/20
+                backdrop-blur-sm
+                transition-all
+              "
               style={{ fontFamily: "'Merriweather', serif" }}
             >
               {s.btn[lang]}
             </Link>
-
           </div>
         </div>
       ))}
@@ -237,7 +252,7 @@ export default function Hero() {
             key={i}
             onClick={() => setCurrent(i)}
             className={`w-3 h-3 rounded-full transition-all ${
-              current === i
+              i === current
                 ? "bg-orange-500 scale-125"
                 : "bg-white/60 hover:bg-white"
             }`}
