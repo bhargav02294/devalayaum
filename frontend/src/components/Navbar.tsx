@@ -179,9 +179,11 @@ export default function Navbar() {
               <option value="en">English</option>
               <option value="hi">Hindi</option>
               <option value="mr">Marathi</option>
+
+{/* Other Language options removed as per recent edits
               <option value="te">Telugu</option>
               <option value="ta">Tamil</option>
-              <option value="bn">Bengali</option>
+              <option value="bn">Bengali</option>*/}
             </select>
           </li>
 
