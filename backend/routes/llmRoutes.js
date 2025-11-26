@@ -1,12 +1,16 @@
 import express from "express";
-import OpenAI from "openai";
+import Groq from "groq-sdk";
 
 const router = express.Router();
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+// --- Groq Client ---
+const client = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
+// ---------------------------
+// TEMPLATE PARSER (FREE LLaMA)
+// ---------------------------
 router.post("/parse-temple", async (req, res) => {
   try {
     const { rawText } = req.body;
@@ -15,11 +19,9 @@ router.post("/parse-temple", async (req, res) => {
     }
 
     const prompt = `
-Extract temple information STRICTLY in valid JSON.
+Extract temple information STRICTLY in valid JSON format.
 
-RETURN ONLY JSON. NO explanations. NO text outside JSON.
-
-Use exactly this structure:
+RETURN ONLY JSON.
 
 {
  "name": {"en": ""}, 
@@ -37,41 +39,44 @@ Use exactly this structure:
  "roadConnectivity": {"en": ""}
 }
 
-Fill only fields found in text. Missing fields keep "".
+Fill only fields present in the text. Leave missing ones as "".
 
 TEXT:
 ${rawText}
 `;
 
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "llama-3.1-8b-instant", // FREE + FAST
       messages: [
-        { role: "system", content: "Return ONLY valid JSON. No extra text." },
-        { role: "user", content: prompt }
-      ]
+        { role: "system", content: "Return ONLY valid JSON." },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.2,
     });
 
-    let content = completion.choices[0].message.content || "";
+    let content = completion.choices?.[0]?.message?.content || "";
 
-    // REMOVE code fences if they appear
+    // Remove code blocks if present
     content = content.replace(/```json/g, "").replace(/```/g, "").trim();
 
     let mapped = {};
     try {
       mapped = JSON.parse(content);
     } catch (err) {
-      console.error("JSON parse failed:", content);
+      console.error("Groq JSON parse fail:", content);
       return res.status(500).json({
-        message: "LLM returned invalid JSON",
-        raw: content
+        message: "Groq returned invalid JSON",
+        raw: content,
       });
     }
 
-    res.json({ mapped });
-
+    return res.json({ mapped });
   } catch (err) {
-    console.error("LLM ROUTE ERROR:", err);
-    res.status(500).json({ message: "LLM Failed", error: err.message });
+    console.error("GROQ LLM ERROR:", err);
+    return res.status(500).json({
+      message: "LLM Failed",
+      error: err.message,
+    });
   }
 });
 
