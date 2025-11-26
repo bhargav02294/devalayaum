@@ -120,70 +120,75 @@ export default function TempleForm() {
   };
 
   // -----------------------
-  // AUTO-FILL FEATURE
-  // -----------------------
-  const handleAutoFill = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+// AUTO-FILL FEATURE
+// -----------------------
+const handleAutoFill = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    if (!backendURL) {
-      alert("Backend URL not configured.");
-      return;
-    }
+  if (!backendURL) {
+    alert("Backend URL not configured.");
+    return;
+  }
 
-    setOcrLoading(true);
+  const token = localStorage.getItem("ADMIN_TOKEN");
 
-    try {
-      // 1) send file to OCR endpoint
-      const fd = new FormData();
-      fd.append("file", file);
+  setOcrLoading(true);
 
-      const ocrRes = await axios.post<{ rawText: string }>(
-        `${backendURL}/api/ocr/temple`,
-        fd,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+  try {
+    // 1) Send file to OCR API
+    const fd = new FormData();
+    fd.append("file", file);
 
-      const rawText = ocrRes?.data?.rawText || "";
-      if (!rawText) {
-        throw new Error("OCR returned no text.");
+    const ocrRes = await axios.post<{ rawText: string }>(
+      `${backendURL}/api/ocr/temple`,
+      fd,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
       }
+    );
 
-      // 2) send raw text to LLM parser
-      const llmRes = await axios.post<{ mapped: Partial<FormState> }>(
-        `${backendURL}/api/llm/parse-temple`,
-        { rawText }
-      );
+    const rawText = ocrRes?.data?.rawText || "";
+    if (!rawText) throw new Error("OCR returned no text.");
 
-      const mapped = llmRes?.data?.mapped;
-      if (!mapped) {
-        throw new Error("Parser returned no mapped data.");
+    // 2) Send raw text to LLM Parser
+    const llmRes = await axios.post<{ mapped: Partial<FormState> }>(
+      `${backendURL}/api/llm/parse-temple`,
+      { rawText },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
       }
+    );
 
-      // 3) Merge mapped safely — only override fields that exist in mapped
-      setForm((prev) => {
-        const merged = { ...prev, ...mapped } as FormState;
+    const mapped = llmRes?.data?.mapped;
+    if (!mapped) throw new Error("Parser returned no mapped data.");
 
-        // ensure imageFiles stays array (if not provided)
-        if (!Array.isArray(merged.imageFiles)) merged.imageFiles = prev.imageFiles;
-        if (!Array.isArray(merged.images)) merged.images = prev.images ?? [];
+    // 3) Merge into form safely
+    setForm((prev) => {
+      const merged = { ...prev, ...mapped } as FormState;
 
-        // ensure nearbyPlaces is array
-        if (!Array.isArray(merged.nearbyPlaces)) merged.nearbyPlaces = prev.nearbyPlaces;
+      if (!Array.isArray(merged.imageFiles)) merged.imageFiles = prev.imageFiles;
+      if (!Array.isArray(merged.images)) merged.images = prev.images ?? [];
+      if (!Array.isArray(merged.nearbyPlaces)) merged.nearbyPlaces = prev.nearbyPlaces;
 
-        return merged;
-      });
+      return merged;
+    });
 
-      alert("Temple details auto-filled successfully!");
-    } catch (err) {
-      console.error("Auto-fill error:", err);
-      alert("Auto-fill failed: " + extractMessage(err));
-    } finally {
-      setOcrLoading(false);
-      // clear input value so same file can be re-uploaded if needed
-      (e.target as HTMLInputElement).value = "";
-    }
-  };
+    alert("Temple details auto-filled successfully!");
+  } catch (err) {
+    console.error("Auto-fill error:", err);
+    alert("Auto-fill failed: " + extractMessage(err));
+  } finally {
+    setOcrLoading(false);
+    (e.target as HTMLInputElement).value = "";
+  }
+};
 
   // Fetch existing temple for editing
   useEffect(() => {
