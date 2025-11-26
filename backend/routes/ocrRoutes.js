@@ -1,10 +1,7 @@
 import express from "express";
 import multer from "multer";
-import pkg from "pdf-parse";        // ✔ correct import for ESM
 import mammoth from "mammoth";
 import Tesseract from "tesseract.js";
-
-const pdfParse = pkg;               // ✔ assign function
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -16,24 +13,26 @@ router.post("/temple", upload.single("file"), async (req, res) => {
     }
 
     let rawText = "";
+    const mime = req.file.mimetype;
 
     // ---------------- PDF ----------------
-    if (req.file.mimetype === "application/pdf") {
+    if (mime === "application/pdf") {
+      const pdfParse = (await import("pdf-parse")).default || (await import("pdf-parse"));
       const result = await pdfParse(req.file.buffer);
       rawText = result.text;
     }
 
     // ---------------- DOCX ----------------
     else if (
-      req.file.mimetype ===
+      mime ===
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
       const { value } = await mammoth.extractRawText({ buffer: req.file.buffer });
       rawText = value;
     }
 
-    // ---------------- IMAGE (OCR) ----------------
-    else if (req.file.mimetype.startsWith("image/")) {
+    // ---------------- IMAGE ----------------
+    else if (mime.startsWith("image/")) {
       const result = await Tesseract.recognize(req.file.buffer, "eng");
       rawText = result.data.text;
     }
