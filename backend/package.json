@@ -20,6 +20,7 @@
     "mammoth": "^1.11.0",
     "mongoose": "^7.5.0",
     "multer": "^2.0.2",
+    "openai": "^4.104.0",
     "pdf-parse": "^2.4.5",
     "pdf-poppler": "^0.2.3",
     "razorpay": "^2.9.6",
