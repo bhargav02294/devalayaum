@@ -10,11 +10,16 @@ const client = new OpenAI({
 router.post("/parse-temple", async (req, res) => {
   try {
     const { rawText } = req.body;
-    if (!rawText) return res.status(400).json({ message: "Missing rawText" });
+    if (!rawText) {
+      return res.status(400).json({ message: "Missing rawText" });
+    }
 
     const prompt = `
-Extract temple information from this text.
-Return ONLY valid JSON structure with these fields:
+Extract temple information STRICTLY in valid JSON.
+
+RETURN ONLY JSON. NO explanations. NO text outside JSON.
+
+Use exactly this structure:
 
 {
  "name": {"en": ""}, 
@@ -32,31 +37,42 @@ Return ONLY valid JSON structure with these fields:
  "roadConnectivity": {"en": ""}
 }
 
-Fill only fields found in the text. Missing fields should remain empty.
+Fill only fields found in text. Missing fields keep "".
+
 TEXT:
 ${rawText}
 `;
 
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [{ role: "system", content: "Extract structured data." },
-                 { role: "user", content: prompt }]
+      messages: [
+        { role: "system", content: "Return ONLY valid JSON. No extra text." },
+        { role: "user", content: prompt }
+      ]
     });
 
-    let mapped;
+    let content = completion.choices[0].message.content || "";
+
+    // REMOVE code fences if they appear
+    content = content.replace(/```json/g, "").replace(/```/g, "").trim();
+
+    let mapped = {};
     try {
-      mapped = JSON.parse(completion.choices[0].message.content);
-    } catch {
-      mapped = {};
+      mapped = JSON.parse(content);
+    } catch (err) {
+      console.error("JSON parse failed:", content);
+      return res.status(500).json({
+        message: "LLM returned invalid JSON",
+        raw: content
+      });
     }
 
     res.json({ mapped });
 
   } catch (err) {
-    console.error("LLM ERROR:", err);
+    console.error("LLM ROUTE ERROR:", err);
     res.status(500).json({ message: "LLM Failed", error: err.message });
   }
 });
 
 export default router;
-
