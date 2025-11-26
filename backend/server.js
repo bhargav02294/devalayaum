@@ -15,6 +15,9 @@ import userRoutes from "./routes/userRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import productPaymentRoutes from "./routes/productPaymentRoutes.js";
 import pujaBookingRoutes from "./routes/pujaBookingRoutes.js";
+import ocrRoutes from "./routes/ocrRoutes.js";
+import llmRoutes from "./routes/llmRoutes.js";
+
 
 
 dotenv.config();
@@ -51,6 +54,10 @@ app.use("/api/user", userRoutes);   // ← add this line
 app.use("/api/payments", paymentRoutes);
 app.use("/api/product-payments", productPaymentRoutes);
 app.use("/api/puja-bookings", pujaBookingRoutes);
+app.use("/api/ocr", ocrRoutes);
+app.use("/api/llm", llmRoutes);
+
+
 
 // connect mongodb
 const mongoUri = process.env.MONGO_URI;

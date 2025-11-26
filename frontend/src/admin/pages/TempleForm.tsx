@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import i18n from "../../i18n";
 import extractMessage from "../../utils/extractMessage";
+import { AiOutlineUpload } from "react-icons/ai";
 
 const LANGS = [
   { code: "en", label: "EN" },
@@ -15,7 +16,6 @@ const LANGS = [
 ] as const;
 
 type LangCode = typeof LANGS[number]["code"];
-
 type Multilingual = Partial<Record<LangCode, string>>;
 
 type NearbyPlace = {
@@ -93,6 +93,9 @@ export default function TempleForm() {
   );
   const [loading, setLoading] = useState(false);
 
+  // OCR / LLM loading state
+  const [ocrLoading, setOcrLoading] = useState(false);
+
   const backendURL = import.meta.env.VITE_API_URL;
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -103,7 +106,6 @@ export default function TempleForm() {
   const getMultiValue = (field: keyof FormState, langKey: LangCode) => {
     const value = form[field];
     if (value && typeof value === "object" && !Array.isArray(value)) {
-      // value is Multilingual-like
       return (value as Multilingual)[langKey] ?? "";
     }
     return "";
@@ -117,6 +119,72 @@ export default function TempleForm() {
     }));
   };
 
+  // -----------------------
+  // AUTO-FILL FEATURE
+  // -----------------------
+  const handleAutoFill = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!backendURL) {
+      alert("Backend URL not configured.");
+      return;
+    }
+
+    setOcrLoading(true);
+
+    try {
+      // 1) send file to OCR endpoint
+      const fd = new FormData();
+      fd.append("file", file);
+
+      const ocrRes = await axios.post<{ rawText: string }>(
+        `${backendURL}/api/ocr/temple`,
+        fd,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      const rawText = ocrRes?.data?.rawText || "";
+      if (!rawText) {
+        throw new Error("OCR returned no text.");
+      }
+
+      // 2) send raw text to LLM parser
+      const llmRes = await axios.post<{ mapped: Partial<FormState> }>(
+        `${backendURL}/api/llm/parse-temple`,
+        { rawText }
+      );
+
+      const mapped = llmRes?.data?.mapped;
+      if (!mapped) {
+        throw new Error("Parser returned no mapped data.");
+      }
+
+      // 3) Merge mapped safely — only override fields that exist in mapped
+      setForm((prev) => {
+        const merged = { ...prev, ...mapped } as FormState;
+
+        // ensure imageFiles stays array (if not provided)
+        if (!Array.isArray(merged.imageFiles)) merged.imageFiles = prev.imageFiles;
+        if (!Array.isArray(merged.images)) merged.images = prev.images ?? [];
+
+        // ensure nearbyPlaces is array
+        if (!Array.isArray(merged.nearbyPlaces)) merged.nearbyPlaces = prev.nearbyPlaces;
+
+        return merged;
+      });
+
+      alert("Temple details auto-filled successfully!");
+    } catch (err) {
+      console.error("Auto-fill error:", err);
+      alert("Auto-fill failed: " + extractMessage(err));
+    } finally {
+      setOcrLoading(false);
+      // clear input value so same file can be re-uploaded if needed
+      (e.target as HTMLInputElement).value = "";
+    }
+  };
+
   // Fetch existing temple for editing
   useEffect(() => {
     if (!id) return;
@@ -124,12 +192,10 @@ export default function TempleForm() {
 
     (async () => {
       try {
-        // we expect the API returns a structure compatible to our FormState (or at least subset)
         const res = await axios.get<Partial<FormState>>(
           `${backendURL}/api/temples/${id}`
         );
         const payload = res.data ?? {};
-        // merge safely into current state (only fields present will override)
         setForm((prev) => ({ ...prev, ...payload }));
       } catch (err) {
         console.error("Load temple:", extractMessage(err));
@@ -164,8 +230,7 @@ export default function TempleForm() {
     e.preventDefault();
     setLoading(true);
     try {
-      // copy existing images first
-      const uploadedUrls = [...form.images];
+      const uploadedUrls = [...(form.images || [])];
 
       // upload new files (if any)
       for (const f of form.imageFiles) {
@@ -215,6 +280,23 @@ export default function TempleForm() {
             {l.label}
           </button>
         ))}
+      </div>
+
+      {/* AUTO-FILL FROM FILE */}
+      <div className="border p-4 rounded-lg mb-6 bg-orange-50">
+        <h3 className="font-bold mb-2 text-orange-700">Auto-Fill From File</h3>
+        <p className="text-gray-700 mb-2">Upload PDF / Image / Word document containing temple details.</p>
+
+        <label className="px-4 py-2 bg-orange-600 text-white rounded cursor-pointer inline-flex items-center gap-2">
+          <AiOutlineUpload />
+          {ocrLoading ? "Processing..." : "Upload & Auto-Fill"}
+          <input
+            type="file"
+            accept=".pdf,.png,.jpg,.jpeg,.docx,.doc"
+            hidden
+            onChange={handleAutoFill}
+          />
+        </label>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
