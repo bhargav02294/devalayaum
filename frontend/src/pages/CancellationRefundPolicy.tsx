@@ -22,7 +22,7 @@ export default function CancellationRefundPolicy() {
           non-refundable due to their devotional nature.
         </p>
 
-        {/* SECTION 1 */}
+        {/* SECTION 1 
         <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-6 mb-2 font-[Marcellus]">
           1. Donations
         </h2>
@@ -38,7 +38,6 @@ export default function CancellationRefundPolicy() {
           <li>Failed transaction where the amount was deducted</li>
         </ul>
 
-        {/* SECTION 2 */}
         <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-6 mb-2 font-[Marcellus]">
           2. Puja Booking
         </h2>
@@ -52,10 +51,10 @@ export default function CancellationRefundPolicy() {
           However, rescheduling may be allowed in special cases if requested
           within <strong>12 hours</strong> of booking.
         </p>
-
+*/}
         {/* SECTION 3 */}
         <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-6 mb-2 font-[Marcellus]">
-          3. Products (If Applicable)
+          1. Products (If Applicable)
         </h2>
         <p className="text-gray-700 mb-3 font-[Poppins] leading-relaxed">
           We accept product cancellation requests <strong>before dispatch only</strong>.
@@ -66,7 +65,7 @@ export default function CancellationRefundPolicy() {
 
         {/* SECTION 4 */}
         <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-6 mb-2 font-[Marcellus]">
-          4. Refund Processing
+          2. Refund Processing
         </h2>
         <p className="text-gray-700 mb-3 font-[Poppins] leading-relaxed">
           If your refund request is approved, funds may take:
@@ -78,7 +77,7 @@ export default function CancellationRefundPolicy() {
 
         {/* SECTION 5 */}
         <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-6 mb-2 font-[Marcellus]">
-          5. Contact for Issues
+          3. Contact for Issues
         </h2>
         <p className="text-gray-700 mb-3 font-[Poppins] leading-relaxed">
           For refund concerns, incorrect payments, or service issues:
