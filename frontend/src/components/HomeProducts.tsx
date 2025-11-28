@@ -1,5 +1,3 @@
-      {/* Header 
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -102,6 +100,7 @@ export default function HomeProducts() {
 
   return (
     <section className="py-20 bg-gradient-to-b from-white to-orange-50">
+      {/* Header */}
       <div className="text-center mb-14">
         <h2 className="text-4xl font-extrabold text-[#b35b00] drop-shadow-md">
           {t(text.heading)}
@@ -109,6 +108,7 @@ export default function HomeProducts() {
         <p className="mt-3 text-gray-600 text-lg">{t(text.subHeading)}</p>
       </div>
 
+      {/* Product Cards */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6">
         {products.slice(0, 3).map((p) => {
           const name = p.name?.[lang] || p.name?.en || "Untitled";
@@ -125,6 +125,7 @@ export default function HomeProducts() {
               key={p._id}
               className="group rounded-2xl overflow-hidden bg-white shadow-lg border border-orange-100 hover:shadow-[0_10px_30px_rgba(179,91,0,0.3)] transition-all duration-500 hover:-translate-y-2"
             >
+              {/* Thumbnail */}
               <div className="relative h-72 overflow-hidden">
                 <img
                   src={p.thumbnail || p.images?.[0] || "/placeholder.jpg"}
@@ -132,11 +133,13 @@ export default function HomeProducts() {
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
                 />
 
+                {/* Tag */}
                 <div className="absolute top-3 left-3 bg-[#b35b00] text-white text-xs px-3 py-1 rounded-full shadow-md">
                   {t(text.tag)}
                 </div>
               </div>
 
+              {/* Content */}
               <div className="p-6">
                 <h3 className="text-xl font-bold text-[#8f4500] mb-2">
                   {name}
@@ -146,6 +149,7 @@ export default function HomeProducts() {
                   {desc}...
                 </p>
 
+                {/* Price */}
                 <div className="mb-6">
                   <span className="text-2xl font-bold text-green-700">
                     ₹{price}
@@ -157,6 +161,7 @@ export default function HomeProducts() {
                   )}
                 </div>
 
+                {/* Button */}
                 <Link
                   to={`/products/${p._id}`}
                   className="block text-center w-full bg-[#b35b00] hover:bg-[#8f4500] text-white font-medium py-2 rounded-lg shadow-md transition duration-300"
@@ -169,6 +174,7 @@ export default function HomeProducts() {
         })}
       </div>
 
+      {/* View All */}
       <div className="text-center mt-16">
         <Link
           to="/products"
@@ -184,4 +190,3 @@ export default function HomeProducts() {
     </section>
   );
 }
-*/}
