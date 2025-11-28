@@ -8,7 +8,7 @@ interface Puja {
   name: Record<string, string>;
   description?: Record<string, string>;
   price?: number;
-  images?: string[];
+  image?: string[];
 }
 
 export default function HomePujas() {
@@ -103,11 +103,13 @@ export default function HomePujas() {
               key={puja._id}
               className="group bg-white rounded-2xl overflow-hidden shadow-lg border border-orange-100 hover:shadow-[0_10px_30px_rgba(179,91,0,0.3)] transition-all duration-500"
             >
+
+
               {/* Image */}
               <div className="relative h-72 overflow-hidden">
-                {puja.images?.[0] ? (
+                {puja.image?.[0] ? (
                   <img
-                    src={puja.images[0]}
+                    src={puja.image[0]}
                     alt={name}
                     className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
                   />
@@ -116,6 +118,9 @@ export default function HomePujas() {
                     No Image
                   </div>
                 )}
+
+
+                
 
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-70"></div>

@@ -119,13 +119,13 @@ export default function ShippingPolicy() {
         </p>
         <div className="mt-3 text-gray-700 font-[Poppins]">
           📍 Nashik, Maharashtra, India <br />
-          📧 contact@devalayaum.in <br />
-          📞 +91 9876543210
+          📧 devalayaum@gmail.com.in <br />
+          📞 +91 7666210342
         </div>
 
         {/* FOOTER NOTE */}
         <p className="text-center text-sm text-gray-500 mt-10 font-[Poppins]">
-          Last updated on <strong>12 November 2025</strong>.
+          Last updated on <strong>28 November 2025</strong>.
         </p>
       </div>
     </section>

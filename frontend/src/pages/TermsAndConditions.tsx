@@ -20,7 +20,7 @@ export default function TermsAndConditions() {
           <span className="font-semibold text-orange-700">Devalayaum</span>.  
           By accessing or using our platform, you agree to follow the terms and
           conditions outlined below. Please read them carefully before using any
-          of our services, including donations, puja bookings, or spiritual product
+          of our services, including donations, puja bookings, or product
           purchases.
         </p>
 
@@ -33,7 +33,7 @@ export default function TermsAndConditions() {
           into binding contracts and agree to comply with all Terms & Conditions.
         </p>
 
-        {/* SECTION 2 */}
+        {/* SECTION 2
         <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-2 font-[Marcellus]">
           2. Donations & Payments
         </h2>
@@ -43,7 +43,7 @@ export default function TermsAndConditions() {
           Once a donation or puja booking is confirmed, it is{" "}
           <strong>non-refundable</strong> except in the case of transaction errors.
         </p>
-
+ */}
         {/* SECTION 3 */}
         <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-8 mb-2 font-[Marcellus]">
           3. Temple Associations

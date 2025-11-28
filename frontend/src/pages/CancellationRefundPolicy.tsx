@@ -16,11 +16,7 @@ export default function CancellationRefundPolicy() {
 
         {/* INTRO */}
         <p className="text-gray-700 mb-5 text-base md:text-lg leading-relaxed font-[Poppins]">
-          At <strong>Devalayaum</strong>, we strive to offer a smooth and divine spiritual
-          experience. Since our services include temple donations, puja bookings,
-          aarti offerings, and spiritual products, certain categories are
-          non-refundable due to their devotional nature.
-        </p>
+          At <strong>Devalayaum</strong>, Refund will be credited within 7 days to the original payment method, Cancellations should be done within 7 days</p>
 
         {/* SECTION 1 
         <h2 className="text-xl md:text-2xl font-semibold text-orange-700 mt-6 mb-2 font-[Marcellus]">
@@ -83,8 +79,8 @@ export default function CancellationRefundPolicy() {
           For refund concerns, incorrect payments, or service issues:
         </p>
         <ul className="ml-6 text-gray-700 mb-4 font-[Poppins] leading-relaxed">
-          <li>📧 Email: contact@devalayaum.in</li>
-          <li>📞 Phone: +91 9876543210</li>
+          <li>📧 Email: devalayaum@gmail.com</li>
+          <li>📞 Phone: +91 7666210342</li>
         </ul>
 
         {/* FOOTNOTE */}
