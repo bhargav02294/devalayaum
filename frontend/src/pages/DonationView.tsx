@@ -90,7 +90,7 @@ export default function DonationView() {
   }, [id, backendURL]);
 
   if (loading) return <div className="pt-24 text-center">Loading...</div>;
-  if (!donation) return <div className="pt-24 text-center">Donation not found.</div>;
+  if (!donation) return <div className="pt-24 text-center"> not found.</div>;
 
   const suggestedAmounts = [51, 101, 501, 1001];
 
@@ -226,7 +226,7 @@ export default function DonationView() {
               className="text-[20px] text-orange-700 font-semibold mb-4"
               style={{ fontFamily: "'Merriweather', serif" }}
             >
-              Make a Donation
+              DO Chadhava
             </h3>
 
             {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -278,7 +278,7 @@ export default function DonationView() {
               onClick={handleDonate}
               className="w-full bg-orange-700 hover:bg-orange-800 text-white text-lg font-semibold py-3 rounded-xl"
             >
-              Donate Now
+              Next
             </button>
           </div>
 
@@ -287,7 +287,7 @@ export default function DonationView() {
         {/* ---------------------- RIGHT COLUMN (DETAILS) ---------------------- */}
         <div className="space-y-10">
 
-          <Section title="About This Donation">
+          <Section title="About Chadhava">
             {t(donation.description)}
           </Section>
 
@@ -295,7 +295,7 @@ export default function DonationView() {
             {t(donation.templeDetails)}
           </Section>
 
-          <Section title="Benefits of Donating">
+          <Section title="Benefits ">
             {t(donation.benefits)}
           </Section>
 
