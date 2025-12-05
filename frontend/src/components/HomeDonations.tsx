@@ -60,7 +60,7 @@ export default function HomeDonations() {
       bn: "পবিত্র কার্যসমূহকে সমর্থন করুন",
     },
     subHeading: {
-      en: "Contribute to divine temple initiatives and spiritual welfare",
+      en: "Contribute to divine temple initiatives and welfare",
       hi: "दिव्य मंदिर पहल और आध्यात्मिक कल्याण में योगदान दें",
       mr: "दैवी मंदिर उपक्रम आणि आध्यात्मिक कल्याणासाठी योगदान द्या",
       ta: "தெய்வீக கோவில் முயற்சிகளுக்கும் ஆன்மீக நலத்திற்கும் பங்களிக்கவும்",

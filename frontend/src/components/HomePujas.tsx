@@ -51,7 +51,7 @@ export default function HomePujas() {
       bn: "জনপ্রিয় পূজা",
     },
     subHeading: {
-      en: "Experience spiritually uplifting pujas performed with devotion",
+      en: "Experience uplifting pujas performed ",
       hi: "भक्ति के साथ की गई आध्यात्मिक रूप से ऊँची उठाने वाली पूजा",
       mr: "भक्तीपूर्वक केलेल्या आध्यात्मिक उन्नती करणाऱ्या पूजा",
       ta: "பக்தியுடன் நடத்தப்படும் ஆன்மீக உயர்வு தரும் பூஜைகள்",

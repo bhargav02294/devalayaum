@@ -20,7 +20,7 @@ export default function TermsAndConditions() {
           <span className="font-semibold text-orange-700">Devalayaum</span>.  
           By accessing or using our platform, you agree to follow the terms and
           conditions outlined below. Please read them carefully before using any
-          of our services, including donations, puja bookings, or product
+          of our services, including puja bookings, or product
           purchases.
         </p>
 
@@ -50,7 +50,7 @@ export default function TermsAndConditions() {
         </h2>
         <p className="text-gray-700 mb-4 font-[Poppins] leading-relaxed">
           We collaborate with verified temples and trusts. However, the performance
-          of rituals, pujas, or aartis is carried out directly by the temple
+          of pujas, or aartis is carried out directly by the temple
           authorities as per their traditions, customs, and timing.
         </p>
 

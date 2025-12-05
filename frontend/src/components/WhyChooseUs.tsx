@@ -24,7 +24,7 @@ export default function WhyChooseUs() {
       bn: "কেন দেবালায়ুম?",
     },
     subheading: {
-      en: "A trusted digital platform bringing temples, pujas, donations, and spiritual experiences closer to every devotee.",
+      en: "A trusted digital platform bringing temples, pujas, and experiences closer to every one",
       hi: "एक विश्वसनीय डिजिटल प्लेटफ़ॉर्म जो मंदिर, पूजा, दान और आध्यात्मिक अनुभव हर भक्त तक पहुँचाता है।",
       mr: "मंदिरे, पूजा, दान आणि आध्यात्मिक अनुभव भक्तांपर्यंत पोहोचवणारे विश्वसनीय व्यासपीठ.",
       ta: "கோயில், பூஜை, காணிக்கை மற்றும் ஆன்மீக அனுபவங்களை உங்களிடம் கொண்டு வரும் நம்பகத்தன்மையான தளம்.",
@@ -45,7 +45,7 @@ export default function WhyChooseUs() {
         bn: "যাচাইকৃত মন্দির অংশীদারিত্ব",
       },
       desc: {
-        en: "Every donation and puja directly connects with authentic temple authorities.",
+        en: "Every  puja directly connects with authentic temple authorities.",
         hi: "हर दान और पूजा सीधे प्रमाणिक मंदिर प्रशासन से जुड़ी होती है।",
         mr: "प्रत्येक देणगी आणि पूजा थेट प्रमाणित मंदिर अधिकाऱ्यांशी जोडलेली आहे.",
         ta: "ஒவ்வொரு காணிக்கையும் பூஜையும் உண்மையான கோவில் நிர்வாகத்துடன் நேரடியாக இணைக்கப்படுகிறது.",
@@ -64,7 +64,7 @@ export default function WhyChooseUs() {
         bn: "আসল বৈদিক পূজা",
       },
       desc: {
-        en: "Certified priests perform rituals based on traditional scriptures.",
+        en: "Certified priests perform based on traditional scriptures.",
         hi: "प्रमाणित पुजारी शास्त्रों के अनुसार पूजा करते हैं।",
         mr: "प्रमाणित पुजारी शास्त्रांनुसार पूजा करतात.",
         ta: "சான்றளிக்கப்பட்ட பூஜாரிகள் வேத நூல்களின் படி பூஜை செய்கிறார்கள்.",
@@ -75,7 +75,7 @@ export default function WhyChooseUs() {
     },
     {
       title: {
-        en: "Transparent Donations",
+        en: "Transparency",
         hi: "पारदर्शी दान",
         mr: "पारदर्शक देणगी",
         ta: "வெளிப்படையான காணிக்கை",
@@ -83,7 +83,7 @@ export default function WhyChooseUs() {
         bn: "স্বচ্ছ দান",
       },
       desc: {
-        en: "Every donation is fully traceable and reaches the temple directly.",
+        en: "Everyone donation is fully traceable and reaches the temple directly.",
         hi: "हर दान ट्रेस किया जा सकता है और सीधे मंदिर तक पहुंचता है।",
         mr: "प्रत्येक देणगी ट्रॅक करण्यायोग्य आणि थेट मंदिरात जाते.",
         ta: "ஒவ்வொரு காணிக்கையும் கண்காணிக்கக்கூடியது மற்றும் கோவிலுக்கு நேரடியாக செல்கிறது.",
@@ -121,7 +121,7 @@ export default function WhyChooseUs() {
         bn: "সারা দেশের ভক্তদের আস্থা",
       },
       desc: {
-        en: "Thousands of devotees rely on Devalayaum every day.",
+        en: "Thousands of users rely on Devalayaum every day.",
         hi: "हजारों भक्त प्रतिदिन हम पर भरोसा करते हैं।",
         mr: "दररोज हजारो भक्त आमच्यावर विश्वास ठेवतात.",
         ta: "தினமும் ஆயிரக்கணக்கான பக்தர்கள் எங்களை நம்புகிறார்கள்.",
@@ -132,7 +132,7 @@ export default function WhyChooseUs() {
     },
     {
       title: {
-        en: "Multi-Language Spiritual Content",
+        en: "Multi-Language Content",
         hi: "बहुभाषी आध्यात्मिक सामग्री",
         mr: "बहुभाषिक आध्यात्मिक सामग्री",
         ta: "பல மொழிகளில் ஆன்மீக உள்ளடக்கம்",

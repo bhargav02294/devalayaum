@@ -85,7 +85,7 @@ export default function ProductsList() {
           No Products Found
         </h2>
         <p className="text-sm md:text-base">
-          New spiritual products will be added soon 🙏
+          New products will be added soon 🙏
         </p>
       </div>
     );
@@ -109,16 +109,16 @@ export default function ProductsList() {
           <h1 className="text-3xl md:text-5xl font-bold font-[Marcellus] leading-tight drop-shadow-md"
             style={{ color: "#b34a00" }}
           >
-            Pure Spiritual Items for Your Daily Worship
+            Pure Items for Your Daily Worship
           </h1>
 
           <ul className="mt-4 space-y-2 md:space-y-3 text-gray-700 text-base md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Every product is chosen with purity and devotion.</li>
+            <li>Every product is chosen with purity.</li>
             <li>Bring home the blessings of divine energy.</li>
             <li>From diyas to idols — everything your worship needs.</li>
-            <li>High-quality spiritual items delivered with trust.</li>
+            <li>High-quality items delivered with trustfulness.</li>
             <li>Make every prayer more powerful with pure products.</li>
-            <li>Spirituality made simple, sacred, and accessible.</li>
+            <li>Hand made simple, sacred, and accessible.</li>
           </ul>
         </div>
 

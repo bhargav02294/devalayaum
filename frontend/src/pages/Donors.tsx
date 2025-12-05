@@ -32,7 +32,7 @@ export default function Donors() {
   if (loading)
     return (
       <p className="text-center mt-28 text-orange-700 text-xl font-semibold">
-        Loading Donors...
+        Loading ..
       </p>
     );
 
@@ -47,7 +47,7 @@ export default function Donors() {
 
       {/* PAGE TITLE */}
       <h1 className="text-3xl md:text-4xl font-bold font-[Marcellus] text-orange-700 mb-8 text-center">
-        🙏 Our Devoted Donors
+        🙏 Our Members
       </h1>
 
       {/* DONORS CONTAINER */}
@@ -55,7 +55,7 @@ export default function Donors() {
 
         {donors.length === 0 ? (
           <p className="text-center text-gray-600 text-lg font-[Poppins]">
-            No donations yet. Be the first to contribute! 🕉️
+            No done yet. Be the first to contribute! 🕉️
           </p>
         ) : (
           <ul className="divide-y divide-gray-200">

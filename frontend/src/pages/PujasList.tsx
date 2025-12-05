@@ -117,15 +117,15 @@ export default function PujasList() {
         {/* LEFT TEXT */}
         <div>
           <h1 className="text-3xl md:text-5xl font-bold font-[Marcellus] text-[#b34a00] drop-shadow-md leading-tight">
-            Divine Rituals to Bring Blessings Into Your Life
+             Bring Blessings Into Your Life
           </h1>
 
           <ul className="mt-4 space-y-2 md:space-y-3 text-gray-700 text-base md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Perform sacred pujas with devotion and blessings.</li>
+            <li>Perform sacred pujas with  blessings.</li>
             <li>Bring peace, prosperity & protection into your home.</li>
             <li>Authentic Vedic pujas performed by trusted priests.</li>
-            <li>Every puja begins with faith — and ends with blessings.</li>
-            <li>Let divine rituals bring harmony into your life.</li>
+            <li>Every puja begins — and ends with blessings.</li>
+            <li>Let  bring harmony into your life.</li>
             <li>Book your puja effortlessly and receive God’s grace.</li>
           </ul>
         </div>

@@ -18,7 +18,7 @@ export default function ShippingPolicy() {
         <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-6 font-[Poppins]">
           At{" "}
           <span className="font-semibold text-orange-700">Devalayaum</span>, we
-          ensure that your devotional and spiritual products are packed with
+          ensure that your  products are packed with
           care and delivered to you safely. This Shipping & Delivery Policy
           explains our shipping process and timelines.
         </p>
@@ -28,7 +28,7 @@ export default function ShippingPolicy() {
           1. Shipping Coverage
         </h2>
         <p className="text-gray-700 leading-relaxed mb-5 font-[Poppins]">
-          We currently ship spiritual products across India through trusted
+          We currently ship  products across India through trusted
           courier partners.  
           <br />
           International delivery will be introduced soon.

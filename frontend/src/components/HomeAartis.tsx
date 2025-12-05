@@ -54,7 +54,7 @@ export default function HomeAartis() {
       bn: "আরতি, কথা ও মন্ত্র",
     },
     subHeading: {
-      en: "Explore sacred verses for healing, devotion and peace",
+      en: "Explore sacred verses for healing, and peace",
       hi: "चिकित्सा, भक्ति और शांति के लिए पवित्र श्लोकों का अन्वेषण करें",
       mr: "उपचार, भक्ती आणि शांततेसाठी पवित्र ओव्या शोधा",
       ta: "ஆரோக்கியம், பக்தி மற்றும் அமைதிக்கான தெய்வீக பாடல்கள்",

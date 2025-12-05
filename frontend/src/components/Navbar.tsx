@@ -77,9 +77,9 @@ export default function Navbar() {
           <Link to="/temples" className="hover:text-orange-700">{t(menuText.temples)}</Link>
           <Link to="/pujas" className="hover:text-orange-700">{t(menuText.pujas)}</Link>
           <Link to="/donations" className="hover:text-orange-700">{t(menuText.donations)}</Link>
-         {/* <Link to="/products" className="hover:text-orange-700">{t(menuText.products)}</Link>*/}
+          <Link to="/products" className="hover:text-orange-700">{t(menuText.products)}</Link>
           <Link to="/aarti" className="hover:text-orange-700">{t(menuText.aarti)}</Link>
-          <Link to="/donors" className="hover:text-orange-700">{t(menuText.donors)}</Link>
+            {/*<Link to="/donors" className="hover:text-orange-700">{t(menuText.donors)}</Link>*/}
         </div>
 
         {/* RIGHT SIDE */}

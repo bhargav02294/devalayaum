@@ -75,9 +75,9 @@ export default function TemplesList() {
 
           <ul className="mt-4 space-y-2 text-gray-700 text-base md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
             <li>Authentic history and sacred significance of every shrine.</li>
-            <li>A spiritual guide to the divine temples of India.</li>
+            <li>A guide to the temples of India.</li>
             <li>From Jyotirlingas to Shaktipeeths — explore the holy sites.</li>
-            <li>Real photos, legends, timings, rituals & more.</li>
+            <li>Real photos, legends, timings & more.</li>
             <li>Your digital journey to India’s sacred places begins here.</li>
           </ul>
         </div>

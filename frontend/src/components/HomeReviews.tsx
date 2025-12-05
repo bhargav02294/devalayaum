@@ -12,7 +12,7 @@ export default function HomeReviews() {
 
   const text = {
     heading: {
-      en: "Devotee Reviews",
+      en: " Reviews",
       hi: "भक्तों की समीक्षा",
       mr: "भक्तांची मते",
       ta: "பக்தர்களின் மதிப்புரைகள்",
@@ -20,7 +20,7 @@ export default function HomeReviews() {
       bn: "ভক্তদের রিভিউ",
     },
     subheading: {
-      en: "Words from our beloved devotees",
+      en: "Words from our beloved ones",
       hi: "हमारे प्रिय भक्तों की बातें",
       mr: "आमच्या प्रिय भक्तांचे शब्द",
       ta: "எங்கள் அன்பான பக்தர்களின் வார்த்தைகள்",
@@ -39,7 +39,7 @@ export default function HomeReviews() {
           bn: "দিল্লি",
         },
         text: {
-          en: "This platform brought me closer to spiritual peace.",
+          en: "This platform brought me closer to peace.",
           hi: "इस प्लेटफ़ॉर्म ने मुझे आध्यात्मिक शांति के करीब ला दिया।",
           mr: "या प्लॅटफॉर्मने मला आध्यात्मिक शांततेजवळ आणले.",
           ta: "இந்த தளம் எனக்கு ஆன்மீக அமைதியைக் கொண்டு வந்தது.",
@@ -58,7 +58,7 @@ export default function HomeReviews() {
           bn: "পুণে",
         },
         text: {
-          en: "Very trustworthy, donations reached temple trusts.",
+          en: "Very trustworthy, reached temple trusts.",
           hi: "बहुत भरोसेमंद, दान मंदिर ट्रस्ट तक पहुँचा।",
           mr: "अत्यंत विश्वासार्ह, देणगी मंदिर ट्रस्टपर्यंत पोहोचली.",
           ta: "மிகவும் நம்பகமானது, நன்கொடைகள் கோவில் அறக்கட்டளைக்கு சென்றன.",
