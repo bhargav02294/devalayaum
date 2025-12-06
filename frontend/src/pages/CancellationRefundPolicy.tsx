@@ -69,6 +69,7 @@ export default function CancellationRefundPolicy() {
         <ul className="list-disc ml-6 text-gray-700 mb-4 font-[Poppins] leading-relaxed">
           <li>5–7 business days for Bank Account / UPI refunds</li>
           <li>2–5 business days for Wallet refunds</li>
+          <li>Return will be done within 7 days</li>
         </ul>
 
         {/* SECTION 5 */}
@@ -79,6 +80,7 @@ export default function CancellationRefundPolicy() {
           For refund concerns, incorrect payments, or service issues:
         </p>
         <ul className="ml-6 text-gray-700 mb-4 font-[Poppins] leading-relaxed">
+          <li>Nikhil Arun Bachhav</li>
           <li>📧 Email: devalayaum@gmail.com</li>
           <li>📞 Phone: +91 7666210342</li>
         </ul>
