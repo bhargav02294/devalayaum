@@ -76,7 +76,7 @@ export default function HomeDonations() {
       bn: "যাচাইকৃত মন্দির ট্রাস্ট",
     },
     donateNow: {
-      en: "Donate Now",
+      en: " Go Next",
       hi: "अभी दान करें",
       mr: "आता दान करा",
       ta: "இப்போது நன்கொடையளிக்கவும்",
@@ -84,7 +84,7 @@ export default function HomeDonations() {
       bn: "এখনই দান করুন",
     },
     viewAll: {
-      en: "View All Donations",
+      en: "View All ",
       hi: "सभी दान देखें",
       mr: "सर्व दान पहा",
       ta: "அனைத்து நன்கொடைகளையும் பார்க்கவும்",

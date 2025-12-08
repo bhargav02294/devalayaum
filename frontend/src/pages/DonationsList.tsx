@@ -82,7 +82,7 @@ export default function DonationsList() {
   if (loading)
     return (
       <p className="text-center mt-20 text-orange-700 text-lg font-semibold">
-        Loading Donations...
+        Loading ...
       </p>
     );
 
@@ -90,9 +90,9 @@ export default function DonationsList() {
     return (
       <div className="pt-20 md:pt-24 pb-16 text-center text-gray-600">
         <h2 className="text-2xl md:text-3xl font-bold mb-3 text-orange-700">
-          No Donations Available
+          No Available
         </h2>
-        <p className="text-sm md:text-base">New donation campaigns will be added soon 🙏</p>
+        <p className="text-sm md:text-base">New  campaigns will be added soon 🙏</p>
       </div>
     );
 
