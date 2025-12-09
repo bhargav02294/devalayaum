@@ -115,8 +115,8 @@ export default function AartisList() {
         {[ 
           { key: "all", label: "All" },
           { key: "aarti", label: "Aartis" },
-          { key: "katha", label: "Kathas" },
-          { key: "mantra", label: "Mantras" },
+          /*{ key: "katha", label: "Kathas" },
+          { key: "mantra", label: "Mantras" },*/
         ].map((b) => (
           <button
             key={b.key}
