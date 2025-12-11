@@ -47,7 +47,7 @@ export default function Donors() {
 
       {/* PAGE TITLE */}
       <h1 className="text-3xl md:text-4xl font-bold font-[Marcellus] text-orange-700 mb-8 text-center">
-        🙏 Our Members
+        🙏 Our Donors
       </h1>
 
       {/* DONORS CONTAINER */}

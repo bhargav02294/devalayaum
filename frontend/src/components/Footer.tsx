@@ -49,7 +49,7 @@ export default function Footer() {
       bn: "যোগাযোগ করুন",
     },
     aboutLine: {
-      en: "Your trusted platform for Temples, Pujas, Aartis, and Products.",
+      en: "Your trusted platform for Temples, Pujas,Chadhavas, Aartis, and Products.",
       hi: "मंदिर, पूजा, दान, आरती और पवित्र उत्पादों के लिए आपका विश्वसनीय आध्यात्मिक प्लेटफ़ॉर्म।",
       mr: "मंदिरे, पूजा, दान, आरती आणि पवित्र वस्तूंसाठी तुमचा विश्वासार्ह आध्यात्मिक प्लॅटफॉर्म.",
       ta: "கோயில்கள், பூஜைகள், தானங்கள், ஆரத்தி மற்றும் தெய்வீக பொருட்களுக்கான உங்கள் நம்பகமான ஆன்மீக தளம்.",
@@ -57,7 +57,7 @@ export default function Footer() {
       bn: "মন্দির, পূজা, দান, আরতি ও পবিত্র পণ্যের জন্য আপনার বিশ্বস্ত আধ্যাত্মিক প্ল্যাটফর্ম।",
     },
     dailyUpdates: {
-      en: "Daily updates",
+      en: "Daily Spiritual updates",
       hi: "दैनिक आध्यात्मिक अपडेट",
       mr: "दैनिक आध्यात्मिक अपडेट",
       ta: "தினசரி ஆன்மீக புதுப்பிப்பு",

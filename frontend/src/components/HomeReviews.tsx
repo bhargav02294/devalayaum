@@ -12,7 +12,7 @@ export default function HomeReviews() {
 
   const text = {
     heading: {
-      en: " Reviews",
+      en: "Devotees Reviews",
       hi: "भक्तों की समीक्षा",
       mr: "भक्तांची मते",
       ta: "பக்தர்களின் மதிப்புரைகள்",
@@ -20,7 +20,7 @@ export default function HomeReviews() {
       bn: "ভক্তদের রিভিউ",
     },
     subheading: {
-      en: "Words from our beloved ones",
+      en: "Words from our beloved devotees",
       hi: "हमारे प्रिय भक्तों की बातें",
       mr: "आमच्या प्रिय भक्तांचे शब्द",
       ta: "எங்கள் அன்பான பக்தர்களின் வார்த்தைகள்",

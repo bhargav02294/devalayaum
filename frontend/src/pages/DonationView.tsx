@@ -226,7 +226,7 @@ export default function DonationView() {
               className="text-[20px] text-orange-700 font-semibold mb-4"
               style={{ fontFamily: "'Merriweather', serif" }}
             >
-              DO Chadhava
+             Make Donation
             </h3>
 
             {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -278,7 +278,7 @@ export default function DonationView() {
               onClick={handleDonate}
               className="w-full bg-orange-700 hover:bg-orange-800 text-white text-lg font-semibold py-3 rounded-xl"
             >
-              Next
+              Donate Now
             </button>
           </div>
 

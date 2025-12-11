@@ -88,12 +88,12 @@ export default function AartisList() {
           </h1>
 
           <ul className="mt-4 space-y-2 md:space-y-3 text-gray-700 text-base md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Chants that purify the mind and awaken.</li>
-            <li>Sacred stories that inspire and uplift the soul.</li>
-            <li>Mantras that bring peace, strength.</li>
-            <li>Aartis that illuminate your path.</li>
-            <li>Kathas that reveal divine wisdom.</li>
-            <li>Mantras that connect you with the Supreme.</li>
+            <li>Chants that purify the mind and awaken donation.</li>
+            <li>Feel the divine presence in every sacred verse.</li>
+            <li>Aartis that bring peace, strength, and positivity.</li>
+            <li>Let your heart glow with the rhythm of devotion.</li>
+            <li>Sacred melodies to connect you with the Divine</li>
+            <li>Begin and end your day with God’s blessings.</li>
           </ul>
         </div>
 

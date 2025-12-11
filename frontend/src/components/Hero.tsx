@@ -57,6 +57,9 @@ export default function Hero() {
       img: "/herotemple.png",
     },
 
+
+
+
     {
       title: {
         en: "Book Authentic Pujas",
@@ -86,9 +89,11 @@ export default function Hero() {
       img: "/heropuja.png",
     },
 
+
+
     {
       title: {
-        en: "Support Us",
+        en: "Support Us with Donation",
         hi: "दान से सहयोग करें",
         mr: "दानाने मदत करा",
         ta: "நன்கொடை அளித்து ஆதரிக்கவும்",
@@ -115,9 +120,12 @@ export default function Hero() {
       img: "/herodonation.png",
     },
 
+
+
+
     {
       title: {
-        en: "Products",
+        en: "Spiritual Products",
         hi: "आध्यात्मिक उत्पाद",
         mr: "आध्यात्मिक उत्पादने",
         ta: "ஆன்மீகப் பொருட்கள்",
@@ -144,6 +152,9 @@ export default function Hero() {
       img: "/heroproduct.png",
     },
 
+
+
+
     {
       title: {
         en: "Aarti & Katha",
@@ -154,7 +165,7 @@ export default function Hero() {
         bn: "আরতি ও কথা",
       },
       text: {
-        en: "Read, listen & watch Aartis & Kathas.",
+        en: "Read, listen & watch Spiritual Aartis & Kathas.",
         hi: "आध्यात्मिक आरती और कथा पढ़ें, सुनें और देखें।",
         mr: "आध्यात्मिक आरती आणि कथा वाचा, ऐका आणि पाहा.",
         ta: "ஆன்மீக ஆரத்தி மற்றும் கதைகளைக் கேட்டு பாருங்கள்.",

@@ -296,7 +296,7 @@ export default function ProductView() {
             {product.spiritualBenefit && (
               <div className="mt-8">
                 <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
-                 Benefits
+                 Spiritual Benefits
                 </h2>
                 <p className="text-gray-700 font-[Merriweather]">
                   {t(product.spiritualBenefit)}

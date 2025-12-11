@@ -39,7 +39,7 @@ export default function HomeTemples() {
       bn: "পবিত্র মন্দির",
     },
     subheading: {
-      en: "Explore ancient temples known for their presence and heritage.",
+      en: "Explore ancient temples known for their spiritual presence and heritage.",
       hi: "आध्यात्मिक उपस्थिति और विरासत के लिए प्रसिद्ध प्राचीन मंदिरों की खोज करें।",
       mr: "आध्यात्मिक उपस्थिती आणि वारशासाठी ओळखली जाणारी प्राचीन मंदिरे पाहा.",
       ta: "ஆன்மீகமும் வரலாறும் நிறைந்த தொன்மையான கோவில்களை ஆராயுங்கள்.",

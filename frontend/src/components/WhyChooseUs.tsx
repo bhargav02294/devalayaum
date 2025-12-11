@@ -24,7 +24,7 @@ export default function WhyChooseUs() {
       bn: "কেন দেবালায়ুম?",
     },
     subheading: {
-      en: "A trusted digital platform bringing temples, pujas, and experiences closer to every one",
+      en: "A trusted digital platform bringing temples, pujas, donations and experiences closer to every one",
       hi: "एक विश्वसनीय डिजिटल प्लेटफ़ॉर्म जो मंदिर, पूजा, दान और आध्यात्मिक अनुभव हर भक्त तक पहुँचाता है।",
       mr: "मंदिरे, पूजा, दान आणि आध्यात्मिक अनुभव भक्तांपर्यंत पोहोचवणारे विश्वसनीय व्यासपीठ.",
       ta: "கோயில், பூஜை, காணிக்கை மற்றும் ஆன்மீக அனுபவங்களை உங்களிடம் கொண்டு வரும் நம்பகத்தன்மையான தளம்.",
@@ -75,7 +75,7 @@ export default function WhyChooseUs() {
     },
     {
       title: {
-        en: "Transparency",
+        en: "Transparency in Donation",
         hi: "पारदर्शी दान",
         mr: "पारदर्शक देणगी",
         ta: "வெளிப்படையான காணிக்கை",

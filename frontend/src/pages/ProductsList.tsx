@@ -109,16 +109,16 @@ export default function ProductsList() {
           <h1 className="text-3xl md:text-5xl font-bold font-[Marcellus] leading-tight drop-shadow-md"
             style={{ color: "#b34a00" }}
           >
-            Pure Items for Your Daily Worship
+            Pure Spiritual Items for Your Daily Worship
           </h1>
 
           <ul className="mt-4 space-y-2 md:space-y-3 text-gray-700 text-base md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>Every product is chosen with purity.</li>
+            <li>Every product is chosen with purity and devotion.</li>
             <li>Bring home the blessings of divine energy.</li>
             <li>From diyas to idols — everything your worship needs.</li>
-            <li>High-quality items delivered with trustfulness.</li>
+            <li>High-quality spiritual items delivered with trust.</li>
             <li>Make every prayer more powerful with pure products.</li>
-            <li>Hand made simple, sacred, and accessible.</li>
+            <li>Spirituality made simple, sacred, and accessible.</li>
           </ul>
         </div>
 

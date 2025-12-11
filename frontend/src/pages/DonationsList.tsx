@@ -116,18 +116,16 @@ export default function DonationsList() {
             className="text-3xl md:text-5xl font-bold font-[Marcellus] drop-shadow-md leading-tight"
             style={{ color: "#b34a00" }}
           >
-            Blessings Begin Here — with a small act of faith that reaches the feet.
+            Blessings Begin Here — with a small act of faith that reaches the feet of the divine.
           </h1>
 
           <ul className="mt-4 space-y-2 md:space-y-3 text-gray-700 text-base md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
             <li>Your offering becomes a prayer in the mandir.</li>
-            <li>Give with love, receive grace.</li>
+            <li>Give with love, receive divine grace.</li>
             <li>Every smallwork creates countless things.</li>
             <li>Your faith reaches God through our seva.</li>
             <li>A pure intention is enough to earn punya.</li>
             <li>What you give from the heart returns as peace.</li>
-            <li>Your bright lights someone else’s life.</li>
-            <li>Blessings flow where kindness begins.</li>
           </ul>
         </div>
 
