@@ -52,8 +52,8 @@ export default function Navbar() {
     pujas: { en: "Pujas", hi: "पूजा", mr: "पूजा", ta: "பூஜைகள்", te: "పూజలు", bn: "পূজা" },
     donations: { en: "Chadhava", hi: "चढ़ावा", mr: "चढावा", ta: "படையல்", te: "చడావా", bn: "চাদাভа" },
     products: { en: "Products", hi: "उत्पाद", mr: "उत्पादने", ta: "பொருட்கள்", te: "ఉత్పత్తులు", bn: "পণ্য" },
-    aarti: { en: "Aarti / Katha", hi: "आरती / कथा", mr: "आरती / कथा", ta: "ஆரத்தி / கதை", te: "ఆర్తి / కథ", bn: "আরতি / কথা" },
-    donors: { en: "Our Donors", hi: "हमारे दानदाता", mr: "आमचे दाते", ta: "நன்கொடையாளர்", te: "విరాళ దాతలు", bn: "দাতা" },
+    aarti: { en: "Aarti", hi: "आरती", mr: "आरती ", ta: "ஆரத்தி ", te: "ఆర్తి ", bn: "আরতি " },
+    donors: { en: " Donors", hi: " दानदाता", mr: " दाते", ta: "நன்கொடையாளர்", te: "విరాళ దాతలు", bn: "দাতা" },
   };
 
   // translation helper (fully safe)
