@@ -3,6 +3,7 @@
 import express from "express";
 import crypto from "crypto";
 import axios from "axios";
+import DonationRecord from "../../models/DonationRecord.js";
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.post("/create-phonepe-payment", async (req, res) => {
       merchantId: MERCHANT_ID,
       merchantTransactionId: transactionId,
       merchantUserId: mobile,
-      amount: Number(amount) * 100,
+      amount: Number(amount) * 100, // paise
       redirectUrl: CALLBACK_URL,
       callbackUrl: CALLBACK_URL,
       mobileNumber: mobile,
@@ -34,8 +35,8 @@ router.post("/create-phonepe-payment", async (req, res) => {
 
     const base64Payload = Buffer.from(JSON.stringify(payload)).toString("base64");
 
-    const toHash = base64Payload + "/pg/v1/pay" + SALT_KEY;
-    const sha = crypto.createHash("sha256").update(toHash).digest("hex");
+    const stringToHash = base64Payload + "/pg/v1/pay" + SALT_KEY;
+    const sha = crypto.createHash("sha256").update(stringToHash).digest("hex");
     const xVerify = `${sha}###${SALT_INDEX}`;
 
     const response = await axios.post(
@@ -66,10 +67,10 @@ router.post("/phonepe/callback", async (req, res) => {
   try {
     const { merchantTransactionId } = req.body;
 
-    const toHash =
+    const stringToHash =
       `/pg/v1/status/${MERCHANT_ID}/${merchantTransactionId}` + SALT_KEY;
 
-    const sha = crypto.createHash("sha256").update(toHash).digest("hex");
+    const sha = crypto.createHash("sha256").update(stringToHash).digest("hex");
     const xVerify = `${sha}###${SALT_INDEX}`;
 
     const statusRes = await axios.get(
@@ -84,7 +85,17 @@ router.post("/phonepe/callback", async (req, res) => {
 
     if (statusRes.data.code === "PAYMENT_SUCCESS") {
       console.log("Donation successful:", merchantTransactionId);
-      // TODO: Save donor in DB
+
+      // Save donor in DB
+      await DonationRecord.create({
+        fullName: req.body.fullName || "Anonymous",
+        mobile: req.body.mobile || "",
+        amount: req.body.amount || 0,
+        donationName: req.body.donationName || "",
+        templeName: req.body.templeName || "",
+        paymentId: merchantTransactionId,
+        verified: true,
+      });
     }
 
     return res.json({ message: "OK" });
@@ -94,5 +105,4 @@ router.post("/phonepe/callback", async (req, res) => {
   }
 });
 
-// ⭐ THIS IS THE IMPORTANT LINE FOR ESM
 export default router;
