@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import i18n from "../i18n";
 
-// 🔥 Multilingual text type
 type LangText = Record<string, string>;
 
 interface Slide {
@@ -16,15 +15,15 @@ interface Slide {
 
 export default function Hero() {
   const lang = i18n.language || "en";
-
   const [, setRender] = useState(false);
 
-  // 🔥 Re-render when language changes — realtime
   useEffect(() => {
     const handler = () => setRender((v) => !v);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
+
+
 
   // 🌍 MULTILANGUAGE SLIDES
   const slides: Slide[] = [
@@ -187,7 +186,6 @@ export default function Hero() {
 
   const [current, setCurrent] = useState(0);
 
-  // Auto-slide
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
@@ -196,7 +194,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="relative w-full h-[78vh] md:h-[90vh] overflow-hidden">
+    <div className="relative w-full h-[85vh] md:h-[90vh] overflow-hidden">
       {slides.map((s, i) => (
         <div
           key={i}
@@ -204,34 +202,42 @@ export default function Hero() {
             i === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
-          {/* Full Image */}
-          <div className="w-full h-full bg-black flex items-center justify-center">
+          {/* MOBILE: object-cover — DESKTOP: object-contain */}
+          <div className="w-full h-full bg-black relative">
             <img
               src={s.img}
               alt={s.title[lang]}
-              className="w-full h-full object-contain"
+              className="
+                w-full h-full 
+                object-cover          /* MOBILE BETTER */
+                md:object-contain     /* DESKTOP SAME */
+              "
             />
+
+            {/* MOBILE GRADIENT OVERLAY — improves text readability */}
+            <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
           </div>
 
-          {/* Text */}
+          {/* TEXT CONTAINER */}
           <div
             className="
-              absolute 
-              top-[43%] md:top-[45%] 
+              absolute
+              top-[55%] md:top-[45%]    /* MOBILE FIX — TEXT LOWER */
               left-[5%] md:left-[7%]
               w-[90%] md:w-[40%]
               text-left
+              translate-y-[-50%] md:translate-y-0
             "
           >
             <h1
-              className="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl"
+              className="text-3xl md:text-5xl font-bold text-white drop-shadow-2xl"
               style={{ fontFamily: "'Marcellus', serif" }}
             >
               {s.title[lang]}
             </h1>
 
             <p
-              className="mt-4 text-lg md:text-xl text-gray-200 leading-relaxed drop-shadow-xl"
+              className="mt-3 md:mt-4 text-base md:text-xl text-gray-200 leading-relaxed drop-shadow-xl"
               style={{ fontFamily: "'Merriweather', serif" }}
             >
               {s.text[lang]}
@@ -240,7 +246,8 @@ export default function Hero() {
             <Link
               to={s.link}
               className="
-                inline-block mt-6 px-7 py-3 rounded-full text-white text-lg
+                inline-block mt-5 md:mt-6 px-6 py-2 md:px-7 md:py-3 
+                rounded-full text-white text-base md:text-lg
                 bg-gradient-to-r from-[#d58a2d] via-[#e09f3e] to-[#c97a1f]
                 hover:from-[#c97a1f] hover:via-[#d58a2d] hover:to-[#e2a74b]
                 shadow-[0_5px_25px_rgba(255,180,80,0.55)]
