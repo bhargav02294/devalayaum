@@ -15,7 +15,9 @@ const PHONEPE_BASE_URL = process.env.PHONEPE_BASE_URL;
 const CALLBACK_URL =
   process.env.BACKEND_URL + "/api/payments/phonepe/callback";
 
-// ---------------- CREATE PAYMENT ----------------
+// ======================================================================
+//                       CREATE PAYMENT (DEBUG LOGGING ENABLED)
+// ======================================================================
 router.post("/create-phonepe-payment", async (req, res) => {
   try {
     const { donationId, fullName, mobile, amount } = req.body;
@@ -39,6 +41,18 @@ router.post("/create-phonepe-payment", async (req, res) => {
     const sha = crypto.createHash("sha256").update(stringToHash).digest("hex");
     const xVerify = `${sha}###${SALT_INDEX}`;
 
+    // ------------------------ DEBUG LOGS ------------------------
+    console.log("=========================================");
+    console.log("PHONEPE PAYMENT INITIATED");
+    console.log("-----------------------------------------");
+    console.log("RAW PAYLOAD:", payload);
+    console.log("BASE64 PAYLOAD:", base64Payload);
+    console.log("STRING TO HASH:", stringToHash);
+    console.log("X-VERIFY:", xVerify);
+    console.log("API URL:", `${PHONEPE_BASE_URL}/pg/v1/pay`);
+    console.log("=========================================");
+
+    // ------------------------ API CALL --------------------------
     const response = await axios.post(
       `${PHONEPE_BASE_URL}/pg/v1/pay`,
       { request: base64Payload },
@@ -51,18 +65,27 @@ router.post("/create-phonepe-payment", async (req, res) => {
       }
     );
 
+    // Debug log for PhonePe response
+    console.log("PHONEPE RESPONSE:", response.data);
+
     return res.json({
       success: true,
       transactionId,
       url: response.data.data.instrumentResponse.redirectInfo.url,
     });
   } catch (error) {
-    console.log("PhonePe Error:", error?.response?.data || error);
+    console.log("=========================================");
+    console.log("PHONEPE ERROR RESPONSE:");
+    console.log(error?.response?.data || error);
+    console.log("=========================================");
+
     res.status(500).json({ error: error?.response?.data || error.message });
   }
 });
 
-// ---------------- CALLBACK & VERIFY ----------------
+// ======================================================================
+//                      CALLBACK + PAYMENT STATUS VERIFY
+// ======================================================================
 router.post("/phonepe/callback", async (req, res) => {
   try {
     const { merchantTransactionId } = req.body;
@@ -72,6 +95,14 @@ router.post("/phonepe/callback", async (req, res) => {
 
     const sha = crypto.createHash("sha256").update(stringToHash).digest("hex");
     const xVerify = `${sha}###${SALT_INDEX}`;
+
+    // Debug logs for callback verification
+    console.log("=========================================");
+    console.log("PHONEPE CALLBACK RECEIVED");
+    console.log("TXN ID:", merchantTransactionId);
+    console.log("STATUS CHECK HASH STRING:", stringToHash);
+    console.log("X-VERIFY FOR STATUS:", xVerify);
+    console.log("=========================================");
 
     const statusRes = await axios.get(
       `${PHONEPE_BASE_URL}/pg/v1/status/${MERCHANT_ID}/${merchantTransactionId}`,
@@ -83,10 +114,11 @@ router.post("/phonepe/callback", async (req, res) => {
       }
     );
 
+    console.log("PHONEPE STATUS RESPONSE:", statusRes.data);
+
     if (statusRes.data.code === "PAYMENT_SUCCESS") {
       console.log("Donation successful:", merchantTransactionId);
 
-      // Save donor in DB
       await DonationRecord.create({
         fullName: req.body.fullName || "Anonymous",
         mobile: req.body.mobile || "",
@@ -100,7 +132,9 @@ router.post("/phonepe/callback", async (req, res) => {
 
     return res.json({ message: "OK" });
   } catch (err) {
-    console.log("Callback Error:", err);
+    console.log("=========================================");
+    console.log("CALLBACK ERROR:", err?.response?.data || err);
+    console.log("=========================================");
     return res.status(500).json({ error: "Callback error" });
   }
 });
