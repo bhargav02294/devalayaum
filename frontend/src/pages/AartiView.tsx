@@ -1,4 +1,5 @@
-// src/pages/AartiView.tsx — LIVE MULTILANGUAGE FIXED
+// AartiView.tsx — ORIGINAL WORKING CODE + Only Live Translation Added
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -22,32 +23,18 @@ export default function AartiView() {
 
   const backendURL = import.meta.env.VITE_API_URL;
 
-  // LIVE LANGUAGE
+  // LIVE LANG SUPPORT
   const [lang, setLang] = useState(i18n.language);
-
   useEffect(() => {
     const handler = (lng: string) => setLang(lng);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
-  const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
   const glow = "shadow-[0_6px_22px_rgba(255,145,60,0.22)]";
 
-  // Load font
-  useEffect(() => {
-    const href =
-      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap";
-    if (!document.querySelector(`link[href="${href}"]`)) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      document.head.appendChild(link);
-    }
-  }, []);
-
-  // LOAD ITEM
   useEffect(() => {
     axios
       .get(`${backendURL}/api/aartis/${id}`)
@@ -70,23 +57,16 @@ export default function AartiView() {
     <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
       <div className="max-w-4xl mx-auto">
 
-        <Link
-          to="/aartis"
-          className="text-orange-700 underline"
-          style={{ fontFamily: "'Merriweather', serif" }}
-        >
+        <Link to="/aartis" className="text-orange-700 underline">
           ← {t({ en: "Back to Aartis", hi: "आरती पर वापस जाएँ", mr: "आरतीकडे परत जा" })}
         </Link>
 
         <div className="mt-6 text-center">
-          <h1 className="text-3xl lg:text-4xl font-[Marcellus] text-orange-800 font-bold">
+          <h1 className="text-3xl lg:text-4xl text-orange-800 font-bold font-[Marcellus]">
             {t(item.title)}
           </h1>
 
-          <p
-            className="text-gray-600 mt-1 text-sm"
-            style={{ fontFamily: "'Merriweather', serif" }}
-          >
+          <p className="text-gray-600 mt-1 text-sm">
             📜{" "}
             {t({
               en: item.type,
@@ -98,17 +78,16 @@ export default function AartiView() {
 
         {item.image && (
           <div className="flex justify-center mt-8">
-            <div className={`rounded-3xl p-4 bg-white ${glow}`}>
+            <div className={`rounded-3xl bg-white p-4 ${glow}`}>
               <img src={item.image} className="w-64 h-64 object-cover rounded-2xl" />
             </div>
           </div>
         )}
 
         <div className="mt-12 space-y-12">
-
           {item.description && (
             <section>
-              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
+              <h2 className="text-[18px] text-orange-600 font-semibold mb-3">
                 {t({ en: "Description", hi: "विवरण", mr: "वर्णन" })}
               </h2>
               <p className="text-gray-700">{t(item.description)}</p>
@@ -117,7 +96,7 @@ export default function AartiView() {
 
           {item.content && (
             <section>
-              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
+              <h2 className="text-[18px] text-orange-600 font-semibold mb-3">
                 {t({
                   en:
                     item.type === "mantra"
@@ -140,15 +119,13 @@ export default function AartiView() {
                 })}
               </h2>
 
-              <p className="text-gray-900 whitespace-pre-line text-lg">
-                {t(item.content)}
-              </p>
+              <p className="text-gray-900 whitespace-pre-line">{t(item.content)}</p>
             </section>
           )}
 
           {item.type === "mantra" && item.meaning && (
             <section>
-              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
+              <h2 className="text-[18px] text-orange-600 font-semibold mb-3">
                 {t({ en: "Meaning", hi: "अर्थ", mr: "अर्थ" })}
               </h2>
               <p className="text-gray-700 whitespace-pre-line">{t(item.meaning)}</p>
@@ -157,14 +134,11 @@ export default function AartiView() {
 
           {typeof item.temple === "object" && item.temple?.name && (
             <section>
-              <h2 className="text-[18px] font-semibold text-orange-600 mb-2">
+              <h2 className="text-[18px] text-orange-600 font-semibold mb-2">
                 {t({ en: "Related Temple", hi: "संबंधित मंदिर", mr: "संबंधित मंदिर" })}
               </h2>
 
-              <Link
-                to={`/temple/${item.temple._id}`}
-                className="text-orange-700 underline text-lg"
-              >
+              <Link to={`/temple/${item.temple._id}`} className="text-orange-700 underline text-lg">
                 🛕 {t(item.temple.name)}
               </Link>
             </section>

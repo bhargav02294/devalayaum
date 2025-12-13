@@ -1,228 +1,225 @@
-// src/pages/AartiView.tsx
-// MULTILANGUAGE + DEVOTIONAL THEME
+// AartisList.tsx — ORIGINAL WORKING LOGIC + LIVE MULTILANGUAGE + TYPE-SAFE FILTERS
 
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
+// DATA STRUCTURE
 interface AartiItem {
   _id: string;
   title: Record<string, string>;
   type: "aarti" | "katha" | "mantra";
   description?: Record<string, string>;
-  content?: Record<string, string>;
-  meaning?: Record<string, string>;
   image?: string;
-  temple?: { _id?: string; name?: Record<string, string> } | string | null;
+  published?: boolean;
 }
 
-export default function AartiView() {
-  const { id } = useParams<{ id: string }>();
-  const [item, setItem] = useState<AartiItem | null>(null);
+// BORDER COMPONENT
+function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
+  return (
+    <div className="overflow-hidden py-1">
+      <div
+        className="animate-border-left"
+        style={{
+          backgroundImage: flipped
+            ? "url('/temple-border-flip.png?rev=4')"
+            : "url('/temple-border.png?rev=4')",
+          backgroundRepeat: "repeat-x",
+          backgroundSize: "260px auto",
+          height: "45px",
+          width: "300%",
+        }}
+      />
+    </div>
+  );
+}
+
+export default function AartisList() {
+  const [items, setItems] = useState<AartiItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // FILTER STATE (STRICT TYPE)
+  type FilterType = "all" | "aarti" | "katha" | "mantra";
+  const [filter, setFilter] = useState<FilterType>("all");
+
   const backendURL = import.meta.env.VITE_API_URL;
-  const lang = i18n.language || "en";
 
-  const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
-
-  const glow = "shadow-[0_6px_22px_rgba(255,145,60,0.22)]";
-
+  // LIVE LANGUAGE STATE
+  const [lang, setLang] = useState(i18n.language);
   useEffect(() => {
-    const href =
-      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap";
-    if (!document.querySelector(`link[href="${href}"]`)) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      document.head.appendChild(link);
-    }
+    const handler = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", handler);
+    return () => i18n.off("languageChanged", handler);
   }, []);
 
+  // TRANSLATION FUNCTION
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
+
+  // LOAD DATA
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await axios.get<AartiItem>(`${backendURL}/api/aartis/${id}`);
-        setItem(res.data);
-      } catch (err) {
-        console.error("Failed to load Aarti:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [id, backendURL]);
+    axios
+      .get(`${backendURL}/api/aartis`)
+      .then((res) => setItems(res.data || []))
+      .catch(() => setItems([]))
+      .finally(() => setLoading(false));
+  }, [backendURL]);
+
+  const filteredItems =
+    filter === "all" ? items : items.filter((it) => it.type === filter);
 
   if (loading)
     return (
-      <p className="text-center mt-24 text-orange-700 text-lg font-semibold">
-        Loading…
-      </p>
+      <div className="pt-20 text-center text-orange-700 text-lg font-semibold">
+        {t({
+          en: "Loading Aartis, Kathas & Mantras…",
+          hi: "लोड हो रहा है…",
+          mr: "लोड होत आहे…",
+        })}
+      </div>
     );
 
-  if (!item)
-    return (
-      <p className="text-center mt-24 text-red-600 text-lg">
-        {t({ en: "Item not found", hi: "आइटम नहीं मिला", mr: "वस्तू आढळली नाही" })}
-      </p>
-    );
+  // FILTER OPTIONS (STRICTLY TYPED)
+  const filterOptions: { key: FilterType; label: string }[] = [
+    { key: "all", label: t({ en: "All", hi: "सभी", mr: "सर्व" }) },
+    { key: "aarti", label: t({ en: "Aartis", hi: "आरती", mr: "आरत्या" }) },
+    { key: "katha", label: t({ en: "Kathas", hi: "कथाएँ", mr: "कथा" }) },
+    { key: "mantra", label: t({ en: "Mantras", hi: "मंत्र", mr: "मंत्र" }) },
+  ];
 
   return (
-    <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        {/* BACK BUTTON */}
-        <Link
-          to="/aartis"
-          className="text-orange-700 hover:text-orange-900 underline"
-          style={{ fontFamily: "'Merriweather', serif" }}
-        >
-          ← {t({ en: "Back to Aartis", hi: "आरती पर वापस जाएँ", mr: "आरतीकडे परत जा" })}
-        </Link>
+    <div
+      className="pt-20 md:pt-24 pb-20"
+      style={{
+        background:
+          "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
+      }}
+    >
+      <ScrollingBorder />
 
-        {/* HEADER */}
-        <div className="mt-6 text-center">
-          <h1 className="text-3xl lg:text-4xl font-[Marcellus] text-orange-800 font-bold">
-            {t(item.title)}
+      {/* HERO SECTION */}
+      <div className="max-w-7xl mx-auto px-5 md:px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
+        <div>
+          <h1
+            className="text-3xl md:text-5xl font-bold font-[Marcellus]"
+            style={{ color: "#b34a00" }}
+          >
+            {t({
+              en: "Aartis, Kathas & Mantras of the Eternal Gods",
+              hi: "अनंत देवों की आरती, कथा और मंत्र",
+              mr: "अनंत देवतांची आरती, कथा आणि मंत्र",
+            })}
           </h1>
 
-          <p
-            className="text-gray-600 mt-1 text-sm tracking-wide"
-            style={{ fontFamily: "'Merriweather', serif" }}
+          <ul className="mt-4 text-gray-700 text-base md:text-xl list-disc pl-5 font-[Poppins] leading-relaxed space-y-2">
+            <li>
+              {t({
+                en: "Chants that purify the mind.",
+                hi: "मन को शुद्ध करने वाले मंत्र।",
+                mr: "मन शुद्ध करणारे मंत्र.",
+              })}
+            </li>
+            <li>
+              {t({
+                en: "Feel the divine presence.",
+                hi: "दिव्य उपस्थिति का अनुभव करें।",
+                mr: "दैवी उपस्थिती अनुभवा.",
+              })}
+            </li>
+            <li>
+              {t({
+                en: "Aartis spreading peace.",
+                hi: "शांति लाने वाली आरती।",
+                mr: "शांती देणाऱ्या आरत्या.",
+              })}
+            </li>
+          </ul>
+        </div>
+
+        <div className="flex justify-center lg:justify-end">
+          <img
+            src="/aarti.png"
+            className="w-56 md:w-80 lg:w-[420px] drop-shadow-xl"
+          />
+        </div>
+      </div>
+
+      <ScrollingBorder flipped />
+
+      {/* FILTER BUTTONS */}
+      <div className="max-w-7xl mx-auto px-5 md:px-10 mt-8 mb-6 flex flex-wrap gap-4 justify-center">
+        {filterOptions.map((b) => (
+          <button
+            key={b.key}
+            onClick={() => setFilter(b.key)}
+            className={`px-6 py-2 rounded-full border font-[Poppins]
+              ${
+                filter === b.key
+                  ? "bg-orange-600 text-white border-orange-700 shadow-lg scale-105"
+                  : "bg-white text-orange-700 border-orange-500 hover:bg-orange-100"
+              }`}
           >
-            📜{" "}
-            {t({
-              en: item.type,
-              hi:
-                item.type === "aarti"
-                  ? "आरती"
-                  : item.type === "katha"
-                  ? "कथा"
-                  : "मंत्र",
-              mr:
-                item.type === "aarti"
-                  ? "आरती"
-                  : item.type === "katha"
-                  ? "कथा"
-                  : "मंत्र",
-            })}
-          </p>
-        </div>
+            {b.label}
+          </button>
+        ))}
+      </div>
 
-        {/* IMAGE */}
-        {item.image && (
-          <div className="flex justify-center mt-8">
-            <div className={`rounded-3xl overflow-hidden bg-white p-4 ${glow}`}>
-              <img
-                src={item.image}
-                alt={t(item.title)}
-                className="w-64 h-64 object-cover rounded-2xl"
-              />
-            </div>
+      {/* CARD GRID */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 mt-8">
+        {filteredItems.length === 0 ? (
+          <div className="col-span-full text-center text-gray-600 pt-10">
+            <h3 className="text-2xl font-semibold text-orange-700">
+              {t({
+                en: "No items found",
+                hi: "कोई आइटम नहीं मिला",
+                mr: "काही वस्तू आढळल्या नाहीत",
+              })}
+            </h3>
+            <p>
+              {t({
+                en: "Please try another category.",
+                hi: "कृपया दूसरी श्रेणी चुनें।",
+                mr: "कृपया दुसरी श्रेणी वापरा.",
+              })}
+            </p>
           </div>
-        )}
+        ) : (
+          filteredItems.map((it) => {
+            const title = t(it.title);
+            const desc = t(it.description);
+            const img = it.image || "/placeholder.jpg";
 
-        {/* CONTENT */}
-        <div className="mt-12 space-y-12">
-          {/* DESCRIPTION */}
-          {item.description && (
-            <section>
-              <h2
-                className="text-[18px] font-semibold text-orange-600 mb-3"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t({ en: "Description", hi: "विवरण", mr: "वर्णन" })}
-              </h2>
-              <p
-                className="text-gray-700 leading-relaxed"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t(item.description)}
-              </p>
-            </section>
-          )}
-
-          {/* MAIN CONTENT */}
-          {item.content && (
-            <section>
-              <h2
-                className="text-[18px] font-semibold text-orange-600 mb-3"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t({
-                  en:
-                    item.type === "mantra"
-                      ? "Mantra"
-                      : item.type === "katha"
-                      ? "Katha Content"
-                      : "Aarti Text",
-                  hi:
-                    item.type === "mantra"
-                      ? "मंत्र"
-                      : item.type === "katha"
-                      ? "कथा सामग्री"
-                      : "आरती पाठ",
-                  mr:
-                    item.type === "mantra"
-                      ? "मंत्र"
-                      : item.type === "katha"
-                      ? "कथा मजकूर"
-                      : "आरती मजकूर",
-                })}
-              </h2>
-
-              <p
-                className="text-gray-900 leading-relaxed whitespace-pre-line text-lg"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t(item.content)}
-              </p>
-            </section>
-          )}
-
-          {/* MEANING FOR MANTRAS */}
-          {item.type === "mantra" && item.meaning && (
-            <section>
-              <h2
-                className="text-[18px] font-semibold text-orange-600 mb-3"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t({ en: "Meaning", hi: "अर्थ", mr: "अर्थ" })}
-              </h2>
-
-              <p
-                className="text-gray-700 leading-relaxed whitespace-pre-line"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t(item.meaning)}
-              </p>
-            </section>
-          )}
-
-          {/* RELATED TEMPLE */}
-          {typeof item.temple === "object" && item.temple?.name && (
-            <section>
-              <h2
-                className="text-[18px] font-semibold text-orange-600 mb-2"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t({
-                  en: "Related Temple",
-                  hi: "संबंधित मंदिर",
-                  mr: "संबंधित मंदिर",
-                })}
-              </h2>
-
+            return (
               <Link
-                to={`/temple/${item.temple._id}`}
-                className="text-orange-700 underline hover:text-orange-900 text-lg"
-                style={{ fontFamily: "'Merriweather', serif" }}
+                to={`/aarti/${it._id}`}
+                key={it._id}
+                className="block rounded-2xl overflow-hidden bg-white border shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
               >
-                🛕 {t(item.temple.name)}
+                <div className="w-full h-48 md:h-56 bg-gray-100">
+                  <img
+                    src={img}
+                    alt={title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="p-4 space-y-2">
+                  <h2 className="text-lg font-semibold font-[Playfair] text-gray-900">
+                    {title}
+                  </h2>
+
+                  <span className="text-sm text-orange-700 font-medium">
+                    {it.type.toUpperCase()}
+                  </span>
+
+                  <p className="text-sm text-gray-700 font-[Poppins] leading-relaxed">
+                    {desc.length > 130 ? desc.slice(0, 130) + "..." : desc}
+                  </p>
+                </div>
               </Link>
-            </section>
-          )}
-        </div>
+            );
+          })
+        )}
       </div>
     </div>
   );
