@@ -101,8 +101,27 @@ export default function AartisList() {
 
       {/* FILTER BUTTONS */}
       <div className="max-w-7xl mx-auto px-5 md:px-10 mt-8 mb-6 flex flex-wrap gap-4 justify-center">
-        {[{ key: "all", label: t({ en: "All", hi: "सभी", mr: "सर्व" }) },
-          { key: "aarti", label: t({ en: "Aartis", hi: "आरती", mr: "आरत्या" }) },
+        {[
+
+          {
+  key: "all",
+  label: t({ en: "All", hi: "सभी", mr: "सर्व" })
+},
+{
+  key: "aarti",
+  label: t({ en: "Aartis", hi: "आरती", mr: "आरत्या" })
+},
+{
+  key: "katha",
+  label: t({ en: "Kathas", hi: "कथाएँ", mr: "कथा" })
+},
+{
+  key: "mantra",
+  label: t({ en: "Mantras", hi: "मंत्र", mr: "मंत्र" })
+}
+
+
+
         ].map((b) => (
           <button
             key={b.key}
@@ -156,3 +175,7 @@ export default function AartisList() {
     </div>
   );
 }
+
+
+
+
