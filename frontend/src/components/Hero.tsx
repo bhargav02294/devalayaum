@@ -94,8 +94,8 @@ export default function Hero() {
     <div
       className="
         relative w-full 
-        h-[75vh] md:h-[90vh]
-        overflow-hidden
+        h-[40vh] md:h-[90vh]    /* MOBILE SMALLER, PC SAME */
+        overflow-hidden 
         mt-0 p-0
       "
     >
@@ -107,48 +107,51 @@ export default function Hero() {
           }`}
         >
 
-          {/* FULL IMAGE – TOUCHING NAVBAR, NO GAP */}
+          {/* FULL IMAGE */}
           <img
             src={s.img}
             alt={s.title[lang]}
             className="
               w-full h-full 
               object-cover md:object-contain
-              block
             "
           />
 
-          {/* TEXT OVER IMAGE */}
+          {/* TEXT ON IMAGE */}
           <div
             className="
               absolute
               left-[5%] md:left-[7%]
-              bottom-[8%] md:top-[45%]
-              md:-translate-y-[50%]
+              
+              /* MOBILE → LOWER */
+              top-[75%]
+              -translate-y-[50%]
+
+              /* PC → CENTERED PERFECTLY */
+              md:top-1/2 md:-translate-y-1/2
+
               w-[90%] md:w-[40%]
               text-left
             "
           >
             <h1
               className="
-                text-2xl md:text-5xl 
+                text-lg md:text-5xl     /* MOBILE SMALLER */
                 font-bold 
-                text-white 
+                text-white
                 drop-shadow-2xl
               "
-              style={{ fontFamily: "'Marcellus', serif" }}
             >
               {s.title[lang]}
             </h1>
 
             <p
               className="
-                mt-2 md:mt-4 
-                text-sm md:text-xl 
-                text-white md:text-gray-200 
+                mt-1 md:mt-4
+                text-xs md:text-xl 
+                text-white md:text-gray-200
                 leading-snug
               "
-              style={{ fontFamily: "'Merriweather', serif" }}
             >
               {s.text[lang]}
             </p>
@@ -156,10 +159,10 @@ export default function Hero() {
             <Link
               to={s.link}
               className="
-                inline-block mt-3 md:mt-6 
-                px-5 py-2 md:px-7 md:py-3
-                rounded-full 
-                text-white text-sm md:text-lg
+                inline-block mt-2 md:mt-6
+                px-4 py-1.5 md:px-7 md:py-3
+                rounded-full
+                text-white text-xs md:text-lg
                 bg-gradient-to-r from-[#d58a2d] via-[#e09f3e] to-[#c97a1f]
                 shadow-[0_5px_25px_rgba(255,180,80,0.55)]
               "
@@ -171,7 +174,7 @@ export default function Hero() {
       ))}
 
       {/* INDICATORS */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-30">
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-30">
         {slides.map((_, i) => (
           <button
             key={i}
