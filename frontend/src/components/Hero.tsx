@@ -97,9 +97,8 @@ export default function Hero() {
     <div
       className="
         relative w-full 
-        h-[65vh] md:h-[90vh]     /* MOBILE FIXED HEIGHT + PC SAME */
-        overflow-hidden 
-        mt-0
+        h-[65vh] md:h-[90vh]
+        overflow-hidden
       "
     >
       {slides.map((s, i) => (
@@ -109,55 +108,67 @@ export default function Hero() {
             i === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
-          {/* MOBILE FIX — FULL IMAGE ALWAYS SHOWN */}
+          {/* FULL IMAGE — MOBILE + DESKTOP */}
           <img
             src={s.img}
             alt={s.title[lang]}
             className="
-              w-full h-full
-              object-contain          /* FULL IMAGE NO CROP */
-              md:object-contain       /* PC REMAINS SAME */
+              w-full h-full 
+              object-contain 
+              md:object-contain
             "
           />
 
           {/* TEXT */}
           <div
             className="
-              absolute 
+              absolute
               left-[5%] md:left-[7%]
-              top-[70%] md:top-[45%]
+              top-[72%] md:top-[45%]
               -translate-y-[50%]
               w-[90%] md:w-[40%]
               text-left
             "
           >
+            {/* MOBILE SMALLER TITLE */}
             <h1
               className="
-                text-3xl md:text-5xl font-bold 
-                text-white drop-shadow-2xl
+                text-xl       /* MOBILE FIXED SMALL SIZE */
+                md:text-5xl   /* DESKTOP SAME */
+                font-bold 
+                text-white 
+                drop-shadow-2xl
               "
               style={{ fontFamily: "'Marcellus', serif" }}
             >
               {s.title[lang]}
             </h1>
 
+            {/* MOBILE SMALLER PARAGRAPH */}
             <p
               className="
-                mt-3 md:mt-4 
-                text-base md:text-xl 
-                text-gray-100 md:text-gray-200
+                mt-2 
+                text-sm       /* MOBILE SMALL */
+                md:text-xl 
+                text-gray-200
+                leading-snug
               "
               style={{ fontFamily: "'Merriweather', serif" }}
             >
               {s.text[lang]}
             </p>
 
+            {/* MOBILE SMALLER BUTTON */}
             <Link
               to={s.link}
               className="
-                inline-block mt-5 md:mt-6 
-                px-6 py-2 md:px-7 md:py-3 
-                rounded-full text-white text-base md:text-lg
+                inline-block 
+                mt-3 md:mt-6 
+                px-4 py-1.5    /* SMALLER BUTTON FOR MOBILE */
+                md:px-7 md:py-3
+                rounded-full 
+                text-white 
+                text-xs md:text-lg
                 bg-gradient-to-r from-[#d58a2d] via-[#e09f3e] to-[#c97a1f]
                 shadow-[0_5px_25px_rgba(255,180,80,0.55)]
               "
@@ -169,7 +180,7 @@ export default function Hero() {
       ))}
 
       {/* INDICATORS */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 z-30">
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-30">
         {slides.map((_, i) => (
           <button
             key={i}
