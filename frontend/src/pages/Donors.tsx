@@ -1,5 +1,7 @@
+// src/pages/Donors.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
+import i18n from "../i18n";
 
 interface Donor {
   _id: string;
@@ -13,26 +15,34 @@ interface Donor {
 export default function Donors() {
   const [donors, setDonors] = useState<Donor[]>([]);
   const [loading, setLoading] = useState(true);
+
   const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
+  const [lang, setLang] = useState(i18n.language);
   useEffect(() => {
-    const fetchDonors = async () => {
-      try {
-        const res = await axios.get(`${backendURL}/api/payments/donors`);
-        setDonors(res.data);
-      } catch (err) {
-        console.error("Failed to fetch donors:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDonors();
+    const handler = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", handler);
+    return () => i18n.off("languageChanged", handler);
+  }, []);
+
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
+
+  useEffect(() => {
+    axios
+      .get(`${backendURL}/api/payments/donors`)
+      .then((res) => setDonors(res.data))
+      .catch((err) => console.error("Failed to fetch donors:", err))
+      .finally(() => setLoading(false));
   }, [backendURL]);
 
   if (loading)
     return (
       <p className="text-center mt-28 text-orange-700 text-xl font-semibold">
-        Loading ..
+        {t({
+          en: "Loading...",
+          hi: "लोड हो रहा है...",
+          mr: "लोड होत आहे..."
+        })}
       </p>
     );
 
@@ -44,28 +54,34 @@ export default function Donors() {
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 25%, #ffffff 75%)",
       }}
     >
-
       {/* PAGE TITLE */}
       <h1 className="text-3xl md:text-4xl font-bold font-[Marcellus] text-orange-700 mb-8 text-center">
-        🙏 Our Donors
+        {t({
+          en: "🙏 Our Donors",
+          hi: "🙏 हमारे दानदाता",
+          mr: "🙏 आमचे दाते"
+        })}
       </h1>
 
-      {/* DONORS CONTAINER */}
+      {/* DONOR LIST CONTAINER */}
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-5 md:p-8 border border-orange-100">
 
         {donors.length === 0 ? (
           <p className="text-center text-gray-600 text-lg font-[Poppins]">
-            No done yet. Be the first to contribute! 🕉️
+            {t({
+              en: "No donations yet. Be the first to contribute!",
+              hi: "अभी तक कोई दान नहीं किया गया है। सबसे पहले योगदान दें!",
+              mr: "अजून देणगी नाही. सर्वात पहिले योगदान करा!"
+            })}
           </p>
         ) : (
           <ul className="divide-y divide-gray-200">
-
             {donors.map((d) => (
               <li
                 key={d._id}
                 className="py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
               >
-                {/* LEFT SECTION */}
+                {/* LEFT SIDE */}
                 <div>
                   <p className="font-semibold text-gray-800 text-lg font-[Poppins]">
                     {d.fullName}
@@ -84,9 +100,9 @@ export default function Donors() {
                 </p>
               </li>
             ))}
-
           </ul>
         )}
+
       </div>
     </section>
   );
