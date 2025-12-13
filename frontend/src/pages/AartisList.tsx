@@ -13,7 +13,6 @@ interface AartiItem {
   published?: boolean;
 }
 
-// Decorative Border Component
 function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   return (
     <div className="overflow-hidden py-1">
@@ -36,10 +35,11 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
 export default function AartisList() {
   const [items, setItems] = useState<AartiItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "aarti">("all");
+  const [filter, setFilter] = useState<"all" | "aarti" | "katha" | "mantra">(
+    "all"
+  );
 
   const backendURL = import.meta.env.VITE_API_URL;
-
   const lang = i18n.language || "en";
   const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
@@ -54,13 +54,12 @@ export default function AartisList() {
   const filteredItems =
     filter === "all" ? items : items.filter((it) => it.type === filter);
 
-  if (loading) {
+  if (loading)
     return (
       <div className="pt-20 md:pt-24 pb-20 text-center text-orange-700 text-lg font-semibold">
         Loading Aartis, Kathas & Mantras…
       </div>
     );
-  }
 
   return (
     <div
@@ -72,11 +71,11 @@ export default function AartisList() {
     >
       <ScrollingBorder />
 
-      {/* HERO SECTION */}
+      {/* HERO */}
       <div className="max-w-7xl mx-auto px-5 md:px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
         <div>
           <h1
-            className="text-3xl md:text-5xl font-bold font-[Marcellus] drop-shadow-md leading-tight"
+            className="text-3xl md:text-5xl font-bold font-[Marcellus]"
             style={{ color: "#b34a00" }}
           >
             {t({
@@ -85,11 +84,6 @@ export default function AartisList() {
               mr: "अनंत देवतांची आरती, कथा आणि मंत्र",
             })}
           </h1>
-
-          <ul className="mt-4 space-y-2 md:space-y-3 text-gray-700 text-base md:text-xl font-[Poppins] leading-relaxed list-disc pl-5">
-            <li>{t({ en: "Chants that purify the mind.", hi: "मन शुद्ध करने वाले मंत्र।", mr: "मन शुद्ध करणारे मंत्र." })}</li>
-            <li>{t({ en: "Aartis that bring peace and devotion.", hi: "शांति और भक्ति लाने वाली आरती।", mr: "शांती आणि भक्ती देणारी आरती." })}</li>
-          </ul>
         </div>
 
         <div className="flex justify-center lg:justify-end">
@@ -102,30 +96,16 @@ export default function AartisList() {
       {/* FILTER BUTTONS */}
       <div className="max-w-7xl mx-auto px-5 md:px-10 mt-8 mb-6 flex flex-wrap gap-4 justify-center">
         {[
-
-          {
-  key: "all",
-  label: t({ en: "All", hi: "सभी", mr: "सर्व" })
-},
-{
-  key: "aarti",
-  label: t({ en: "Aartis", hi: "आरती", mr: "आरत्या" })
-},
-{
-  key: "katha",
-  label: t({ en: "Kathas", hi: "कथाएँ", mr: "कथा" })
-},
-{
-  key: "mantra",
-  label: t({ en: "Mantras", hi: "मंत्र", mr: "मंत्र" })
-}
-
-
-
+          { key: "all", label: t({ en: "All", hi: "सभी", mr: "सर्व" }) },
+          { key: "aarti", label: t({ en: "Aartis", hi: "आरती", mr: "आरत्या" }) },
+          { key: "katha", label: t({ en: "Kathas", hi: "कथाएँ", mr: "कथा" }) },
+          { key: "mantra", label: t({ en: "Mantras", hi: "मंत्र", mr: "मंत्र" }) },
         ].map((b) => (
           <button
             key={b.key}
-            onClick={() => setFilter(b.key as "all" | "aarti")}
+            onClick={() =>
+              setFilter(b.key as "all" | "aarti" | "katha" | "mantra")
+            }
             className={`px-6 py-2 rounded-full font-[Poppins] border
               ${
                 filter === b.key
@@ -138,7 +118,7 @@ export default function AartisList() {
         ))}
       </div>
 
-      {/* CARD GRID */}
+      {/* GRID */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
         {filteredItems.map((it) => {
           const title = t(it.title);
@@ -175,7 +155,3 @@ export default function AartisList() {
     </div>
   );
 }
-
-
-
-

@@ -5,7 +5,6 @@ import i18n from "../i18n";
 import logo from "../assets/logo.png";
 
 type LangCode = "en" | "hi" | "mr" | "ta" | "te" | "bn";
-
 type MenuItem = Record<LangCode, string>;
 
 export default function Navbar() {
@@ -21,7 +20,6 @@ export default function Navbar() {
     setToken(Boolean(localStorage.getItem("USER_TOKEN")));
   }, []);
 
-  // close language dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (langRef.current && !langRef.current.contains(e.target as Node)) {
@@ -42,28 +40,25 @@ export default function Navbar() {
     navigate("/");
   };
 
-  // menu labels with correct typing
   const menuText: Record<
-    "home" | "temples" | "pujas" | "donations" | "products" | "aarti" | "donors",
+    "home" | "temples" | "pujas" | "donations" | "products" | "aartis" | "donors",
     MenuItem
   > = {
     home: { en: "Home", hi: "होम", mr: "मुख्यपृष्ठ", ta: "முகப்பு", te: "హోమ్", bn: "হোম" },
     temples: { en: "Temples", hi: "मंदिर", mr: "मंदिरे", ta: "கோயில்கள்", te: "దేవాలయాలు", bn: "মন্দির" },
     pujas: { en: "Pujas", hi: "पूजा", mr: "पूजा", ta: "பூஜைகள்", te: "పూజలు", bn: "পূজা" },
-    donations: { en: "Chadhava", hi: "चढ़ावा", mr: "चढावा", ta: "படையல்", te: "చడావా", bn: "চাদাভа" },
+    donations: { en: "Chadhava", hi: "चढ़ावा", mr: "चढावा", ta: "படையல்", te: "చడావా", bn: "চাদাভা" },
     products: { en: "Products", hi: "उत्पाद", mr: "उत्पादने", ta: "பொருட்கள்", te: "ఉత్పత్తులు", bn: "পণ্য" },
-    aarti: { en: "Aarti", hi: "आरती", mr: "आरती ", ta: "ஆரத்தி ", te: "ఆర్తి ", bn: "আরতি " },
-    donors: { en: " Donors", hi: " दानदाता", mr: " दाते", ta: "நன்கொடையாளர்", te: "విరాళ దాతలు", bn: "দাতা" },
+    aartis: { en: "Aarti", hi: "आरती", mr: "आरती", ta: "ஆரத்தி", te: "ఆర్తి", bn: "আরতি" },
+    donors: { en: "Donors", hi: "दानदाता", mr: "दाते", ta: "நன்கொடையாளர்", te: "విరాళ దాతలు", bn: "দাতা" },
   };
 
-  // translation helper (fully safe)
   const t = (obj: MenuItem) => obj[lang] ?? obj["en"];
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white/95 backdrop-blur z-50 shadow-md border-b border-orange-200/40 h-[65px] flex items-center">
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-6">
 
-        {/* LOGO */}
         <Link to="/" className="flex items-center gap-3" onClick={closeMenu}>
           <img src={logo} alt="Devalayaum Logo" className="w-12 h-12 rounded-full shadow-md" />
           <span className="text-xl font-bold bg-gradient-to-r from-orange-700 to-yellow-500 bg-clip-text text-transparent font-[Marcellus]">
@@ -78,7 +73,7 @@ export default function Navbar() {
           <Link to="/pujas" className="hover:text-orange-700">{t(menuText.pujas)}</Link>
           <Link to="/donations" className="hover:text-orange-700">{t(menuText.donations)}</Link>
           <Link to="/products" className="hover:text-orange-700">{t(menuText.products)}</Link>
-          <Link to="/aarti" className="hover:text-orange-700">{t(menuText.aarti)}</Link>
+          <Link to="/aartis" className="hover:text-orange-700">{t(menuText.aartis)}</Link>
           <Link to="/donors" className="hover:text-orange-700">{t(menuText.donors)}</Link>
         </div>
 
@@ -113,7 +108,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* DESKTOP LOGIN/LOGOUT */}
+          {/* LOGIN / LOGOUT */}
           {token ? (
             <div className="hidden md:flex items-center gap-5">
               <button
@@ -139,7 +134,6 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* MOBILE MENU TOGGLE */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-gray-700"
@@ -149,7 +143,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE MENU BELOW */}
+      {/* MOBILE MENU */}
       <div
         className={`md:hidden bg-white border-t border-orange-200 shadow-xl transition-all duration-300 overflow-hidden absolute top-[65px] left-0 w-full ${
           menuOpen ? "max-h-[600px] p-5" : "max-h-0 p-0"
@@ -157,7 +151,7 @@ export default function Navbar() {
       >
         <ul className="flex flex-col gap-5 text-gray-800 font-[Poppins] text-lg">
           {(
-            ["home", "temples", "pujas", "donations", "products", "aarti", "donors"] as const
+            ["home", "temples", "pujas", "donations", "products", "aartis", "donors"] as const
           ).map((key) => (
             <li key={key}>
               <Link to={`/${key === "home" ? "" : key}`} onClick={closeMenu}>
@@ -166,7 +160,7 @@ export default function Navbar() {
             </li>
           ))}
 
-          {/* LANGUAGE MOBILE */}
+          {/* MOBILE LANGUAGE */}
           <li>
             <select
               onChange={(e) => {
@@ -179,11 +173,6 @@ export default function Navbar() {
               <option value="en">English</option>
               <option value="hi">Hindi</option>
               <option value="mr">Marathi</option>
-
-{/* Other Language options removed as per recent edits
-              <option value="te">Telugu</option>
-              <option value="ta">Tamil</option>
-              <option value="bn">Bengali</option>*/}
             </select>
           </li>
 
