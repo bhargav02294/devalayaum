@@ -183,7 +183,6 @@ export default function Hero() {
       img: "/heroaarti.png",
     },
   ];
-
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -194,7 +193,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="relative w-full h-[85vh] md:h-[90vh] overflow-hidden">
+    <div className="relative w-full h-[75vh] md:h-[90vh] overflow-hidden">
       {slides.map((s, i) => (
         <div
           key={i}
@@ -202,42 +201,38 @@ export default function Hero() {
             i === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
-          {/* MOBILE: object-cover — DESKTOP: object-contain */}
-          <div className="w-full h-full bg-black relative">
+          {/* BACKGROUND + FULL IMAGE FIT */}
+          <div className="w-full h-full bg-gradient-to-b from-[#f7ebe1] via-[#fffaf3] to-white flex items-center justify-center p-4">
             <img
               src={s.img}
               alt={s.title[lang]}
               className="
-                w-full h-full 
-                object-cover          /* MOBILE BETTER */
-                md:object-contain     /* DESKTOP SAME */
+                max-w-full max-h-full
+                object-contain   /* FULL IMAGE ALWAYS SHOWN */
               "
             />
-
-            {/* MOBILE GRADIENT OVERLAY — improves text readability */}
-            <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
           </div>
 
           {/* TEXT CONTAINER */}
           <div
             className="
               absolute
-              top-[55%] md:top-[45%]    /* MOBILE FIX — TEXT LOWER */
+              top-[60%] md:top-[45%]
               left-[5%] md:left-[7%]
               w-[90%] md:w-[40%]
               text-left
-              translate-y-[-50%] md:translate-y-0
+              -translate-y-[50%]
             "
           >
             <h1
-              className="text-3xl md:text-5xl font-bold text-white drop-shadow-2xl"
+              className="text-3xl md:text-5xl font-bold text-gray-900 md:text-white drop-shadow-2xl"
               style={{ fontFamily: "'Marcellus', serif" }}
             >
               {s.title[lang]}
             </h1>
 
             <p
-              className="mt-3 md:mt-4 text-base md:text-xl text-gray-200 leading-relaxed drop-shadow-xl"
+              className="mt-3 md:mt-4 text-base md:text-xl text-gray-700 md:text-gray-200 leading-relaxed drop-shadow-xl"
               style={{ fontFamily: "'Merriweather', serif" }}
             >
               {s.text[lang]}
@@ -246,7 +241,7 @@ export default function Hero() {
             <Link
               to={s.link}
               className="
-                inline-block mt-5 md:mt-6 px-6 py-2 md:px-7 md:py-3 
+                inline-block mt-5 md:mt-6 px-6 py-2 md:px-7 md:py-3
                 rounded-full text-white text-base md:text-lg
                 bg-gradient-to-r from-[#d58a2d] via-[#e09f3e] to-[#c97a1f]
                 hover:from-[#c97a1f] hover:via-[#d58a2d] hover:to-[#e2a74b]
