@@ -1,6 +1,4 @@
-// src/pages/AartiView.tsx
-// MULTILANGUAGE + DEVOTIONAL THEME
-
+// src/pages/AartiView.tsx — LIVE MULTILANGUAGE FIXED
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -23,12 +21,21 @@ export default function AartiView() {
   const [loading, setLoading] = useState(true);
 
   const backendURL = import.meta.env.VITE_API_URL;
-  const lang = i18n.language || "en";
+
+  // LIVE LANGUAGE
+  const [lang, setLang] = useState(i18n.language);
+
+  useEffect(() => {
+    const handler = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", handler);
+    return () => i18n.off("languageChanged", handler);
+  }, []);
 
   const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
 
   const glow = "shadow-[0_6px_22px_rgba(255,145,60,0.22)]";
 
+  // Load font
   useEffect(() => {
     const href =
       "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap";
@@ -40,26 +47,17 @@ export default function AartiView() {
     }
   }, []);
 
+  // LOAD ITEM
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await axios.get<AartiItem>(`${backendURL}/api/aartis/${id}`);
-        setItem(res.data);
-      } catch (err) {
-        console.error("Failed to load Aarti:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+    axios
+      .get(`${backendURL}/api/aartis/${id}`)
+      .then((res) => setItem(res.data))
+      .catch(() => setItem(null))
+      .finally(() => setLoading(false));
   }, [id, backendURL]);
 
   if (loading)
-    return (
-      <p className="text-center mt-24 text-orange-700 text-lg font-semibold">
-        Loading…
-      </p>
-    );
+    return <p className="text-center mt-24 text-orange-700 text-lg">Loading…</p>;
 
   if (!item)
     return (
@@ -71,84 +69,55 @@ export default function AartiView() {
   return (
     <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
       <div className="max-w-4xl mx-auto">
-        {/* BACK BUTTON */}
+
         <Link
           to="/aartis"
-          className="text-orange-700 hover:text-orange-900 underline"
+          className="text-orange-700 underline"
           style={{ fontFamily: "'Merriweather', serif" }}
         >
           ← {t({ en: "Back to Aartis", hi: "आरती पर वापस जाएँ", mr: "आरतीकडे परत जा" })}
         </Link>
 
-        {/* HEADER */}
         <div className="mt-6 text-center">
           <h1 className="text-3xl lg:text-4xl font-[Marcellus] text-orange-800 font-bold">
             {t(item.title)}
           </h1>
 
           <p
-            className="text-gray-600 mt-1 text-sm tracking-wide"
+            className="text-gray-600 mt-1 text-sm"
             style={{ fontFamily: "'Merriweather', serif" }}
           >
             📜{" "}
             {t({
               en: item.type,
-              hi:
-                item.type === "aarti"
-                  ? "आरती"
-                  : item.type === "katha"
-                  ? "कथा"
-                  : "मंत्र",
-              mr:
-                item.type === "aarti"
-                  ? "आरती"
-                  : item.type === "katha"
-                  ? "कथा"
-                  : "मंत्र",
+              hi: item.type === "aarti" ? "आरती" : item.type === "katha" ? "कथा" : "मंत्र",
+              mr: item.type === "aarti" ? "आरती" : item.type === "katha" ? "कथा" : "मंत्र",
             })}
           </p>
         </div>
 
-        {/* IMAGE */}
         {item.image && (
           <div className="flex justify-center mt-8">
-            <div className={`rounded-3xl overflow-hidden bg-white p-4 ${glow}`}>
-              <img
-                src={item.image}
-                alt={t(item.title)}
-                className="w-64 h-64 object-cover rounded-2xl"
-              />
+            <div className={`rounded-3xl p-4 bg-white ${glow}`}>
+              <img src={item.image} className="w-64 h-64 object-cover rounded-2xl" />
             </div>
           </div>
         )}
 
-        {/* CONTENT */}
         <div className="mt-12 space-y-12">
-          {/* DESCRIPTION */}
+
           {item.description && (
             <section>
-              <h2
-                className="text-[18px] font-semibold text-orange-600 mb-3"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
+              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
                 {t({ en: "Description", hi: "विवरण", mr: "वर्णन" })}
               </h2>
-              <p
-                className="text-gray-700 leading-relaxed"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t(item.description)}
-              </p>
+              <p className="text-gray-700">{t(item.description)}</p>
             </section>
           )}
 
-          {/* MAIN CONTENT */}
           {item.content && (
             <section>
-              <h2
-                className="text-[18px] font-semibold text-orange-600 mb-3"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
+              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
                 {t({
                   en:
                     item.type === "mantra"
@@ -171,52 +140,30 @@ export default function AartiView() {
                 })}
               </h2>
 
-              <p
-                className="text-gray-900 leading-relaxed whitespace-pre-line text-lg"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
+              <p className="text-gray-900 whitespace-pre-line text-lg">
                 {t(item.content)}
               </p>
             </section>
           )}
 
-          {/* MEANING FOR MANTRAS */}
           {item.type === "mantra" && item.meaning && (
             <section>
-              <h2
-                className="text-[18px] font-semibold text-orange-600 mb-3"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
+              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
                 {t({ en: "Meaning", hi: "अर्थ", mr: "अर्थ" })}
               </h2>
-
-              <p
-                className="text-gray-700 leading-relaxed whitespace-pre-line"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t(item.meaning)}
-              </p>
+              <p className="text-gray-700 whitespace-pre-line">{t(item.meaning)}</p>
             </section>
           )}
 
-          {/* RELATED TEMPLE */}
           {typeof item.temple === "object" && item.temple?.name && (
             <section>
-              <h2
-                className="text-[18px] font-semibold text-orange-600 mb-2"
-                style={{ fontFamily: "'Merriweather', serif" }}
-              >
-                {t({
-                  en: "Related Temple",
-                  hi: "संबंधित मंदिर",
-                  mr: "संबंधित मंदिर",
-                })}
+              <h2 className="text-[18px] font-semibold text-orange-600 mb-2">
+                {t({ en: "Related Temple", hi: "संबंधित मंदिर", mr: "संबंधित मंदिर" })}
               </h2>
 
               <Link
                 to={`/temple/${item.temple._id}`}
-                className="text-orange-700 underline hover:text-orange-900 text-lg"
-                style={{ fontFamily: "'Merriweather', serif" }}
+                className="text-orange-700 underline text-lg"
               >
                 🛕 {t(item.temple.name)}
               </Link>
