@@ -1,4 +1,4 @@
-// Fully optimized Aarti List page with multilingual support
+// Fully optimized AartisList page (mobile + desktop) with multilingual support
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -12,6 +12,8 @@ interface AartiItem {
   image?: string;
   published?: boolean;
 }
+
+type FilterType = "all" | "aarti" | "katha" | "mantra";
 
 function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   return (
@@ -32,15 +34,14 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   );
 }
 
-export default function AartiList() {
+export default function AartisList() {
   const [items, setItems] = useState<AartiItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [filter, setFilter] = useState<"all" | "aarti" | "katha" | "mantra">(
-    "all"
-  );
+  const [filter, setFilter] = useState<FilterType>("all");
 
   const backendURL = import.meta.env.VITE_API_URL;
+
   const lang = i18n.language || "en";
   const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
@@ -57,14 +58,21 @@ export default function AartiList() {
 
   if (loading)
     return (
-      <div className="pt-20 text-center text-orange-700 text-lg font-semibold">
+      <div className="pt-20 md:pt-24 pb-20 text-center text-orange-700 text-lg font-semibold">
         Loading Aartis, Kathas & Mantras…
       </div>
     );
 
+  const filterButtons: { key: FilterType; label: string }[] = [
+    { key: "all", label: t({ en: "All", hi: "सभी", mr: "सर्व" }) },
+    { key: "aarti", label: t({ en: "Aartis", hi: "आरती", mr: "आरत्या" }) },
+    { key: "katha", label: t({ en: "Kathas", hi: "कथाएँ", mr: "कथा" }) },
+    { key: "mantra", label: t({ en: "Mantras", hi: "मंत्र", mr: "मंत्र" }) },
+  ];
+
   return (
     <div
-      className="pt-20 pb-20"
+      className="pt-20 md:pt-24 pb-20"
       style={{
         background:
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
@@ -73,7 +81,7 @@ export default function AartiList() {
       <ScrollingBorder />
 
       {/* HERO */}
-      <div className="max-w-7xl mx-auto px-5 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
+      <div className="max-w-7xl mx-auto px-5 md:px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
         <div>
           <h1
             className="text-3xl md:text-5xl font-bold font-[Marcellus]"
@@ -88,31 +96,24 @@ export default function AartiList() {
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <img src="/aarti.png" className="w-56 md:w-80 lg:w-[420px]" />
+          <img src="/aarti.png" className="w-56 md:w-80 lg:w-[420px] drop-shadow-xl" />
         </div>
       </div>
 
       <ScrollingBorder flipped />
 
-      {/* FILTER BUTTONS */}
-      <div className="max-w-7xl mx-auto px-5 mt-8 mb-6 flex flex-wrap gap-4 justify-center">
-        {[
-          { key: "all", label: t({ en: "All", hi: "सभी", mr: "सर्व" }) },
-          { key: "aarti", label: t({ en: "Aartis", hi: "आरती", mr: "आरत्या" }) },
-          { key: "katha", label: t({ en: "Kathas", hi: "कथाएँ", mr: "कथा" }) },
-          { key: "mantra", label: t({ en: "Mantras", hi: "मंत्र", mr: "मंत्र" }) },
-        ].map((b) => (
+      {/* FILTERS */}
+      <div className="max-w-7xl mx-auto px-5 md:px-10 mt-8 mb-6 flex flex-wrap gap-4 justify-center">
+        {filterButtons.map((b) => (
           <button
             key={b.key}
-            onClick={() =>
-              setFilter(b.key as "all" | "aarti" | "katha" | "mantra")
-            }
+            onClick={() => setFilter(b.key)}
             className={`px-6 py-2 rounded-full font-[Poppins] border
-            ${
-              filter === b.key
-                ? "bg-orange-600 text-white border-orange-700 shadow-lg scale-105"
-                : "bg-white text-orange-700 border-orange-500 hover:bg-orange-100"
-            }`}
+              ${
+                filter === b.key
+                  ? "bg-orange-600 text-white border-orange-700 shadow-lg scale-105"
+                  : "bg-white text-orange-700 border-orange-500 hover:bg-orange-100"
+              }`}
           >
             {b.label}
           </button>
@@ -120,7 +121,7 @@ export default function AartiList() {
       </div>
 
       {/* GRID */}
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
         {filteredItems.map((it) => {
           const title = t(it.title);
           const desc = t(it.description);
@@ -130,14 +131,14 @@ export default function AartiList() {
             <Link
               to={`/aarti/${it._id}`}
               key={it._id}
-              className="block rounded-2xl shadow-sm bg-white border hover:shadow-md hover:-translate-y-1 transition-all"
+              className="block rounded-2xl overflow-hidden bg-white border shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
             >
-              <div className="w-full h-48 bg-gray-100 overflow-hidden">
+              <div className="w-full h-48 md:h-56 bg-gray-100 overflow-hidden">
                 <img src={img} alt={title} className="w-full h-full object-cover" />
               </div>
 
               <div className="p-4 space-y-2">
-                <h2 className="text-lg font-semibold text-gray-900 font-[Playfair]">
+                <h2 className="text-lg font-semibold font-[Playfair] text-gray-900">
                   {title}
                 </h2>
 

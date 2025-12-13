@@ -18,7 +18,6 @@ interface AartiItem {
 
 export default function AartiView() {
   const { id } = useParams<{ id: string }>();
-
   const [item, setItem] = useState<AartiItem | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -49,7 +48,11 @@ export default function AartiView() {
   }, [id, backendURL]);
 
   if (loading)
-    return <p className="text-center mt-24 text-orange-700 text-lg">Loading…</p>;
+    return (
+      <p className="text-center mt-24 text-orange-700 text-lg font-semibold">
+        Loading…
+      </p>
+    );
 
   if (!item)
     return (
@@ -60,20 +63,25 @@ export default function AartiView() {
     <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
       <div className="max-w-4xl mx-auto">
 
-        {/* FIXED BACK BUTTON */}
+        {/* FIXED: BACK BUTTON */}
         <Link
           to="/aarti"
           className="text-orange-700 hover:text-orange-900 underline"
+          style={{ fontFamily: "'Merriweather', serif" }}
         >
           ← {t({ en: "Back to Aartis", hi: "आरती पर वापस जाएँ", mr: "आरतीकडे परत जा" })}
         </Link>
 
+        {/* HEADER */}
         <div className="mt-6 text-center">
           <h1 className="text-3xl lg:text-4xl font-[Marcellus] text-orange-800 font-bold">
             {t(item.title)}
           </h1>
 
-          <p className="text-gray-600 mt-1 text-sm capitalize tracking-wide">
+          <p
+            className="text-gray-600 mt-1 text-sm capitalize tracking-wide"
+            style={{ fontFamily: "'Merriweather', serif" }}
+          >
             📜{" "}
             {t({
               en: item.type,
@@ -83,6 +91,7 @@ export default function AartiView() {
           </p>
         </div>
 
+        {/* IMAGE */}
         {item.image && (
           <div className="flex justify-center mt-8">
             <div className={`rounded-3xl overflow-hidden bg-white p-4 ${glow}`}>
@@ -95,21 +104,21 @@ export default function AartiView() {
           </div>
         )}
 
+        {/* CONTENT */}
         <div className="mt-12 space-y-12">
+
           {item.description && (
             <section>
-              <h2 className="text-[18px] text-orange-600 mb-3 font-semibold">
+              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
                 {t({ en: "Description", hi: "विवरण", mr: "वर्णन" })}
               </h2>
-              <p className="text-gray-700 leading-relaxed">
-                {t(item.description)}
-              </p>
+              <p className="text-gray-700 leading-relaxed">{t(item.description)}</p>
             </section>
           )}
 
           {item.content && (
             <section>
-              <h2 className="text-[18px] text-orange-600 mb-3 font-semibold">
+              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
                 {t({
                   en:
                     item.type === "mantra"
@@ -131,8 +140,7 @@ export default function AartiView() {
                       : "आरती मजकूर",
                 })}
               </h2>
-
-              <p className="whitespace-pre-line text-lg text-gray-900">
+              <p className="text-gray-900 leading-relaxed whitespace-pre-line text-lg">
                 {t(item.content)}
               </p>
             </section>
@@ -140,10 +148,10 @@ export default function AartiView() {
 
           {item.type === "mantra" && item.meaning && (
             <section>
-              <h2 className="text-[18px] text-orange-600 mb-3 font-semibold">
+              <h2 className="text-[18px] font-semibold text-orange-600 mb-3">
                 {t({ en: "Meaning", hi: "अर्थ", mr: "अर्थ" })}
               </h2>
-              <p className="text-gray-700 whitespace-pre-line">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                 {t(item.meaning)}
               </p>
             </section>
@@ -151,7 +159,7 @@ export default function AartiView() {
 
           {typeof item.temple === "object" && item.temple?.name && (
             <section>
-              <h2 className="text-[18px] text-orange-600 mb-2 font-semibold">
+              <h2 className="text-[18px] font-semibold text-orange-600 mb-2">
                 {t({
                   en: "Related Temple",
                   hi: "संबंधित मंदिर",
