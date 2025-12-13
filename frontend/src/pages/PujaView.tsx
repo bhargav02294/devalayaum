@@ -1,7 +1,7 @@
 // src/pages/PujaView.tsx
-// PROFESSIONAL PREMIUM PUJA VIEW PAGE — PERFECTLY MATCHED TO TEMPLE PAGE
+// FULL MULTILINGUAL + MATCHED TEMPLE PAGE DESIGN + CLEAN ESLINT
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
@@ -25,6 +25,7 @@ interface Puja {
   procedure?: Record<string, string>;
   mantra?: Record<string, string>;
   materialsRequired?: Record<string, string>;
+
   availableAt?: Record<string, string>[];
   placesDescription?: Record<string, string>;
 
@@ -41,18 +42,26 @@ interface Puja {
 type PujaPackage = NonNullable<Puja["packages"]>[number];
 
 /* ----------------------------------------------------------
-   Main Page
+   MAIN PAGE
 ---------------------------------------------------------- */
 export default function PujaView() {
   const { id } = useParams<{ id: string }>();
-  const lang = i18n.language || "en";
   const backendURL = import.meta.env.VITE_API_URL;
 
   const [puja, setPuja] = useState<Puja | null>(null);
   const [loading, setLoading] = useState(true);
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoverPreview, setHoverPreview] = useState<string | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
+
+  /* LIVE LANGUAGE STATE */
+  const [lang, setLang] = useState(i18n.language);
+  useEffect(() => {
+    const h = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", h);
+    return () => i18n.off("languageChanged", h);
+  }, []);
 
   const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
 
@@ -80,14 +89,22 @@ export default function PujaView() {
   if (loading)
     return (
       <div className="pt-24 flex justify-center text-gray-500 text-lg">
-        Loading Puja…
+        {t({
+          en: "Loading Puja…",
+          hi: "पूजा लोड हो रही है…",
+          mr: "पूजा लोड होत आहे…",
+        })}
       </div>
     );
 
   if (!puja)
     return (
       <div className="pt-24 flex justify-center text-red-600 text-lg">
-        Puja not found.
+        {t({
+          en: "Puja not found.",
+          hi: "पूजा नहीं मिली।",
+          mr: "पूजा आढळली नाही.",
+        })}
       </div>
     );
 
@@ -95,17 +112,20 @@ export default function PujaView() {
   const gallery = [...(puja.images || [])];
   if (puja.image && !gallery.includes(puja.image)) gallery.unshift(puja.image);
   if (gallery.length === 0) gallery.push("/puja-placeholder.jpg");
-
   const mainImg = hoverPreview || gallery[activeIndex];
+
   const glow = "shadow-[0_4px_20px_rgba(255,153,51,0.18)]";
 
   /* Smooth Scroll */
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
+  const scrollTo = (targetId: string) => {
+    const el = document.getElementById(targetId);
     if (!el) return;
     window.scrollTo({ top: el.offsetTop - 90, behavior: "smooth" });
   };
 
+  /* ----------------------------------------------------
+      RETURN UI
+  ---------------------------------------------------- */
   return (
     <div
       className="pt-20 pb-20"
@@ -113,23 +133,17 @@ export default function PujaView() {
     >
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* -------------------------------------- */}
-        {/* MAIN PUJA TITLE - EXACT TEMPLE STYLE */}
-        {/* -------------------------------------- */}
+        {/* TITLE */}
         <h1 className="mt-8 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
           {t(puja.name)}
         </h1>
 
-        <p
-          className="text-gray-700 mt-2"
-          style={{ fontFamily: "'Merriweather', serif" }}
-        >
-          {puja.category} {puja.subCategory ? `› ${puja.subCategory}` : ""}
+        <p className="text-gray-700 mt-2" style={{ fontFamily: "'Merriweather', serif" }}>
+          {puja.category}
+          {puja.subCategory ? ` › ${puja.subCategory}` : ""}
         </p>
 
-        {/* -------------------------------------- */}
-        {/* IMAGE SECTION */}
-        {/* -------------------------------------- */}
+        {/* IMAGE + VIDEO */}
         <div className="flex justify-center mt-8 mb-14">
           <div className={`rounded-3xl overflow-hidden bg-white p-4 w-full max-w-3xl ${glow}`}>
             <div className="h-[240px] md:h-[300px] lg:h-[340px] flex justify-center items-center bg-gradient-to-b from-white via-[#fff4dd] to-white rounded-xl relative">
@@ -139,9 +153,8 @@ export default function PujaView() {
                 <button
                   onClick={() => setVideoOpen(true)}
                   className="absolute bottom-3 right-3 px-4 py-2 text-sm rounded-full bg-white/90 text-orange-700 shadow hover:bg-white"
-                  style={{ fontFamily: "'Merriweather', serif" }}
                 >
-                  ▶ Play Video
+                  ▶ {t({ en: "Play Video", hi: "वीडियो चलाएँ", mr: "व्हिडिओ प्ले करा" })}
                 </button>
               )}
             </div>
@@ -163,64 +176,63 @@ export default function PujaView() {
                 </button>
               ))}
             </div>
-
           </div>
         </div>
 
-        {/* -------------------------------------- */}
-        {/* QUICK NAV BUTTONS */}
-        {/* -------------------------------------- */}
+        {/* QUICK NAV */}
         <div className="flex flex-wrap gap-2 mb-10 justify-start">
           {[
-            ["overview", "Overview"],
-            ["benefits", "Benefits"],
-            ["procedure", "Procedure"],
-            ["mantra", "Main Mantra"],
-            ["materials", "Materials Required"],
-            ["availability", "Availability"],
-            ["packages", "Puja Packages"],
-          ].map(([target, label]) => (
+            ["overview", t({ en: "Overview", hi: "सारांश", mr: "आढावा" })],
+            ["benefits", t({ en: "Benefits", hi: "लाभ", mr: "फायदे" })],
+            ["procedure", t({ en: "Procedure", hi: "विधि", mr: "प्रक्रिया" })],
+            ["mantra", t({ en: "Main Mantra", hi: "मुख्य मंत्र", mr: "मुख्य मंत्र" })],
+            ["materials", t({ en: "Materials Required", hi: "आवश्यक सामग्री", mr: "आवश्यक सामग्री" })],
+            ["availability", t({ en: "Availability", hi: "उपलब्धता", mr: "उपलब्धता" })],
+            ["packages", t({ en: "Puja Packages", hi: "पूजा पैकेज", mr: "पूजा पॅकेज" })],
+          ].map(([id, label]) => (
             <button
-              key={target}
-              onClick={() => scrollTo(target)}
+              key={id}
+              onClick={() => scrollTo(id)}
               className={`rounded-full px-4 py-1.5 text-sm bg-white shadow hover:bg-orange-50 text-gray-700 transition ${glow}`}
-              style={{ fontFamily: "'Merriweather', serif" }}
             >
               {label}
             </button>
           ))}
         </div>
 
-        {/* -------------------------------------- */}
-        {/* SECTIONS (MATCH TEMPLE PAGE EXACTLY) */}
-        {/* -------------------------------------- */}
-
-        <Section id="overview" title="Overview">
+        {/* Sections */}
+        <Section id="overview" title={t({ en: "Overview", hi: "सारांश", mr: "आढावा" })}>
           <p>{t(puja.description)}</p>
           {puja.whyPerform && (
             <p className="mt-3">
-              <span className="text-lg font-semibold text-orange-700">Why Perform:</span> {t(puja.whyPerform)}
+              <span className="text-lg font-semibold text-orange-700">
+                {t({ en: "Why Perform:", hi: "क्यों करें:", mr: "का का:" })}
+              </span>{" "}
+              {t(puja.whyPerform)}
             </p>
           )}
         </Section>
 
-        <Section id="benefits" title="Benefits">
+        <Section id="benefits" title={t({ en: "Benefits", hi: "लाभ", mr: "फायदे" })}>
           <p>{t(puja.benefits)}</p>
         </Section>
 
-        <Section id="procedure" title="Procedure">
+        <Section id="procedure" title={t({ en: "Procedure", hi: "विधि", mr: "प्रक्रिया" })}>
           <p className="whitespace-pre-line">{t(puja.procedure)}</p>
         </Section>
 
-        <Section id="mantra" title="Main Mantra">
+        <Section id="mantra" title={t({ en: "Main Mantra", hi: "मुख्य मंत्र", mr: "मुख्य मंत्र" })}>
           <p className="italic">{t(puja.mantra)}</p>
         </Section>
 
-        <Section id="materials" title="Materials Required">
+        <Section
+          id="materials"
+          title={t({ en: "Materials Required", hi: "आवश्यक सामग्री", mr: "आवश्यक सामग्री" })}
+        >
           <p>{t(puja.materialsRequired)}</p>
         </Section>
 
-        <Section id="availability" title="Availability">
+        <Section id="availability" title={t({ en: "Availability", hi: "उपलब्धता", mr: "उपलब्धता" })}>
           {puja.availableAt?.length ? (
             <ul className="list-disc ml-6">
               {puja.availableAt.map((a, i) => (
@@ -228,13 +240,14 @@ export default function PujaView() {
               ))}
             </ul>
           ) : (
-            <p>Not specified.</p>
+            <p>{t({ en: "Not specified.", hi: "निर्दिष्ट नहीं।", mr: "निश्चित नाही." })}</p>
           )}
 
           {puja.placesDescription && <p className="mt-2">{t(puja.placesDescription)}</p>}
         </Section>
 
-        <Section id="packages" title="Puja Packages">
+        {/* Packages */}
+        <Section id="packages" title={t({ en: "Puja Packages", hi: "पूजा पैकेज", mr: "पूजा पॅकेज" })}>
           {puja.packages?.length ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {puja.packages.map((pkg) => (
@@ -242,10 +255,9 @@ export default function PujaView() {
               ))}
             </div>
           ) : (
-            <p>No packages available.</p>
+            <p>{t({ en: "No packages available.", hi: "कोई पैकेज उपलब्ध नहीं।", mr: "पॅकेज उपलब्ध नाहीत." })}</p>
           )}
         </Section>
-
       </div>
 
       {videoOpen && puja.videoUrl && (
@@ -256,15 +268,17 @@ export default function PujaView() {
 }
 
 /* ----------------------------------------------------------
-   Section = EXACT Temple Section Style
+   SECTION COMPONENT (Temple Page exact style)
 ---------------------------------------------------------- */
-interface SectionProps {
+function Section({
+  id,
+  title,
+  children,
+}: {
   id?: string;
   title: string;
   children: React.ReactNode;
-}
-
-function Section({ id, title, children }: SectionProps) {
+}) {
   return (
     <section id={id} className="mt-12">
       <h2
@@ -285,23 +299,16 @@ function Section({ id, title, children }: SectionProps) {
 }
 
 /* ----------------------------------------------------------
-   Package Card — Fonts & Colors matched perfectly
+   Package Card
 ---------------------------------------------------------- */
-interface PujaPackageCardProps {
-  pkg: PujaPackage;
-  pujaId: string;
-}
-
-function PujaPackageCard({ pkg, pujaId }: PujaPackageCardProps) {
-  const tx = (o?: Record<string, string>) => o?.[i18n.language] || o?.en || "";
+function PujaPackageCard({ pkg, pujaId }: { pkg: PujaPackage; pujaId: string }) {
+  const lang = i18n.language;
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
   return (
-    <div className={`p-6 rounded-2xl bg-white ${"shadow-[0_4px_20px_rgba(255,153,51,0.18)]"}`}>
-      <h3
-        className="text-lg font-semibold text-orange-700 mb-1"
-        style={{ fontFamily: "'Merriweather', serif" }}
-      >
-        {tx(pkg.title)}
+    <div className="p-6 rounded-2xl bg-white shadow-[0_4px_20px_rgba(255,153,51,0.18)]">
+      <h3 className="text-lg font-semibold text-orange-700 mb-1">
+        {t(pkg.title)}
       </h3>
 
       <p className="text-2xl font-bold text-gray-800 mt-1">
@@ -311,29 +318,23 @@ function PujaPackageCard({ pkg, pujaId }: PujaPackageCardProps) {
         )}
       </p>
 
-      {pkg.details && <p className="mt-2 text-gray-700">{tx(pkg.details)}</p>}
-      {pkg.benefits && <p className="mt-2 text-gray-700 italic">{tx(pkg.benefits)}</p>}
+      {pkg.details && <p className="mt-2 text-gray-700">{t(pkg.details)}</p>}
+      {pkg.benefits && <p className="mt-2 text-gray-700 italic">{t(pkg.benefits)}</p>}
 
       <Link
         to={`/pujas/${pujaId}/book/${pkg.key}`}
         className="mt-5 block text-center bg-orange-700 text-white py-2 rounded-lg hover:bg-orange-800"
-        style={{ fontFamily: "'Merriweather', serif" }}
       >
-        Book Now
+        {t({ en: "Book Now", hi: "बुक करें", mr: "बुक करा" })}
       </Link>
     </div>
   );
 }
 
 /* ----------------------------------------------------------
-   Video Popup — Clean
+   VIDEO POPUP
 ---------------------------------------------------------- */
-interface VideoPopupProps {
-  url: string;
-  onClose: () => void;
-}
-
-function VideoPopup({ url, onClose }: VideoPopupProps) {
+function VideoPopup({ url, onClose }: { url: string; onClose: () => void }) {
   return (
     <div
       className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50"

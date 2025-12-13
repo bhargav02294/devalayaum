@@ -1,9 +1,14 @@
 // src/pages/PujaBooking.tsx
+// FULL MULTILANGUAGE VERSION — CLEAN & ESLINT SAFE
+
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
+/* --------------------------------------------------
+   INTERFACES
+-------------------------------------------------- */
 interface PujaPackage {
   key: string;
   title: Record<string, string>;
@@ -29,88 +34,96 @@ interface Member {
   specificWish?: string;
 }
 
-// Safe error extractor without using `any`
+/* --------------------------------------------------
+   SAFE ERROR HANDLER (NO ANY)
+-------------------------------------------------- */
 function getErrorMessage(err: unknown): string {
   if (!err) return "Unknown error";
 
   if (typeof err === "string") return err;
 
   if (typeof err === "object" && err !== null) {
-    // Narrow to expected shape
     const e = err as {
       message?: unknown;
-      response?: { data?: { message?: unknown } } | unknown;
+      response?: { data?: { message?: unknown } };
     };
 
     if (typeof e.message === "string") return e.message;
-
-    if (
-      e.response &&
-      typeof e.response === "object" &&
-      "data" in (e.response as object)
-    ) {
-      const resp = (e.response as { data?: unknown }).data;
-      if (resp && typeof resp === "object" && "message" in (resp as object)) {
-        const msg = (resp as { message?: unknown }).message;
-        if (typeof msg === "string") return msg;
-      }
-    }
+    if (e.response?.data?.message && typeof e.response.data.message === "string")
+      return e.response.data.message;
   }
 
   return "Something went wrong";
 }
 
-// Safe accessor to get a Member field as string
+/* --------------------------------------------------
+   SAFE MEMBER ACCESSOR
+-------------------------------------------------- */
 function getMemberValue(member: Member, field: keyof Member): string {
   const val = member[field];
   return typeof val === "string" ? val : "";
 }
 
+/* --------------------------------------------------
+   MAIN COMPONENT
+-------------------------------------------------- */
 export default function PujaBooking() {
   const { id, pkgKey } = useParams<{ id: string; pkgKey: string }>();
   const backendURL = import.meta.env.VITE_API_URL;
-  const lang = i18n.language || "en";
   const navigate = useNavigate();
+
+  /* LIVE MULTILANGUAGE SUPPORT */
+  const [lang, setLang] = useState(i18n.language);
+  useEffect(() => {
+    const h = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", h);
+    return () => i18n.off("languageChanged", h);
+  }, []);
+
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
   const [puja, setPuja] = useState<Puja | null>(null);
   const [pkg, setPkg] = useState<PujaPackage | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
+
   const [members, setMembers] = useState<Member[]>([]);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const token = localStorage.getItem("USER_TOKEN");
 
+  /* --------------------------------------------------
+     LOAD PUJA + SELECTED PACKAGE
+  -------------------------------------------------- */
   useEffect(() => {
     const load = async () => {
       try {
         const res = await axios.get<Puja>(`${backendURL}/api/pujas/${id}`);
         setPuja(res.data);
 
-        const found = (res.data.packages || []).find(
-          (p: PujaPackage) => p.key === pkgKey
-        );
+        const found = (res.data.packages || []).find((p) => p.key === pkgKey);
         setPkg(found);
 
-        // Initialize members based on package type
         let initialMembers = 1;
         if (found?.key === "partner") initialMembers = 2;
         else if (found?.key === "family") initialMembers = 4;
 
         setMembers(Array.from({ length: initialMembers }).map(() => ({ fullName: "" })));
-      } catch (err: unknown) {
-        console.error("Failed to load puja:", err);
+      } catch (err) {
         setError(getErrorMessage(err));
       } finally {
         setLoading(false);
       }
     };
+
     load();
   }, [id, pkgKey, backendURL]);
 
-  const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
-
+  /* --------------------------------------------------
+     MEMBER UPDATE HELPERS
+  -------------------------------------------------- */
   const updateMember = (index: number, field: keyof Member, value: string) => {
     setMembers((prev) => {
       const copy = [...prev];
@@ -119,14 +132,14 @@ export default function PujaBooking() {
     });
   };
 
-  const addMember = () => {
-    setMembers((prev) => [...prev, { fullName: "" }]);
-  };
+  const addMember = () => setMembers((prev) => [...prev, { fullName: "" }]);
 
-  const removeMember = (index: number) => {
+  const removeMember = (index: number) =>
     setMembers((prev) => prev.filter((_, i) => i !== index));
-  };
 
+  /* --------------------------------------------------
+     VALIDATION
+  -------------------------------------------------- */
   const validate = () => {
     if (!token) {
       setError("Please sign in to book a puja.");
@@ -136,148 +149,190 @@ export default function PujaBooking() {
       setError("Invalid package.");
       return false;
     }
+
     for (let i = 0; i < members.length; i++) {
-      if (!members[i].fullName || members[i].fullName.trim() === "") {
+      if (!members[i].fullName.trim()) {
         setError(`Please enter full name for person ${i + 1}`);
         return false;
       }
     }
+
     return true;
   };
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
+  /* --------------------------------------------------
+     SUBMIT BOOKING
+  -------------------------------------------------- */
+  const handleSubmit = async (evt: React.FormEvent) => {
+    evt.preventDefault();
     setError("");
+
     if (!validate()) return;
+
     setSubmitting(true);
+
     try {
-      const payload = {
-        pujaId: id,
-        packageKey: pkg!.key,
-        members,
-        notes,
-      };
-      await axios.post(`${backendURL}/api/puja-bookings`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        `${backendURL}/api/puja-bookings`,
+        {
+          pujaId: id,
+          packageKey: pkg!.key,
+          members,
+          notes,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
       alert("🙏 Booking saved successfully. We will contact you soon.");
       navigate("/my-account");
-    } catch (err: unknown) {
-      console.error("Booking failed:", err);
+    } catch (err) {
       setError(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <p className="pt-24 text-center">Loading...</p>;
+  /* --------------------------------------------------
+     UI
+  -------------------------------------------------- */
+  if (loading) return <p className="pt-24 text-center">Loading…</p>;
+
   if (!puja || !pkg)
     return (
-      <div className="pt-24 p-6">
-        <p className="text-center text-red-600">Puja or package not found.</p>
+      <div className="pt-24 p-6 text-center text-red-600">
+        Puja or package not found.
       </div>
     );
 
-  // Define the fields to render and their labels with proper typing
-  const memberFields: Array<[keyof Member, string]> = [
-    ["fullName", "Full name *"],
-    ["dateOfBirth", "Date of birth"],
-    ["city", "City / Village"],
-    ["rashi", "Rashi"],
-    ["gotra", "Gotra (optional)"],
-    ["specificWish", "Specific Wish (optional)"],
+  /* Multilingual Labels */
+  const memberFields: Array<[keyof Member, Record<string, string>]> = [
+    ["fullName", { en: "Full Name *", hi: "पूरा नाम *", mr: "पूर्ण नाव *" }],
+    ["dateOfBirth", { en: "Date of Birth", hi: "जन्म तिथि", mr: "जन्मतारीख" }],
+    ["city", { en: "City / Village", hi: "शहर / गाँव", mr: "शहर / गाव" }],
+    ["rashi", { en: "Rashi", hi: "राशि", mr: "राशी" }],
+    ["gotra", { en: "Gotra (optional)", hi: "गोत्र (वैकल्पिक)", mr: "गोत्र (ऐच्छिक)" }],
+    [
+      "specificWish",
+      {
+        en: "Specific Wish (optional)",
+        hi: "विशेष कामना (वैकल्पिक)",
+        mr: "विशिष्ट इच्छा (ऐच्छिक)",
+      },
+    ],
   ];
 
   return (
     <div className="pt-24 pb-16 px-6 md:px-20 bg-gray-50 min-h-screen">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow p-6">
-        <h1 className="text-2xl font-[Marcellus] text-orange-700 mb-2">{t(puja.name)}</h1>
+
+        <h1 className="text-2xl font-[Marcellus] text-orange-700 mb-2">
+          {t(puja.name)}
+        </h1>
+
         <p className="text-sm text-gray-600 mb-4">
-          Package: <span className="font-semibold">{t(pkg.title) || pkg.key}</span> •{" "}
-          <span className="text-lg font-bold text-green-700">₹{pkg.discountPrice || pkg.price}</span>
+          {t({ en: "Package:", hi: "पैकेज:", mr: "पॅकेज:" })}{" "}
+          <span className="font-semibold">{t(pkg.title) || pkg.key}</span> •{" "}
+          <span className="text-lg font-bold text-green-700">
+            ₹{pkg.discountPrice || pkg.price}
+          </span>
         </p>
 
         {!token && (
           <div className="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
             <p className="text-sm">
-              You must be signed in to book this puja.{" "}
+              {t({
+                en: "You must be logged in to book this puja.",
+                hi: "यह पूजा बुक करने के लिए कृपया लॉगिन करें।",
+                mr: "ही पूजा बुक करण्यासाठी कृपया लॉगिन करा.",
+              })}{" "}
               <Link to="/login" className="text-orange-600 underline">
-                Login / Register
+                {t({ en: "Login / Register", hi: "लॉगिन / रजिस्टर", mr: "लॉगिन / नोंदणी" })}
               </Link>
             </p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <h3 className="font-semibold text-gray-800">Participants</h3>
-            <p className="text-sm text-gray-500">Fill details for each person in this booking.</p>
-          </div>
+          <h3 className="font-semibold text-gray-800">
+            {t({ en: "Participants", hi: "प्रतिभागी", mr: "सहभागी" })}
+          </h3>
 
-          {/* Participants Fields */}
+          {/* PARTICIPANTS */}
           {members.map((m, idx) => (
             <div key={idx} className="border rounded-lg p-4 bg-gray-50">
-              <div className="flex justify-between items-center mb-2">
-                <h4 className="font-semibold">Person {idx + 1}</h4>
+              <div className="flex justify-between mb-2">
+                <h4 className="font-semibold">
+                  {t({ en: "Person", hi: "व्यक्ति", mr: "व्यक्ती" })} {idx + 1}
+                </h4>
+
                 {pkg.key === "family" && members.length > 4 && (
                   <button
                     type="button"
                     onClick={() => removeMember(idx)}
                     className="text-sm text-red-600 underline"
                   >
-                    Remove
+                    {t({ en: "Remove", hi: "हटाएं", mr: "काढा" })}
                   </button>
                 )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {memberFields.map(([field, label]) => (
-                  <div key={String(field)}>
-                    <label className="block text-sm font-medium">{label}</label>
+                {memberFields.map(([field, labelObj]) => {
+                  const label = t(labelObj);
+                  return (
+                    <div key={String(field)}>
+                      <label className="block text-sm font-medium">{label}</label>
 
-                    {field === "dateOfBirth" ? (
-                      <input
-                        type="date"
-                        value={getMemberValue(m, field)}
-                        onChange={(e) => updateMember(idx, field, e.target.value)}
-                        className="w-full border p-2 rounded"
-                      />
-                    ) : (
-                      <input
-                        type="text"
-                        value={getMemberValue(m, field)}
-                        onChange={(e) => updateMember(idx, field, e.target.value)}
-                        className="w-full border p-2 rounded"
-                        placeholder={label}
-                      />
-                    )}
-                  </div>
-                ))}
+                      {field === "dateOfBirth" ? (
+                        <input
+                          type="date"
+                          value={getMemberValue(m, field)}
+                          onChange={(ev) => updateMember(idx, field, ev.target.value)}
+                          className="w-full border p-2 rounded"
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          value={getMemberValue(m, field)}
+                          onChange={(ev) => updateMember(idx, field, ev.target.value)}
+                          className="w-full border p-2 rounded"
+                          placeholder={label}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}
 
-          {/* Add more members only for Family package */}
+          {/* ADD MEMBER (Family Package) */}
           {pkg.key === "family" && (
-            <div className="flex gap-2">
+            <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={addMember}
                 className="px-4 py-2 rounded bg-blue-600 text-white"
               >
-                + Add family member
+                + {t({ en: "Add family member", hi: "परिवार का सदस्य जोड़ें", mr: "कुटुंब सदस्य जोडा" })}
               </button>
-              <p className="text-sm text-gray-600 self-center">You can add more members as needed.</p>
             </div>
           )}
 
+          {/* NOTES */}
           <div>
-            <label className="block text-sm font-medium">Notes / Additional info</label>
+            <label className="block text-sm font-medium">
+              {t({ en: "Notes / Additional info", hi: "नोट्स / अतिरिक्त जानकारी", mr: "नोट्स / अतिरिक्त माहिती" })}
+            </label>
             <textarea
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              onChange={(ev) => setNotes(ev.target.value)}
               className="w-full border p-2 rounded"
-              placeholder="Any additional details or requests..."
+              placeholder={t({
+                en: "Any additional details or requests…",
+                hi: "कोई अतिरिक्त विवरण या अनुरोध…",
+                mr: "अतिरिक्त माहिती किंवा विनंती…",
+              })}
             />
           </div>
 
@@ -289,10 +344,16 @@ export default function PujaBooking() {
               disabled={submitting || !token}
               className="bg-orange-600 text-white px-6 py-2 rounded shadow disabled:opacity-60"
             >
-              {submitting ? "Booking..." : "Book Now"}
+              {submitting
+                ? t({ en: "Booking…", hi: "बुकिंग हो रही है…", mr: "बुकिंग…" })
+                : t({ en: "Book Now", hi: "अभी बुक करें", mr: "आता बुक करा" })}
             </button>
-            <Link to={`/pujas/${id}`} className="px-4 py-2 rounded border text-gray-700">
-              Cancel
+
+            <Link
+              to={`/pujas/${id}`}
+              className="px-4 py-2 rounded border text-gray-700"
+            >
+              {t({ en: "Cancel", hi: "रद्द करें", mr: "रद्द करा" })}
             </Link>
           </div>
         </form>

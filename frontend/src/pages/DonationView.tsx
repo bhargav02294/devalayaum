@@ -1,14 +1,10 @@
-// src/pages/DonationView.tsx
-// FINAL PHONEPE VERSION — Razorpay completely removed
-
+// DonationView.tsx — FULL LIVE MULTILANGUAGE + MATCHED DESIGN
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-/* -------------------------------------------------------
-   INTERFACES
-------------------------------------------------------- */
+/* ---------------------------- INTERFACE ----------------------------- */
 interface Donation {
   _id: string;
   thumbnail: string;
@@ -23,22 +19,48 @@ interface Donation {
   price: number;
 }
 
-/* -------------------------------------------------------
-   MAIN COMPONENT
-------------------------------------------------------- */
+/* -------------------------------------------------------------------
+   SECTION COMPONENT
+-------------------------------------------------------------------- */
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h2 className="text-[18px] text-orange-700 font-semibold mb-2">
+        {title}
+      </h2>
+
+      <p className="text-gray-700 leading-relaxed" style={{ fontFamily: "'Merriweather', serif" }}>
+        {children}
+      </p>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------
+   MAIN DONATION VIEW
+-------------------------------------------------------------------- */
 export default function DonationView() {
   const { id } = useParams<{ id: string }>();
   const [donation, setDonation] = useState<Donation | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const backendURL = import.meta.env.VITE_API_URL;
+
+  /* LIVE LANGUAGE UPDATE */
+  const [lang, setLang] = useState(i18n.language);
+  useEffect(() => {
+    const handler = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", handler);
+    return () => i18n.off("languageChanged", handler);
+  }, []);
+
+  const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
+
+  /* USER INPUTS */
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
   const [amount, setAmount] = useState<number | "">("");
   const [error, setError] = useState("");
-
-  const backendURL = import.meta.env.VITE_API_URL;
-  const lang = i18n.language || "en";
-  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
   const glow = "shadow-[0_10px_30px_rgba(140,85,40,0.18)]";
 
@@ -54,7 +76,7 @@ export default function DonationView() {
     }
   }, []);
 
-  /* Fetch Donation */
+  /* FETCH DONATION */
   useEffect(() => {
     axios
       .get(`${backendURL}/api/donations/${id}`)
@@ -63,79 +85,74 @@ export default function DonationView() {
       .finally(() => setLoading(false));
   }, [id, backendURL]);
 
-  if (loading) return <div className="pt-24 text-center">Loading...</div>;
-  if (!donation) return <div className="pt-24 text-center">Donation not found.</div>;
+  if (loading)
+    return <div className="pt-24 text-center">{t({ en: "Loading…", hi: "लोड हो रहा है…", mr: "लोड होत आहे…" })}</div>;
+
+  if (!donation)
+    return <div className="pt-24 text-center">{t({ en: "Donation not found", hi: "दान नहीं मिला", mr: "दान सापडले नाही" })}</div>;
 
   const suggestedAmounts = [51, 101, 501, 1001];
 
-  /* -------------------------------------------------------
-     HANDLE DONATION (PHONEPE)
-  ------------------------------------------------------- */
+  /* -------------------------------------------------------------------
+       DONATION HANDLER (PHONEPE)
+  -------------------------------------------------------------------- */
   const handleDonate = async () => {
     setError("");
 
-    if (!fullName.trim()) return setError("Please enter your full name.");
-    if (!mobile.trim()) return setError("Please enter your mobile number.");
+    if (!fullName.trim()) return setError(t({ en: "Please enter your full name.", hi: "कृपया पूरा नाम दर्ज करें।", mr: "कृपया पूर्ण नाव भरा." }));
+    if (!mobile.trim()) return setError(t({ en: "Please enter your mobile number.", hi: "कृपया मोबाइल नंबर दर्ज करें।", mr: "कृपया मोबाईल नंबर भरा." }));
     if (!amount || Number(amount) < 1)
-      return setError("Please enter a valid donation amount.");
+      return setError(t({ en: "Enter a valid donation amount.", hi: "मान्य दान राशि दर्ज करें।", mr: "वैध देणगी रक्कम भरा." }));
 
     try {
-      const response = await axios.post(
-        `${backendURL}/api/payments/create-phonepe-payment`,
-        {
-          donationId: donation._id,
-          fullName,
-          mobile,
-          amount,
-        }
-      );
+      const response = await axios.post(`${backendURL}/api/payments/create-phonepe-payment`, {
+        donationId: donation._id,
+        fullName,
+        mobile,
+        amount,
+      });
 
       if (response.data.success) {
-        window.location.href = response.data.url; // Redirect to PhonePe payment page
+        window.location.href = response.data.url;
       } else {
-        setError("Payment initiation failed.");
+        setError(t({ en: "Payment failed.", hi: "भुगतान असफल हुआ।", mr: "पेमेंट अयशस्वी झाले." }));
       }
     } catch {
-      setError("Payment failed. Please try again.");
+      setError(t({ en: "Payment failed. Please try again.", hi: "भुगतान असफल। पुनः प्रयास करें।", mr: "पेमेंट अयशस्वी. पुन्हा प्रयत्न करा." }));
     }
   };
 
-  /* -------------------------------------------------------
-     UI
-  ------------------------------------------------------- */
+  /* -------------------------------------------------------------------
+       UI
+  -------------------------------------------------------------------- */
   return (
     <div className="pt-24 pb-20 bg-gradient-to-b from-[#fff4d9] via-[#fff9f1] to-white min-h-screen px-6">
-
       <div className="max-w-6xl mx-auto mb-12 px-2">
+
         <h1 className="mt-4 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
           {t(donation.donationName)}
         </h1>
 
-        <p
-          className="text-gray-700 text-lg mt-2"
-          style={{ fontFamily: "'Merriweather', serif" }}
-        >
-          <span className="font-semibold text-orange-800">
-            {t(donation.templeName)}
-          </span>
+        <p className="text-gray-700 text-lg mt-2" style={{ fontFamily: "'Merriweather', serif" }}>
+          <span className="font-semibold text-orange-800">{t(donation.templeName)}</span>
         </p>
 
         <p className="text-gray-600 text-lg" style={{ fontFamily: "'Merriweather', serif" }}>
           {t(donation.address)}
         </p>
 
-        <p
-          className="mt-4 text-gray-700 italic text-xl"
-          style={{ fontFamily: "'Merriweather', serif" }}
-        >
+        <p className="mt-4 text-gray-700 italic text-xl" style={{ fontFamily: "'Merriweather', serif" }}>
           {t(donation.shortDetails)}
         </p>
       </div>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+        {/* LEFT SIDE — Image + Donation Box */}
         <div className="space-y-10 lg:sticky lg:top-24 self-start">
+
           <div className={`rounded-3xl bg-white overflow-hidden p-4 ${glow}`}>
-            <div className="h-[260px] md:h-[300px] lg:h-[330px] rounded-2xl overflow-hidden bg-[#fff6e9] flex items-center justify-center">
+            <div className="h-[260px] md:h-[300px] lg:h-[330px] rounded-2xl overflow-hidden bg-[#fff6e9]">
               <img
                 src={donation.thumbnail}
                 alt={t(donation.donationName)}
@@ -145,11 +162,8 @@ export default function DonationView() {
           </div>
 
           <div className={`p-8 rounded-3xl bg-white ${glow}`}>
-            <h3
-              className="text-[20px] text-orange-700 font-semibold mb-4"
-              style={{ fontFamily: "'Merriweather', serif" }}
-            >
-              Make Donation
+            <h3 className="text-[20px] text-orange-700 font-semibold mb-4" style={{ fontFamily: "'Merriweather', serif" }}>
+              {t({ en: "Make Donation", hi: "दान करें", mr: "देणगी द्या" })}
             </h3>
 
             {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -158,7 +172,7 @@ export default function DonationView() {
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Full Name"
+              placeholder={t({ en: "Full Name", hi: "पूरा नाम", mr: "पूर्ण नाव" })}
               className="w-full border p-3 rounded-xl mb-4"
             />
 
@@ -166,10 +180,11 @@ export default function DonationView() {
               type="text"
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
-              placeholder="Mobile / WhatsApp Number"
+              placeholder={t({ en: "Mobile / WhatsApp Number", hi: "मोबाइल / व्हाट्सऐप नंबर", mr: "मोबाईल / व्हॉट्सअ‍ॅप नंबर" })}
               className="w-full border p-3 rounded-xl mb-4"
             />
 
+            {/* PRESET AMOUNTS */}
             <div className="flex flex-wrap gap-3 mb-4">
               {suggestedAmounts.map((amt) => (
                 <button
@@ -192,7 +207,7 @@ export default function DonationView() {
               min={1}
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              placeholder="Enter custom amount"
+              placeholder={t({ en: "Enter custom amount", hi: "राशि दर्ज करें", mr: "रक्कम भरा" })}
               className="w-full border p-3 rounded-xl mb-6"
             />
 
@@ -200,41 +215,30 @@ export default function DonationView() {
               onClick={handleDonate}
               className="w-full bg-orange-700 hover:bg-orange-800 text-white text-lg font-semibold py-3 rounded-xl"
             >
-              Donate Now
+              {t({ en: "Donate Now", hi: "अभी दान करें", mr: "आत्ताच देणगी द्या" })}
             </button>
           </div>
         </div>
 
+        {/* RIGHT SIDE CONTENT */}
         <div className="space-y-10">
-          <Section title="About Chadhava">{t(donation.description)}</Section>
-          <Section title="Temple Details">{t(donation.templeDetails)}</Section>
-          <Section title="Benefits">{t(donation.benefits)}</Section>
-          <Section title="Summary">{t(donation.summary)}</Section>
+          <Section title={t({ en: "About Chadhava", hi: "चढ़ावे के बारे में", mr: "चढाव्याबद्दल" })}>
+            {t(donation.description)}
+          </Section>
+
+          <Section title={t({ en: "Temple Details", hi: "मंदिर विवरण", mr: "मंदिर माहिती" })}>
+            {t(donation.templeDetails)}
+          </Section>
+
+          <Section title={t({ en: "Benefits", hi: "लाभ", mr: "फायदे" })}>
+            {t(donation.benefits)}
+          </Section>
+
+          <Section title={t({ en: "Summary", hi: "सारांश", mr: "सारांश" })}>
+            {t(donation.summary)}
+          </Section>
         </div>
       </div>
     </div>
-  );
-}
-
-/* -------------------------------------------------------
-   SECTION COMPONENT
-------------------------------------------------------- */
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section>
-      <h2
-        className="text-[18px] text-orange-700 font-semibold mb-2"
-        style={{ fontFamily: "'Merriweather', serif" }}
-      >
-        {title}
-      </h2>
-
-      <p
-        className="text-gray-700 leading-relaxed"
-        style={{ fontFamily: "'Merriweather', serif" }}
-      >
-        {children}
-      </p>
-    </section>
   );
 }

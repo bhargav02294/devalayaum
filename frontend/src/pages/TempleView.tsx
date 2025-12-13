@@ -4,6 +4,9 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
+/* ----------------------------------------------------
+   Interfaces
+---------------------------------------------------- */
 interface Temple {
   _id: string;
   name: Record<string, string>;
@@ -61,20 +64,21 @@ function IconLocation({ size = 16 }: { size?: number }) {
   );
 }
 
-
-
-/* Helpers */
+/* Multilanguage helper */
 const useLang = () => {
-  const lang = i18n.language || "en";
-  const getText = (f?: Record<string, string>) => f?.[lang] || f?.en || "";
-  return { lang, getText };
+  const [lang, setLang] = useState(i18n.language);
+
+  useEffect(() => {
+    const handler = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", handler);
+    return () => i18n.off("languageChanged", handler);
+  }, []);
+
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
+  return { lang, t };
 };
 
-/**
- * LabelValue updated:
- * - label styled as requested (text-lg, font-semibold, orange)
- * - value uses Merriweather inline style to ensure font loads
- */
+/* LabelValue */
 function LabelValue({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
@@ -87,11 +91,7 @@ function LabelValue({ label, value }: { label: string; value?: string | null }) 
   );
 }
 
-/**
- * Section component that enforces Merriweather on its heading and body.
- * We use inline style for fontFamily to guarantee the font is applied
- * (since Tailwind config may not include Merriweather).
- */
+/* Section Wrapper */
 function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
   return (
     <section id={id} className="mt-12">
@@ -108,10 +108,12 @@ function Section({ id, title, children }: { id?: string; title: string; children
   );
 }
 
-/* MAIN COMPONENT */
+/* ----------------------------------------------------
+   MAIN COMPONENT
+---------------------------------------------------- */
 export default function TempleView() {
   const { id } = useParams<{ id: string }>();
-  const { getText } = useLang();
+  const { t } = useLang();
 
   const [temple, setTemple] = useState<Temple | null>(null);
   const [loading, setLoading] = useState(true);
@@ -120,9 +122,10 @@ export default function TempleView() {
 
   const backendURL = import.meta.env.VITE_API_URL;
 
-  // Inject Merriweather font link into head once
+  // load font
   useEffect(() => {
-    const href = "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap";
+    const href =
+      "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap";
     if (!document.querySelector(`link[href="${href}"]`)) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -131,12 +134,12 @@ export default function TempleView() {
     }
   }, []);
 
+  // load temple
   useEffect(() => {
     if (!id) return;
-    setLoading(true);
     axios
       .get<Temple>(`${backendURL}/api/temples/${id}`)
-      .then(res => setTemple(res.data))
+      .then((res) => setTemple(res.data))
       .catch(() => setTemple(null))
       .finally(() => setLoading(false));
   }, [id, backendURL]);
@@ -144,7 +147,11 @@ export default function TempleView() {
   if (loading) {
     return (
       <div className="pt-24 pb-20 flex justify-center text-orange-700 text-lg font-semibold">
-        Loading temple details…
+        {t({
+          en: "Loading temple details…",
+          hi: "मंदिर विवरण लोड हो रहा है…",
+          mr: "मंदिराची माहिती लोड होत आहे…"
+        })}
       </div>
     );
   }
@@ -152,9 +159,11 @@ export default function TempleView() {
   if (!temple) {
     return (
       <div className="pt-24 pb-20 text-center">
-        <p className="text-red-600 font-semibold">Temple not found</p>
+        <p className="text-red-600 font-semibold">
+          {t({ en: "Temple not found", hi: "मंदिर नहीं मिला", mr: "मंदिर सापडले नाही" })}
+        </p>
         <Link to="/temples" className="text-orange-700 hover:underline mt-4 inline-block">
-          ← Back to Temples
+          ← {t({ en: "Back to Temples", hi: "मंदिरों पर वापस जाएँ", mr: "मंदिरांकडे परत जा" })}
         </Link>
       </div>
     );
@@ -164,12 +173,13 @@ export default function TempleView() {
   const displayImage = hoverImage ?? images[activeImage];
 
   const prohibitedItemsStr =
-    Array.isArray(temple.prohibitedItems) && temple.prohibitedItems.length
-      ? temple.prohibitedItems.join(", ")
-      : undefined;
+    temple.prohibitedItems?.length ? temple.prohibitedItems.join(", ") : undefined;
 
   const glow = "shadow-[0_4px_20px_rgba(255,153,51,0.18)]";
 
+  /* ----------------------------------------------------
+     PAGE UI
+  ---------------------------------------------------- */
   return (
     <div
       className="pt-20 pb-20"
@@ -177,136 +187,173 @@ export default function TempleView() {
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* LEFT SIDE */}
           <div className="lg:col-span-2">
-           <h1 className="mt-4 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
-  {getText(temple.name)}
-</h1>
 
+            {/* TITLE */}
+            <h1 className="mt-4 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
+              {t(temple.name)}
+            </h1>
 
+            {/* LOCATION */}
             <p className="text-gray-700 mt-3 flex items-center gap-2">
               <IconLocation />
-              <span className="font-medium text-gray-800">{getText(temple.location)}</span>
+              <span className="font-medium text-gray-800">
+                {t(temple.location)}
+              </span>
             </p>
 
-            {/* Gallery */}
-            <div className={`mt-8 rounded-3xl overflow-hidden bg-white ${glow}`}>
-  <div className="relative h-[260px] md:h-[320px] lg:h-[360px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff4dd] to-white">
-    <img
-      src={displayImage}
-      alt="temple"
-      className="max-w-full max-h-full object-contain drop-shadow-[0_4px_20px_rgba(255,153,51,0.25)]"
-    />
-  </div>
+            {/* MAIN IMAGE GALLERY */}
+            <div className={`mt-8 rounded-3xl overflow-hidden bg-white p-4 ${glow}`}>
+              <div className="relative h-[260px] md:h-[320px] lg:h-[360px] flex items-center justify-center bg-gradient-to-b from-white via-[#fff4dd] to-white">
 
+                <img
+                  src={displayImage}
+                  alt="temple"
+                  className="max-w-full max-h-full object-contain drop-shadow-[0_4px_20px_rgba(255,153,51,0.25)]"
+                />
+              </div>
 
-              
-
+              {/* THUMBNAILS */}
               <div className="p-4 flex gap-4 overflow-x-auto bg-gradient-to-r from-white to-[#fff8ec]">
-                {images.map((src, idx) => {
-                  const active = idx === activeImage;
-                  return (
-                    <button
-                      key={idx}
-                      onMouseEnter={() => setHoverImage(src)}
-                      onMouseLeave={() => setHoverImage(null)}
-                      onClick={() => setActiveImage(idx)}
-                      className={`
-                        rounded-xl overflow-hidden transition-all 
-                        ${active ? "ring-2 ring-orange-300 scale-105 shadow-[0_4px_15px_rgba(255,153,51,0.35)]" : "hover:scale-105"}
-                      `}
-                      style={{ width: active ? 170 : 120, height: active ? 110 : 75 }}
-                    >
-                      <img src={src} className="w-full h-full object-cover" />
-                    </button>
-                  );
-                })}
+                {images.map((src, idx) => (
+                  <button
+                    key={idx}
+                    onMouseEnter={() => setHoverImage(src)}
+                    onMouseLeave={() => setHoverImage(null)}
+                    onClick={() => setActiveImage(idx)}
+                    className={`rounded-xl overflow-hidden transition-all ${
+                      idx === activeImage
+                        ? "ring-2 ring-orange-300 scale-105 shadow-[0_4px_15px_rgba(255,153,51,0.35)]"
+                        : "hover:scale-105"
+                    }`}
+                    style={{ width: idx === activeImage ? 170 : 120, height: idx === activeImage ? 110 : 75 }}
+                  >
+                    <img src={src} className="w-full h-full object-cover" />
+                  </button>
+                ))}
               </div>
             </div>
 
-            <Section id="about" title="About the Temple">
-          {getText(temple.about)}
-        </Section>
-
+            {/* SECTION: ABOUT */}
+            <Section id="about" title={t({ en: "About the Temple", hi: "मंदिर के बारे में", mr: "मंदिराबद्दल माहिती" })}>
+              {t(temple.about)}
+            </Section>
           </div>
 
-
-          
-
-          {/* Right column: Darshan card */}
+          {/* RIGHT SIDEBAR */}
           <div className="space-y-7 lg:mt-[140px]">
             <div className={`bg-white rounded-2xl p-6 ${glow}`}>
-<h3
-  className="text-2xl text-orange-800 font-semibold mb-4"
-  style={{ fontFamily: "'Merriweather', serif" }}
->
-  Darshan & Aarti
-</h3>
+              <h3
+                className="text-2xl text-orange-800 font-semibold mb-4"
+                style={{ fontFamily: "'Merriweather', serif" }}
+              >
+                {t({ en: "Darshan & Aarti", hi: "दर्शन और आरती", mr: "दर्शन आणि आरती" })}
+              </h3>
 
-              <LabelValue label="Darshan Timings" value={getText(temple.darshanTiming)} />
+              <LabelValue
+                label={t({ en: "Darshan Timings", hi: "दर्शन समय", mr: "दर्शनाची वेळ" })}
+                value={t(temple.darshanTiming)}
+              />
 
               {temple.aartiTimings && (
                 <div className="mt-3">
-                  <p className="text-sm text-gray-500 mb-1">Aarti Timings</p>
+                  <p className="text-sm text-gray-500 mb-1">
+                    {t({ en: "Aarti Timings", hi: "आरती समय", mr: "आरतीची वेळ" })}
+                  </p>
 
                   <div className="space-y-1 text-gray-800">
                     <div className="flex items-center gap-2">
-                      <IconClock /> <strong>Morning:</strong> {temple.aartiTimings.morning || "-"}
+                      <IconClock /> <strong>{t({ en: "Morning:", hi: "सुबह:", mr: "सकाळी:" })}</strong>{" "}
+                      {temple.aartiTimings.morning || "-"}
                     </div>
+
                     <div className="flex items-center gap-2">
-                      <IconClock /> <strong>Shringar:</strong> {temple.aartiTimings.shringar || "-"}
+                      <IconClock /> <strong>{t({ en: "Shringar:", hi: "श्रृंगार:", mr: "श्रृंगार:" })}</strong>{" "}
+                      {temple.aartiTimings.shringar || "-"}
                     </div>
+
                     <div className="flex items-center gap-2">
-                      <IconClock /> <strong>Shayan:</strong> {temple.aartiTimings.shayan || "-"}
+                      <IconClock /> <strong>{t({ en: "Shayan:", hi: "शयन:", mr: "शयन:" })}</strong>{" "}
+                      {temple.aartiTimings.shayan || "-"}
                     </div>
                   </div>
                 </div>
               )}
 
-              <LabelValue label="Special Pooja Info" value={getText(temple.specialPoojaInfo)} />
+              <LabelValue
+                label={t({ en: "Special Pooja Info", hi: "विशेष पूजा जानकारी", mr: "विशेष पूजा माहिती" })}
+                value={t(temple.specialPoojaInfo)}
+              />
             </div>
           </div>
         </div>
 
-
-
-            
-        {/* Full-width sections */}
-        
-        <Section id="religion" title="Religious & Historical Information">
-          <LabelValue label="Main Deity" value={getText(temple.mainDeity)} />
-          <LabelValue label="Deity Description" value={getText(temple.deityDescription)} />
-          <LabelValue label="Significance" value={getText(temple.significance)} />
-          <LabelValue label="History" value={getText(temple.history)} />
-          <LabelValue label="Architecture" value={getText(temple.architecture)} />
-          <LabelValue label="Builder / Trust" value={getText(temple.builderOrTrust)} />
-          <LabelValue label="Consecration Date" value={temple.consecrationDate || ""} />
+        {/* RELIGION & HISTORY */}
+        <Section
+          id="religion"
+          title={t({ en: "Religious & Historical Information", hi: "धार्मिक और ऐतिहासिक जानकारी", mr: "धार्मिक आणि ऐतिहासिक माहिती" })}
+        >
+          <LabelValue label={t({ en: "Main Deity", hi: "मुख्य देवता", mr: "मुख्य देवता" })} value={t(temple.mainDeity)} />
+          <LabelValue label={t({ en: "Deity Description", hi: "देवता विवरण", mr: "देवतांचे वर्णन" })} value={t(temple.deityDescription)} />
+          <LabelValue label={t({ en: "Significance", hi: "महत्व", mr: "महत्त्व" })} value={t(temple.significance)} />
+          <LabelValue label={t({ en: "History", hi: "इतिहास", mr: "इतिहास" })} value={t(temple.history)} />
+          <LabelValue label={t({ en: "Architecture", hi: "वास्तुकला", mr: "वास्तुकला" })} value={t(temple.architecture)} />
+          <LabelValue label={t({ en: "Builder / Trust", hi: "निर्माता / ट्रस्ट", mr: "निर्माता / ट्रस्ट" })} value={t(temple.builderOrTrust)} />
+          <LabelValue label={t({ en: "Consecration Date", hi: "प्रतिष्ठा तिथि", mr: "प्राणप्रतिष्ठा तारीख" })} value={temple.consecrationDate} />
         </Section>
 
-        {/* Visitor Information (simple text section using Merriweather) */}
-        <Section id="visitor" title="Visitor Information">
-          <LabelValue label="Dress Code" value={getText(temple.dressCode)} />
-          <LabelValue label="Entry Rules" value={getText(temple.entryRules)} />
-          {prohibitedItemsStr && <LabelValue label="Prohibited Items" value={prohibitedItemsStr} />}
-          <LabelValue label="Locker Facility" value={temple.lockerFacility ? "Available" : "Not Available"} />
+        {/* VISITOR INFO */}
+        <Section
+          id="visitor"
+          title={t({ en: "Visitor Information", hi: "यात्री जानकारी", mr: "भेट देणाऱ्यांसाठी माहिती" })}
+        >
+          <LabelValue label={t({ en: "Dress Code", hi: "ड्रेस कोड", mr: "ड्रेस कोड" })} value={t(temple.dressCode)} />
+          <LabelValue label={t({ en: "Entry Rules", hi: "प्रवेश नियम", mr: "प्रवेश नियम" })} value={t(temple.entryRules)} />
+          {prohibitedItemsStr && (
+            <LabelValue
+              label={t({ en: "Prohibited Items", hi: "निषिद्ध वस्तुएँ", mr: "बंदी घातलेल्या वस्तू" })}
+              value={prohibitedItemsStr}
+            />
+          )}
+          <LabelValue
+            label={t({ en: "Locker Facility", hi: "लॉकर सुविधा", mr: "लॉकर सुविधा" })}
+            value={
+              temple.lockerFacility
+                ? t({ en: "Available", hi: "उपलब्ध", mr: "उपलब्ध" })
+                : t({ en: "Not Available", hi: "उपलब्ध नहीं", mr: "उपलब्ध नाही" })
+            }
+          />
         </Section>
 
-        <Section id="travel" title="Travel & Connectivity">
-          <LabelValue label="How to Reach" value={getText(temple.howToReach)} />
-          <LabelValue label="Nearest Airport" value={getText(temple.nearestAirport)} />
-          <LabelValue label="Nearest Railway" value={getText(temple.nearestRailway)} />
-          <LabelValue label="Road Connectivity" value={getText(temple.roadConnectivity)} />
+        {/* TRAVEL */}
+        <Section
+          id="travel"
+          title={t({ en: "Travel & Connectivity", hi: "यात्रा और संपर्क", mr: "प्रवास आणि संपर्क" })}
+        >
+          <LabelValue label={t({ en: "How to Reach", hi: "कैसे पहुंचे", mr: "कसे पोहोचावे" })} value={t(temple.howToReach)} />
+          <LabelValue label={t({ en: "Nearest Airport", hi: "निकटतम हवाई अड्डा", mr: "जवळचे विमानतळ" })} value={t(temple.nearestAirport)} />
+          <LabelValue label={t({ en: "Nearest Railway Station", hi: "निकटतम रेलवे स्टेशन", mr: "जवळचे रेल्वे स्टेशन" })} value={t(temple.nearestRailway)} />
+          <LabelValue label={t({ en: "Road Connectivity", hi: "सड़क संपर्क", mr: "रस्ते संपर्क" })} value={t(temple.roadConnectivity)} />
         </Section>
 
+        {/* NEARBY PLACES */}
         {temple.nearbyPlaces?.length ? (
-          <Section id="nearby" title="Nearby Places">
+          <Section
+            id="nearby"
+            title={t({ en: "Nearby Places", hi: "पास के स्थान", mr: "जवळची ठिकाणे" })}
+          >
             <div className="space-y-3">
               {temple.nearbyPlaces.map((p, i) => (
-                <div key={i} className="p-3 bg-orange-50 rounded-xl hover:bg-orange-100 transition">
+                <div
+                  key={i}
+                  className="p-3 bg-orange-50 rounded-xl hover:bg-orange-100 transition"
+                >
                   <p className="font-medium text-gray-900" style={{ fontFamily: "'Merriweather', serif" }}>
-                    {getText(p.name)}
+                    {t(p.name)}
                   </p>
                   <p className="text-gray-700 text-sm" style={{ fontFamily: "'Merriweather', serif" }}>
-                    {getText(p.description)}
+                    {t(p.description)}
                   </p>
                 </div>
               ))}

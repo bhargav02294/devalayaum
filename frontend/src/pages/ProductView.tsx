@@ -1,12 +1,10 @@
-// src/pages/ProductView.tsx
-// PREMIUM SPIRITUAL PRODUCT PAGE — CLEAN LUXURY LAYOUT + TEMPLE THEME
-
+// ProductView.tsx — FULL MULTILANGUAGE + PREMIUM UI + RAZORPAY PAYMENT (ESLint-clean)
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-/* ------------------ Razorpay Types ------------------ */
+/* ---------------- RAZORPAY TYPES ---------------- */
 interface RazorpayResponse {
   razorpay_order_id: string;
   razorpay_payment_id: string;
@@ -27,7 +25,7 @@ interface RazorpayInstance {
   open: () => void;
 }
 
-/* ---------------- Razorpay Loader ------------------- */
+/* Load Razorpay Script */
 const loadRazorpayScript = (): Promise<boolean> =>
   new Promise((resolve) => {
     const exists = document.querySelector(
@@ -43,7 +41,7 @@ const loadRazorpayScript = (): Promise<boolean> =>
     document.body.appendChild(script);
   });
 
-/* ---------------- Product Interface ----------------- */
+/* ---------------- PRODUCT INTERFACE ---------------- */
 interface Product {
   _id: string;
   name: Record<string, string>;
@@ -78,26 +76,42 @@ export default function ProductView() {
   const [videoOpen, setVideoOpen] = useState(false);
 
   const backendURL = import.meta.env.VITE_API_URL;
-  const lang = i18n.language || "en";
+
+  /* Live Language Support */
+  const [lang, setLang] = useState(i18n.language);
+  useEffect(() => {
+    const handler = (lng: string) => setLang(lng);
+    i18n.on("languageChanged", handler);
+    return () => i18n.off("languageChanged", handler);
+  }, []);
   const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
-  /* Load Product */
+  /* Fetch Product */
   useEffect(() => {
-    const load = async () => {
+    async function load() {
       try {
         const res = await axios.get<Product>(`${backendURL}/api/products/${id}`);
         setProduct(res.data);
-      } catch (e) {
-        console.error("Product load failed:", e);
+      } catch {
+        console.error("Product load failed");
       } finally {
         setLoading(false);
       }
-    };
+    }
     load();
   }, [id, backendURL]);
 
   if (loading) return <p className="pt-24 text-center">Loading…</p>;
-  if (!product) return <p className="pt-24 text-center text-gray-600">Product not found</p>;
+  if (!product)
+    return (
+      <p className="pt-24 text-center text-gray-600">
+        {t({
+          en: "Product not found",
+          hi: "उत्पाद नहीं मिला",
+          mr: "उत्पाद आढळला नाही",
+        })}
+      </p>
+    );
 
   /* Build Gallery */
   const gallery = [...(product.images || [])];
@@ -107,20 +121,26 @@ export default function ProductView() {
 
   const mainImg = hoverPreview || gallery[activeIndex];
 
-  /* Handle Buy Now */
+  /* ---------------- HANDLE BUY NOW ---------------- */
   const handleBuy = async () => {
     const token = localStorage.getItem("USER_TOKEN");
     const userId = localStorage.getItem("USER_ID");
 
     if (!token || !userId) {
-      alert("Please login first to buy this product.");
+      alert(
+        t({
+          en: "Please login first to buy this product.",
+          hi: "कृपया इस उत्पाद को खरीदने के लिए पहले लॉगिन करें।",
+          mr: "कृपया हा उत्पादन खरेदी करण्यासाठी प्रथम लॉगिन करा.",
+        })
+      );
       navigate("/login");
       return;
     }
 
     const loaded = await loadRazorpayScript();
     if (!loaded) {
-      alert("Failed to load Razorpay. Check internet.");
+      alert("Razorpay failed to load.");
       return;
     }
 
@@ -152,28 +172,22 @@ export default function ProductView() {
             });
             alert("🙏 Payment Successful!");
             navigate("/order-success");
-          } catch (e) {
-            console.error("Verification failed:", e);
-            alert("Payment succeeded but verification failed.");
+          } catch {
+            alert("Payment verified but something went wrong.");
           }
         },
 
         prefill: { email: localStorage.getItem("auth_email") || "" },
-
         theme: { color: "#c46a1e" },
       };
 
       const ctor = (window as unknown as { Razorpay?: new (o: RazorpayOptions) => RazorpayInstance })
         .Razorpay;
 
-      if (!ctor) {
-        alert("Razorpay SDK not ready.");
-        return;
-      }
+      if (!ctor) return alert("Razorpay SDK not available.");
 
       new ctor(options).open();
-    } catch (e) {
-      console.error("Payment failed:", e);
+    } catch {
       alert("Payment could not be initiated.");
     }
   };
@@ -181,19 +195,19 @@ export default function ProductView() {
   const glow = "shadow-[0_6px_20px_rgba(200,130,50,0.20)]";
 
   /* ----------------------------------------------------
-     UI START
+     UI
   ---------------------------------------------------- */
   return (
     <div className="pt-24 pb-20 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6">
 
         <Link to="/products" className="text-orange-700 hover:underline mb-4 block">
-        
+          ← {t({ en: "Back to Products", hi: "उत्पादों पर वापस जाएँ", mr: "उत्पादांकडे परत जा" })}
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
-          {/* ---------------- LEFT: FIXED IMAGE SECTION ---------------- */}
+          {/* LEFT: IMAGES */}
           <div>
             <div className={`rounded-3xl overflow-hidden bg-white ${glow}`}>
               <div className="h-[420px] flex justify-center items-center bg-gradient-to-b from-white to-[#fff3e2]">
@@ -223,122 +237,97 @@ export default function ProductView() {
                 onClick={() => setVideoOpen(true)}
                 className="mt-4 bg-white border px-4 py-2 rounded-lg hover:bg-orange-50 shadow"
               >
-                ▶ Watch Product Video
+                ▶ {t({ en: "Watch Product Video", hi: "उत्पाद वीडियो देखें", mr: "उत्पादन व्हिडिओ पाहा" })}
               </button>
             )}
           </div>
 
-          {/* ---------------- RIGHT: PRODUCT DETAILS ---------------- */}
+          {/* RIGHT: DETAILS */}
           <div>
-            {/* TITLE */}
             <h1 className="mt-4 text-3xl lg:text-4xl font-[Marcellus] text-orange-700 font-bold">
               {t(product.name)}
             </h1>
 
             <p className="text-gray-600 mt-2 font-[Merriweather]">
-              Category: {product.category}
+              {t({ en: "Category", hi: "श्रेणी", mr: "श्रेणी" })}: {product.category}
             </p>
             {product.subCategory && (
               <p className="text-gray-600 font-[Merriweather]">
-                Subcategory: {product.subCategory}
+                {t({ en: "Subcategory", hi: "उपश्रेणी", mr: "उपश्रेणी" })}: {product.subCategory}
               </p>
             )}
 
-           {/* PRICE BOX — LUXURY STYLE (FIXED) */}
-<div className="mt-6 p-5 bg-[#fff6e9] border border-orange-200 rounded-2xl relative">
+            {/* PRICE BOX */}
+            <div className="mt-6 p-5 bg-[#fff6e9] border border-orange-200 rounded-2xl relative">
+              {product.discountPrice && (
+                <p className="text-sm text-gray-500 line-through font-[Merriweather] mb-1">
+                  ₹{product.price}
+                </p>
+              )}
 
-  {/* Strike Price — Clean Above Main Price */}
-  {product.discountPrice && (
-    <p className="text-sm text-gray-500 line-through font-[Merriweather] mb-1">
-      ₹{product.price}
-    </p>
-  )}
-
-  {/* Main Price — Slightly Smaller */}
-  <p className="text-3xl font-[Merriweather] font-bold text-orange-900">
-    ₹{product.discountPrice || product.price}
-  </p>
-
-  {/* Premium Golden Button */}
-  <div className="mt-4 flex justify-start">
-  <button
-    onClick={handleBuy}
-    className="
-      px-6 py-2
-      rounded-xl
-      text-white text-[15px] font-[Merriweather]
-      bg-gradient-to-r from-orange-500 to-orange-600
-      hover:from-orange-600 hover:to-orange-700
-      shadow-[0_4px_18px_rgba(255,150,70,0.45)]
-      transition-all
-      w-[40%]   /* NEW: Small premium width */
-      min-w-[140px] /* ensures it never becomes too small */
-    "
-  >
-    Buy Now
-  </button>
-</div>
-
-</div>
-
-
-            {/* SECTION: DESCRIPTION */}
-            <div className="mt-10">
-              <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
-                Description
-              </h2>
-              <p className="text-gray-700 leading-relaxed font-[Merriweather]">
-                {t(product.description)}
+              <p className="text-3xl font-[Merriweather] font-bold text-orange-900">
+                ₹{product.discountPrice || product.price}
               </p>
+
+              <div className="mt-4">
+                <button
+                  onClick={handleBuy}
+                  className="px-6 py-2 rounded-xl text-white text-[15px] font-[Merriweather]
+                    bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700
+                    shadow-[0_4px_18px_rgba(255,150,70,0.45)] transition-all w-[40%] min-w-[140px]"
+                >
+                  {t({ en: "Buy Now", hi: "अभी खरीदें", mr: "आता खरेदी करा" })}
+                </button>
+              </div>
             </div>
 
-            {/* SECTION: SPIRITUAL BENEFITS */}
+            {/* DETAILS SECTIONS */}
+            <DetailSection title={t({ en: "Description", hi: "विवरण", mr: "वर्णन" })}>
+              {t(product.description)}
+            </DetailSection>
+
             {product.spiritualBenefit && (
-              <div className="mt-8">
-                <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
-                 Spiritual Benefits
-                </h2>
-                <p className="text-gray-700 font-[Merriweather]">
-                  {t(product.spiritualBenefit)}
-                </p>
-              </div>
+              <DetailSection title={t({ en: "Spiritual Benefits", hi: "आध्यात्मिक लाभ", mr: "आध्यात्मिक लाभ" })}>
+                {t(product.spiritualBenefit)}
+              </DetailSection>
             )}
 
-            {/* SECTION: DEITY ASSOCIATED */}
             {product.deityAssociated && (
-              <div className="mt-8">
-                <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
-                  Associated Deity
-                </h2>
-                <p className="text-gray-700 font-[Merriweather]">
-                  {t(product.deityAssociated)}
-                </p>
-              </div>
+              <DetailSection title={t({ en: "Associated Deity", hi: "संबंधित देवता", mr: "संबंधित देवता" })}>
+                {t(product.deityAssociated)}
+              </DetailSection>
             )}
 
-            {/* SECTION: MANTRA */}
             {product.mantra && (
-              <div className="mt-8">
-                <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
-                  Mantra
-                </h2>
-                <p className="italic text-gray-900 font-[Merriweather]">
-                  "{t(product.mantra)}"
-                </p>
-              </div>
+              <DetailSection title={t({ en: "Mantra", hi: "मंत्र", mr: "मंत्र" })}>
+                <span className="italic text-lg">"{t(product.mantra)}"</span>
+              </DetailSection>
             )}
 
-            {/* MATERIAL / SIZE */}
             <div className="mt-8 text-gray-700 font-[Merriweather] space-y-1">
-              {product.material && <p><strong>Material:</strong> {product.material}</p>}
-              {product.size && <p><strong>Size:</strong> {product.size}</p>}
-              {product.dimensions && <p><strong>Dimensions:</strong> {product.dimensions}</p>}
+              {product.material && (
+                <p>
+                  <strong>{t({ en: "Material", hi: "सामग्री", mr: "साहित्य" })}:</strong>{" "}
+                  {product.material}
+                </p>
+              )}
+              {product.size && (
+                <p>
+                  <strong>{t({ en: "Size", hi: "आकार", mr: "आकार" })}:</strong> {product.size}
+                </p>
+              )}
+              {product.dimensions && (
+                <p>
+                  <strong>{t({ en: "Dimensions", hi: "आयाम", mr: "परिमाण" })}:</strong>{" "}
+                  {product.dimensions}
+                </p>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* VIDEO MODAL */}
+      {/* VIDEO POPUP */}
       {videoOpen && product.videoUrl && (
         <div
           className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50"
@@ -353,7 +342,8 @@ export default function ProductView() {
             </div>
 
             <div className="aspect-video">
-              {(product.videoUrl.includes("youtube") || product.videoUrl.includes("youtu.be")) ? (
+              {(product.videoUrl.includes("youtube") ||
+                product.videoUrl.includes("youtu.be")) ? (
                 <iframe
                   className="w-full h-full"
                   src={product.videoUrl.replace("watch?v=", "embed/")}
@@ -367,5 +357,25 @@ export default function ProductView() {
         </div>
       )}
     </div>
+  );
+}
+
+/* ---------------- SECTION COMPONENT ---------------- */
+function DetailSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="mt-8">
+      <h2 className="text-[18px] font-[Merriweather] font-semibold text-orange-600 mb-2">
+        {title}
+      </h2>
+      <p className="text-gray-700 leading-relaxed font-[Merriweather]">
+        {children}
+      </p>
+    </section>
   );
 }
