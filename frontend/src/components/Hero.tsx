@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import i18n from "../i18n";
 
 type LangText = Record<string, string>;
+
 interface Slide {
   title: LangText;
   text: LangText;
@@ -17,7 +18,7 @@ export default function Hero() {
   const [, setRender] = useState(false);
 
   useEffect(() => {
-    const handler = () => setRender(v => !v);
+    const handler = () => setRender((v) => !v);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
@@ -34,7 +35,6 @@ export default function Hero() {
       link: "/temples",
       img: "/herotemple.png",
     },
-
     {
       title: { en: "Book Authentic Pujas", hi: "सत्य पूजा बुक करें", mr: "अस्सल पूजा बुक करा" },
       text: {
@@ -46,7 +46,6 @@ export default function Hero() {
       link: "/pujas",
       img: "/heropuja.png",
     },
-
     {
       title: { en: "Support Us with Donation", hi: "दान से सहयोग करें", mr: "दानाने मदत करा" },
       text: {
@@ -58,7 +57,6 @@ export default function Hero() {
       link: "/donate",
       img: "/herodonation.png",
     },
-
     {
       title: { en: "Spiritual Products", hi: "आध्यात्मिक उत्पाद", mr: "आध्यात्मिक उत्पादने" },
       text: {
@@ -70,7 +68,6 @@ export default function Hero() {
       link: "/products",
       img: "/heroproduct.png",
     },
-
     {
       title: { en: "Aarti & Katha", hi: "आरती और कथा", mr: "आरती आणि कथा" },
       text: {
@@ -88,7 +85,7 @@ export default function Hero() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrent(prev => (prev + 1) % slides.length);
+      setCurrent((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
   }, [slides.length]);
@@ -97,8 +94,9 @@ export default function Hero() {
     <div
       className="
         relative w-full 
-        h-[65vh] md:h-[90vh]
+        h-[75vh] md:h-[90vh]
         overflow-hidden
+        mt-0 p-0
       "
     >
       {slides.map((s, i) => (
@@ -108,33 +106,32 @@ export default function Hero() {
             i === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
-          {/* FULL IMAGE — MOBILE + DESKTOP */}
+
+          {/* FULL IMAGE – TOUCHING NAVBAR, NO GAP */}
           <img
             src={s.img}
             alt={s.title[lang]}
             className="
               w-full h-full 
-              object-contain 
-              md:object-contain
+              object-cover md:object-contain
+              block
             "
           />
 
-          {/* TEXT */}
+          {/* TEXT OVER IMAGE */}
           <div
             className="
               absolute
               left-[5%] md:left-[7%]
-              top-[72%] md:top-[45%]
-              -translate-y-[50%]
+              bottom-[8%] md:top-[45%]
+              md:-translate-y-[50%]
               w-[90%] md:w-[40%]
               text-left
             "
           >
-            {/* MOBILE SMALLER TITLE */}
             <h1
               className="
-                text-xl       /* MOBILE FIXED SMALL SIZE */
-                md:text-5xl   /* DESKTOP SAME */
+                text-2xl md:text-5xl 
                 font-bold 
                 text-white 
                 drop-shadow-2xl
@@ -144,13 +141,11 @@ export default function Hero() {
               {s.title[lang]}
             </h1>
 
-            {/* MOBILE SMALLER PARAGRAPH */}
             <p
               className="
-                mt-2 
-                text-sm       /* MOBILE SMALL */
-                md:text-xl 
-                text-gray-200
+                mt-2 md:mt-4 
+                text-sm md:text-xl 
+                text-white md:text-gray-200 
                 leading-snug
               "
               style={{ fontFamily: "'Merriweather', serif" }}
@@ -158,17 +153,13 @@ export default function Hero() {
               {s.text[lang]}
             </p>
 
-            {/* MOBILE SMALLER BUTTON */}
             <Link
               to={s.link}
               className="
-                inline-block 
-                mt-3 md:mt-6 
-                px-4 py-1.5    /* SMALLER BUTTON FOR MOBILE */
-                md:px-7 md:py-3
+                inline-block mt-3 md:mt-6 
+                px-5 py-2 md:px-7 md:py-3
                 rounded-full 
-                text-white 
-                text-xs md:text-lg
+                text-white text-sm md:text-lg
                 bg-gradient-to-r from-[#d58a2d] via-[#e09f3e] to-[#c97a1f]
                 shadow-[0_5px_25px_rgba(255,180,80,0.55)]
               "
@@ -180,7 +171,7 @@ export default function Hero() {
       ))}
 
       {/* INDICATORS */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-30">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-30">
         {slides.map((_, i) => (
           <button
             key={i}
