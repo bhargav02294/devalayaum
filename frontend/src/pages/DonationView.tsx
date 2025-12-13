@@ -1,36 +1,10 @@
 // src/pages/DonationView.tsx
-// FINAL PROFESSIONAL DONATION PAGE — Sticky Left Column + Fixed Image + Temple Fonts
+// FINAL PHONEPE VERSION — Razorpay completely removed
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
-
-// Load Razorpay script (safe)
-const loadRazorpayScript = (): Promise<boolean> =>
-  new Promise((resolve) => {
-    const existing = document.querySelector(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-    );
-    if (existing) return resolve(true);
-
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-
-// Razorpay typings
-declare global {
-  interface RazorpayInstance {
-    open: () => void;
-  }
-
-  interface Window {
-    Razorpay: new (options: Record<string, unknown>) => RazorpayInstance;
-  }
-}
 
 /* -------------------------------------------------------
    INTERFACES
@@ -90,12 +64,12 @@ export default function DonationView() {
   }, [id, backendURL]);
 
   if (loading) return <div className="pt-24 text-center">Loading...</div>;
-  if (!donation) return <div className="pt-24 text-center"> not found.</div>;
+  if (!donation) return <div className="pt-24 text-center">Donation not found.</div>;
 
   const suggestedAmounts = [51, 101, 501, 1001];
 
   /* -------------------------------------------------------
-     HANDLE DONATION
+     HANDLE DONATION (PHONEPE)
   ------------------------------------------------------- */
   const handleDonate = async () => {
     setError("");
@@ -105,66 +79,22 @@ export default function DonationView() {
     if (!amount || Number(amount) < 1)
       return setError("Please enter a valid donation amount.");
 
-    const loaded = await loadRazorpayScript();
-    if (!loaded) return setError("Failed to load payment gateway.");
-
     try {
-      // Create Order
-      const response = await axios.post(`${backendURL}/api/payments/create-order`, {
-        donationId: donation._id,
-        fullName,
-        mobile,
-        amount,
-      });
+      const response = await axios.post(
+        `${backendURL}/api/payments/create-phonepe-payment`,
+        {
+          donationId: donation._id,
+          fullName,
+          mobile,
+          amount,
+        }
+      );
 
-      const data = response.data as {
-        orderId: string;
-        amount: number;
-        currency: string;
-      };
-
-      if (!data.orderId || !data.amount || !data.currency) {
-        return setError("Invalid server response for payment.");
+      if (response.data.success) {
+        window.location.href = response.data.url; // Redirect to PhonePe payment page
+      } else {
+        setError("Payment initiation failed.");
       }
-
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: data.amount,
-        currency: data.currency,
-        name: "Devalayaum",
-        description: `Donation: ${t(donation.donationName)}`,
-        order_id: data.orderId,
-
-        handler: async (resp: {
-          razorpay_order_id: string;
-          razorpay_payment_id: string;
-          razorpay_signature: string;
-        }) => {
-          try {
-            await axios.post(`${backendURL}/api/payments/verify`, {
-              orderId: resp.razorpay_order_id,
-              paymentId: resp.razorpay_payment_id,
-              signature: resp.razorpay_signature,
-              fullName,
-              mobile,
-              amount,
-              templeName: t(donation.templeName),
-              donationName: t(donation.donationName),
-            });
-
-            alert("🙏 Thank you! Your donation was successful.");
-            window.location.href = "/donors";
-          } catch {
-            alert("Payment succeeded but verification failed.");
-          }
-        },
-
-        prefill: { name: fullName, contact: mobile },
-        theme: { color: "#b34a00" },
-      };
-
-      const razor = new window.Razorpay(options);
-      razor.open();
     } catch {
       setError("Payment failed. Please try again.");
     }
@@ -176,7 +106,6 @@ export default function DonationView() {
   return (
     <div className="pt-24 pb-20 bg-gradient-to-b from-[#fff4d9] via-[#fff9f1] to-white min-h-screen px-6">
 
-      {/* -------------------------------- HEADER -------------------------------- */}
       <div className="max-w-6xl mx-auto mb-12 px-2">
         <h1 className="mt-4 text-2xl lg:text-3xl font-[Marcellus] text-orange-700 font-bold">
           {t(donation.donationName)}
@@ -203,13 +132,8 @@ export default function DonationView() {
         </p>
       </div>
 
-      {/* ---------------------- MAIN GRID (Sticky Left + Scroll Right) ---------------------- */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-
-        {/* ---------------------- LEFT COLUMN (STICKY) ---------------------- */}
         <div className="space-y-10 lg:sticky lg:top-24 self-start">
-
-          {/* IMAGE FIXED HEIGHT */}
           <div className={`rounded-3xl bg-white overflow-hidden p-4 ${glow}`}>
             <div className="h-[260px] md:h-[300px] lg:h-[330px] rounded-2xl overflow-hidden bg-[#fff6e9] flex items-center justify-center">
               <img
@@ -220,13 +144,12 @@ export default function DonationView() {
             </div>
           </div>
 
-          {/* MAKE A DONATION BOX */}
           <div className={`p-8 rounded-3xl bg-white ${glow}`}>
             <h3
               className="text-[20px] text-orange-700 font-semibold mb-4"
               style={{ fontFamily: "'Merriweather', serif" }}
             >
-             Make Donation
+              Make Donation
             </h3>
 
             {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -247,7 +170,6 @@ export default function DonationView() {
               className="w-full border p-3 rounded-xl mb-4"
             />
 
-            {/* Suggested Amounts */}
             <div className="flex flex-wrap gap-3 mb-4">
               {suggestedAmounts.map((amt) => (
                 <button
@@ -281,37 +203,21 @@ export default function DonationView() {
               Donate Now
             </button>
           </div>
-
         </div>
 
-        {/* ---------------------- RIGHT COLUMN (DETAILS) ---------------------- */}
         <div className="space-y-10">
-
-          <Section title="About Chadhava">
-            {t(donation.description)}
-          </Section>
-
-          <Section title="Temple Details">
-            {t(donation.templeDetails)}
-          </Section>
-
-          <Section title="Benefits ">
-            {t(donation.benefits)}
-          </Section>
-
-          <Section title="Summary">
-            {t(donation.summary)}
-          </Section>
-
+          <Section title="About Chadhava">{t(donation.description)}</Section>
+          <Section title="Temple Details">{t(donation.templeDetails)}</Section>
+          <Section title="Benefits">{t(donation.benefits)}</Section>
+          <Section title="Summary">{t(donation.summary)}</Section>
         </div>
-
       </div>
     </div>
   );
 }
 
 /* -------------------------------------------------------
-   SECTION COMPONENT — SMALL + MERRIWEATHER
+   SECTION COMPONENT
 ------------------------------------------------------- */
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

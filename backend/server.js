@@ -17,6 +17,7 @@ import productPaymentRoutes from "./routes/productPaymentRoutes.js";
 import pujaBookingRoutes from "./routes/pujaBookingRoutes.js";
 import ocrRoutes from "./routes/ocrRoutes.js";
 import llmRoutes from "./routes/llmRoutes.js";
+import phonepeRoutes from "./routes/payments/phonepe.routes.js";
 
 
 
@@ -56,6 +57,7 @@ app.use("/api/product-payments", productPaymentRoutes);
 app.use("/api/puja-bookings", pujaBookingRoutes);
 app.use("/api/ocr", ocrRoutes);
 app.use("/api/llm", llmRoutes);
+app.use("/api/payments", phonepeRoutes);
 
 
 
