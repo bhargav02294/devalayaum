@@ -1,4 +1,4 @@
-// Fully optimized AartisList page (mobile + desktop) with multilingual support
+// Fully optimized Aarti List page with multilingual support
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -32,9 +32,10 @@ function ScrollingBorder({ flipped = false }: { flipped?: boolean }) {
   );
 }
 
-export default function AartisList() {
+export default function AartiList() {
   const [items, setItems] = useState<AartiItem[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [filter, setFilter] = useState<"all" | "aarti" | "katha" | "mantra">(
     "all"
   );
@@ -56,14 +57,14 @@ export default function AartisList() {
 
   if (loading)
     return (
-      <div className="pt-20 md:pt-24 pb-20 text-center text-orange-700 text-lg font-semibold">
+      <div className="pt-20 text-center text-orange-700 text-lg font-semibold">
         Loading Aartis, Kathas & Mantras…
       </div>
     );
 
   return (
     <div
-      className="pt-20 md:pt-24 pb-20"
+      className="pt-20 pb-20"
       style={{
         background:
           "linear-gradient(to bottom, #fff4cc 0%, #fff8e7 20%, #ffffff 60%)",
@@ -72,7 +73,7 @@ export default function AartisList() {
       <ScrollingBorder />
 
       {/* HERO */}
-      <div className="max-w-7xl mx-auto px-5 md:px-10 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
+      <div className="max-w-7xl mx-auto px-5 mb-10 grid grid-cols-1 lg:grid-cols-[60%_40%] gap-10 items-center">
         <div>
           <h1
             className="text-3xl md:text-5xl font-bold font-[Marcellus]"
@@ -87,14 +88,14 @@ export default function AartisList() {
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <img src="/aarti.png" className="w-56 md:w-80 lg:w-[420px] drop-shadow-xl" />
+          <img src="/aarti.png" className="w-56 md:w-80 lg:w-[420px]" />
         </div>
       </div>
 
       <ScrollingBorder flipped />
 
       {/* FILTER BUTTONS */}
-      <div className="max-w-7xl mx-auto px-5 md:px-10 mt-8 mb-6 flex flex-wrap gap-4 justify-center">
+      <div className="max-w-7xl mx-auto px-5 mt-8 mb-6 flex flex-wrap gap-4 justify-center">
         {[
           { key: "all", label: t({ en: "All", hi: "सभी", mr: "सर्व" }) },
           { key: "aarti", label: t({ en: "Aartis", hi: "आरती", mr: "आरत्या" }) },
@@ -107,11 +108,11 @@ export default function AartisList() {
               setFilter(b.key as "all" | "aarti" | "katha" | "mantra")
             }
             className={`px-6 py-2 rounded-full font-[Poppins] border
-              ${
-                filter === b.key
-                  ? "bg-orange-600 text-white border-orange-700 shadow-lg scale-105"
-                  : "bg-white text-orange-700 border-orange-500 hover:bg-orange-100"
-              }`}
+            ${
+              filter === b.key
+                ? "bg-orange-600 text-white border-orange-700 shadow-lg scale-105"
+                : "bg-white text-orange-700 border-orange-500 hover:bg-orange-100"
+            }`}
           >
             {b.label}
           </button>
@@ -119,7 +120,7 @@ export default function AartisList() {
       </div>
 
       {/* GRID */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredItems.map((it) => {
           const title = t(it.title);
           const desc = t(it.description);
@@ -129,14 +130,14 @@ export default function AartisList() {
             <Link
               to={`/aarti/${it._id}`}
               key={it._id}
-              className="block rounded-2xl overflow-hidden bg-white border shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
+              className="block rounded-2xl shadow-sm bg-white border hover:shadow-md hover:-translate-y-1 transition-all"
             >
-              <div className="w-full h-48 md:h-56 bg-gray-100 overflow-hidden">
+              <div className="w-full h-48 bg-gray-100 overflow-hidden">
                 <img src={img} alt={title} className="w-full h-full object-cover" />
               </div>
 
               <div className="p-4 space-y-2">
-                <h2 className="text-lg font-semibold font-[Playfair] text-gray-900">
+                <h2 className="text-lg font-semibold text-gray-900 font-[Playfair]">
                   {title}
                 </h2>
 

@@ -23,6 +23,7 @@ export default function AartiView() {
   const [loading, setLoading] = useState(true);
 
   const backendURL = import.meta.env.VITE_API_URL;
+
   const lang = i18n.language || "en";
   const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
@@ -40,18 +41,11 @@ export default function AartiView() {
   }, []);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await axios.get<AartiItem>(`${backendURL}/api/aartis/${id}`);
-        setItem(res.data);
-      } catch {
-        setItem(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    load();
+    axios
+      .get(`${backendURL}/api/aartis/${id}`)
+      .then((res) => setItem(res.data))
+      .catch(() => setItem(null))
+      .finally(() => setLoading(false));
   }, [id, backendURL]);
 
   if (loading)
@@ -66,10 +60,10 @@ export default function AartiView() {
     <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
       <div className="max-w-4xl mx-auto">
 
+        {/* FIXED BACK BUTTON */}
         <Link
-          to="/aartis"
+          to="/aarti"
           className="text-orange-700 hover:text-orange-900 underline"
-          style={{ fontFamily: "'Merriweather', serif" }}
         >
           ← {t({ en: "Back to Aartis", hi: "आरती पर वापस जाएँ", mr: "आरतीकडे परत जा" })}
         </Link>
@@ -79,10 +73,7 @@ export default function AartiView() {
             {t(item.title)}
           </h1>
 
-          <p
-            className="text-gray-600 mt-1 text-sm capitalize tracking-wide"
-            style={{ fontFamily: "'Merriweather', serif" }}
-          >
+          <p className="text-gray-600 mt-1 text-sm capitalize tracking-wide">
             📜{" "}
             {t({
               en: item.type,
@@ -110,7 +101,9 @@ export default function AartiView() {
               <h2 className="text-[18px] text-orange-600 mb-3 font-semibold">
                 {t({ en: "Description", hi: "विवरण", mr: "वर्णन" })}
               </h2>
-              <p className="text-gray-700 leading-relaxed">{t(item.description)}</p>
+              <p className="text-gray-700 leading-relaxed">
+                {t(item.description)}
+              </p>
             </section>
           )}
 
@@ -138,7 +131,8 @@ export default function AartiView() {
                       : "आरती मजकूर",
                 })}
               </h2>
-              <p className="text-gray-900 leading-relaxed whitespace-pre-line text-lg">
+
+              <p className="whitespace-pre-line text-lg text-gray-900">
                 {t(item.content)}
               </p>
             </section>
@@ -149,7 +143,7 @@ export default function AartiView() {
               <h2 className="text-[18px] text-orange-600 mb-3 font-semibold">
                 {t({ en: "Meaning", hi: "अर्थ", mr: "अर्थ" })}
               </h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              <p className="text-gray-700 whitespace-pre-line">
                 {t(item.meaning)}
               </p>
             </section>
