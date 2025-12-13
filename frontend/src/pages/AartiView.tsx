@@ -1,11 +1,14 @@
 // src/pages/AartiView.tsx
-// PREMIUM AARTI / MANTRA / KATHA VIEW PAGE — MATCHED WITH TEMPLE + PUJA THEME
+// PREMIUM AARTI / MANTRA / KATHA VIEW PAGE — MULTILANGUAGE SUPPORTED
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
+/* -------------------------------------------------------
+   INTERFACE
+------------------------------------------------------- */
 interface AartiItem {
   _id: string;
   title: Record<string, string>;
@@ -17,23 +20,28 @@ interface AartiItem {
   temple?: { _id?: string; name?: Record<string, string> } | string | null;
 }
 
+/* -------------------------------------------------------
+   MAIN COMPONENT
+------------------------------------------------------- */
 export default function AartiView() {
   const { id } = useParams<{ id: string }>();
+
   const [item, setItem] = useState<AartiItem | null>(null);
   const [loading, setLoading] = useState(true);
 
   const backendURL = import.meta.env.VITE_API_URL;
-  const lang = i18n.language || "en";
 
-  const getText = (field?: Record<string, string>) =>
-    field?.[lang] || field?.en || "";
+  /* Language Helper */
+  const lang = i18n.language || "en";
+  const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
   const glow = "shadow-[0_6px_22px_rgba(255,145,60,0.22)]";
 
-  // Load Merriweather dynamically
+  /* Load Merriweather Font */
   useEffect(() => {
     const href =
       "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap";
+
     if (!document.querySelector(`link[href="${href}"]`)) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -42,6 +50,7 @@ export default function AartiView() {
     }
   }, []);
 
+  /* Fetch Aarti Info */
   useEffect(() => {
     const load = async () => {
       try {
@@ -53,6 +62,7 @@ export default function AartiView() {
         setLoading(false);
       }
     };
+
     load();
   }, [id, backendURL]);
 
@@ -65,9 +75,14 @@ export default function AartiView() {
 
   if (!item)
     return (
-      <p className="text-center mt-24 text-red-600 text-lg">Item not found</p>
+      <p className="text-center mt-24 text-red-600 text-lg">
+        Aarti not found.
+      </p>
     );
 
+  /* -------------------------------------------------------
+     UI
+  ------------------------------------------------------- */
   return (
     <div className="pt-24 pb-20 px-6 bg-gradient-to-b from-[#fff7e3] via-[#fffdf8] to-white min-h-screen">
       <div className="max-w-4xl mx-auto">
@@ -78,20 +93,24 @@ export default function AartiView() {
           className="text-orange-700 hover:text-orange-900 underline"
           style={{ fontFamily: "'Merriweather', serif" }}
         >
-          ← Back to Aartis
+          ← {t({ en: "Back to Aartis", hi: "आरती पर वापस जाएँ", mr: "आरतीकडे परत जा" })}
         </Link>
 
-        {/* HEADER SECTION */}
+        {/* HEADER */}
         <div className="mt-6 text-center">
           <h1 className="text-3xl lg:text-4xl font-[Marcellus] text-orange-800 font-bold">
-            {getText(item.title)}
+            {t(item.title)}
           </h1>
 
           <p
             className="text-gray-600 mt-1 text-sm capitalize tracking-wide"
             style={{ fontFamily: "'Merriweather', serif" }}
           >
-            📜 {item.type}
+            📜 {t({
+              en: item.type,
+              hi: item.type === "aarti" ? "आरती" : item.type === "katha" ? "कथा" : "मंत्र",
+              mr: item.type === "aarti" ? "आरती" : item.type === "katha" ? "कथा" : "मंत्र",
+            })}
           </p>
         </div>
 
@@ -101,14 +120,14 @@ export default function AartiView() {
             <div className={`rounded-3xl overflow-hidden bg-white p-4 ${glow}`}>
               <img
                 src={item.image}
-                alt={getText(item.title)}
+                alt={t(item.title)}
                 className="w-64 h-64 object-cover rounded-2xl"
               />
             </div>
           </div>
         )}
 
-        {/* CONTENT BOX */}
+        {/* CONTENT */}
         <div className="mt-12 space-y-12">
 
           {/* DESCRIPTION */}
@@ -118,13 +137,14 @@ export default function AartiView() {
                 className="text-[18px] font-semibold text-orange-600 mb-3"
                 style={{ fontFamily: "'Merriweather', serif" }}
               >
-                Description
+                {t({ en: "Description", hi: "विवरण", mr: "वर्णन" })}
               </h2>
+
               <p
                 className="text-gray-700 leading-relaxed"
                 style={{ fontFamily: "'Merriweather', serif" }}
               >
-                {getText(item.description)}
+                {t(item.description)}
               </p>
             </section>
           )}
@@ -136,36 +156,52 @@ export default function AartiView() {
                 className="text-[18px] font-semibold text-orange-600 mb-3"
                 style={{ fontFamily: "'Merriweather', serif" }}
               >
-                {item.type === "mantra"
-                  ? "Mantra"
-                  : item.type === "katha"
-                  ? "Katha Content"
-                  : "Aarti Text"}
+                {t({
+                  en:
+                    item.type === "mantra"
+                      ? "Mantra"
+                      : item.type === "katha"
+                      ? "Katha Content"
+                      : "Aarti Text",
+                  hi:
+                    item.type === "mantra"
+                      ? "मंत्र"
+                      : item.type === "katha"
+                      ? "कथा सामग्री"
+                      : "आरती पाठ",
+                  mr:
+                    item.type === "mantra"
+                      ? "मंत्र"
+                      : item.type === "katha"
+                      ? "कथा मजकूर"
+                      : "आरती मजकूर",
+                })}
               </h2>
 
               <p
                 className="text-gray-900 leading-relaxed whitespace-pre-line text-lg"
                 style={{ fontFamily: "'Merriweather', serif" }}
               >
-                {getText(item.content)}
+                {t(item.content)}
               </p>
             </section>
           )}
 
-          {/* MEANING */}
+          {/* MEANING (Only for Mantras) */}
           {item.type === "mantra" && item.meaning && (
             <section>
               <h2
                 className="text-[18px] font-semibold text-orange-600 mb-3"
                 style={{ fontFamily: "'Merriweather', serif" }}
               >
-                Meaning
+                {t({ en: "Meaning", hi: "अर्थ", mr: "अर्थ" })}
               </h2>
+
               <p
                 className="text-gray-700 leading-relaxed whitespace-pre-line"
                 style={{ fontFamily: "'Merriweather', serif" }}
               >
-                {getText(item.meaning)}
+                {t(item.meaning)}
               </p>
             </section>
           )}
@@ -177,7 +213,11 @@ export default function AartiView() {
                 className="text-[18px] font-semibold text-orange-600 mb-2"
                 style={{ fontFamily: "'Merriweather', serif" }}
               >
-                Related Temple
+                {t({
+                  en: "Related Temple",
+                  hi: "संबंधित मंदिर",
+                  mr: "संबंधित मंदिर",
+                })}
               </h2>
 
               <Link
@@ -185,7 +225,7 @@ export default function AartiView() {
                 className="text-orange-700 underline hover:text-orange-900 text-lg"
                 style={{ fontFamily: "'Merriweather', serif" }}
               >
-                🛕 {getText(item.temple.name)}
+                🛕 {t(item.temple.name)}
               </Link>
             </section>
           )}
