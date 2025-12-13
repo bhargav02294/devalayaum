@@ -1,8 +1,9 @@
 // E:\devalayaum\backend\routes\payments\phonepe.routes.js
 
-const express = require("express");
-const crypto = require("crypto");
-const axios = require("axios");
+import express from "express";
+import crypto from "crypto";
+import axios from "axios";
+
 const router = express.Router();
 
 const MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID;
@@ -24,7 +25,7 @@ router.post("/create-phonepe-payment", async (req, res) => {
       merchantId: MERCHANT_ID,
       merchantTransactionId: transactionId,
       merchantUserId: mobile,
-      amount: Number(amount) * 100, // paise
+      amount: Number(amount) * 100,
       redirectUrl: CALLBACK_URL,
       callbackUrl: CALLBACK_URL,
       mobileNumber: mobile,
@@ -33,8 +34,8 @@ router.post("/create-phonepe-payment", async (req, res) => {
 
     const base64Payload = Buffer.from(JSON.stringify(payload)).toString("base64");
 
-    const stringToHash = base64Payload + "/pg/v1/pay" + SALT_KEY;
-    const sha = crypto.createHash("sha256").update(stringToHash).digest("hex");
+    const toHash = base64Payload + "/pg/v1/pay" + SALT_KEY;
+    const sha = crypto.createHash("sha256").update(toHash).digest("hex");
     const xVerify = `${sha}###${SALT_INDEX}`;
 
     const response = await axios.post(
@@ -42,9 +43,9 @@ router.post("/create-phonepe-payment", async (req, res) => {
       { request: base64Payload },
       {
         headers: {
+          "Content-Type": "application/json",
           "X-VERIFY": xVerify,
           "X-MERCHANT-ID": MERCHANT_ID,
-          "Content-Type": "application/json",
         },
       }
     );
@@ -55,7 +56,8 @@ router.post("/create-phonepe-payment", async (req, res) => {
       url: response.data.data.instrumentResponse.redirectInfo.url,
     });
   } catch (error) {
-    return res.status(500).json({ error: error?.response?.data || error.message });
+    console.log("PhonePe Error:", error?.response?.data || error);
+    res.status(500).json({ error: error?.response?.data || error.message });
   }
 });
 
@@ -64,10 +66,10 @@ router.post("/phonepe/callback", async (req, res) => {
   try {
     const { merchantTransactionId } = req.body;
 
-    const stringToHash =
+    const toHash =
       `/pg/v1/status/${MERCHANT_ID}/${merchantTransactionId}` + SALT_KEY;
 
-    const sha = crypto.createHash("sha256").update(stringToHash).digest("hex");
+    const sha = crypto.createHash("sha256").update(toHash).digest("hex");
     const xVerify = `${sha}###${SALT_INDEX}`;
 
     const statusRes = await axios.get(
@@ -81,22 +83,16 @@ router.post("/phonepe/callback", async (req, res) => {
     );
 
     if (statusRes.data.code === "PAYMENT_SUCCESS") {
-      // INSERT DONOR RECORD IN DB
-      // await DonorModel.create({
-      //   fullName,
-      //   mobile,
-      //   amount,
-      //   donationName,
-      //   templeName,
-      // });
-
       console.log("Donation successful:", merchantTransactionId);
+      // TODO: Save donor in DB
     }
 
     return res.json({ message: "OK" });
   } catch (err) {
+    console.log("Callback Error:", err);
     return res.status(500).json({ error: "Callback error" });
   }
 });
 
-module.exports = router;
+// ⭐ THIS IS THE IMPORTANT LINE FOR ESM
+export default router;
