@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import i18n from "../i18n";
 
 type LangText = Record<string, string>;
-
 interface Slide {
   title: LangText;
   text: LangText;
@@ -18,7 +17,7 @@ export default function Hero() {
   const [, setRender] = useState(false);
 
   useEffect(() => {
-    const handler = () => setRender((v) => !v);
+    const handler = () => setRender(v => !v);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
@@ -89,7 +88,7 @@ export default function Hero() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
+      setCurrent(prev => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
   }, [slides.length]);
@@ -98,9 +97,9 @@ export default function Hero() {
     <div
       className="
         relative w-full 
-        h-auto md:h-[90vh]
-        overflow-hidden
-        mt-0 p-0
+        h-[65vh] md:h-[90vh]     /* MOBILE FIXED HEIGHT + PC SAME */
+        overflow-hidden 
+        mt-0
       "
     >
       {slides.map((s, i) => (
@@ -110,27 +109,21 @@ export default function Hero() {
             i === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
-          {/* MOBILE IMAGE — FULL HEIGHT + FULL WIDTH */}
-          <div className="w-full h-auto md:h-full relative flex items-center justify-center bg-black md:bg-black">
-            <img
-              src={s.img}
-              alt={s.title[lang]}
-              className="
-                w-full 
-                h-auto 
-                object-cover  
-                md:h-full md:object-contain
-              "
-            />
+          {/* MOBILE FIX — FULL IMAGE ALWAYS SHOWN */}
+          <img
+            src={s.img}
+            alt={s.title[lang]}
+            className="
+              w-full h-full
+              object-contain          /* FULL IMAGE NO CROP */
+              md:object-contain       /* PC REMAINS SAME */
+            "
+          />
 
-            {/* Gradient overlay on mobile only */}
-            <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-          </div>
-
-          {/* TEXT CONTENT */}
+          {/* TEXT */}
           <div
             className="
-              absolute
+              absolute 
               left-[5%] md:left-[7%]
               top-[70%] md:top-[45%]
               -translate-y-[50%]
@@ -140,10 +133,8 @@ export default function Hero() {
           >
             <h1
               className="
-                text-3xl md:text-5xl 
-                font-bold 
-                text-white 
-                drop-shadow-2xl
+                text-3xl md:text-5xl font-bold 
+                text-white drop-shadow-2xl
               "
               style={{ fontFamily: "'Marcellus', serif" }}
             >
@@ -154,9 +145,7 @@ export default function Hero() {
               className="
                 mt-3 md:mt-4 
                 text-base md:text-xl 
-                text-gray-100 md:text-gray-200 
-                leading-relaxed 
-                drop-shadow-xl
+                text-gray-100 md:text-gray-200
               "
               style={{ fontFamily: "'Merriweather', serif" }}
             >
@@ -167,14 +156,11 @@ export default function Hero() {
               to={s.link}
               className="
                 inline-block mt-5 md:mt-6 
-                px-6 py-2 md:px-7 md:py-3
-                rounded-full 
-                text-white text-base md:text-lg
+                px-6 py-2 md:px-7 md:py-3 
+                rounded-full text-white text-base md:text-lg
                 bg-gradient-to-r from-[#d58a2d] via-[#e09f3e] to-[#c97a1f]
                 shadow-[0_5px_25px_rgba(255,180,80,0.55)]
-                border border-white/20
               "
-              style={{ fontFamily: "'Merriweather', serif" }}
             >
               {s.btn[lang]}
             </Link>
@@ -189,7 +175,7 @@ export default function Hero() {
             key={i}
             onClick={() => setCurrent(i)}
             className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all ${
-              i === current ? "bg-orange-500 scale-125" : "bg-white/60 hover:bg-white"
+              i === current ? "bg-orange-500 scale-125" : "bg-white/60"
             }`}
           ></button>
         ))}
