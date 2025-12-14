@@ -1,3 +1,4 @@
+// src/components/HomeAartis.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -18,13 +19,14 @@ export default function HomeAartis() {
   const [list, setList] = useState<Aarti[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 Auto re-render when language changes
+  /* 🔥 Live language update */
   useEffect(() => {
     const handler = () => setLang(i18n.language);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
+  /* Fetch aartis */
   useEffect(() => {
     axios
       .get(`${backendURL}/api/aartis/home-list`)
@@ -34,32 +36,38 @@ export default function HomeAartis() {
   }, [backendURL]);
 
   if (loading) {
-    return <p className="text-center py-10 text-gray-500">Loading...</p>;
+    return (
+      <p className="text-center py-10 text-gray-500">
+        Loading devotional content…
+      </p>
+    );
   }
 
   if (list.length === 0) {
     return (
-      <p className="text-center py-10 text-gray-500">No Aartis available.</p>
+      <p className="text-center py-10 text-gray-500">
+        No Aartis, Kathas or Mantras available.
+      </p>
     );
   }
 
-  // 🌍 Multi-language labels
+  /* 🌍 Multilanguage SEO text */
   const text = {
     heading: {
-      en: "Aartis, Kathas & Mantras",
-      hi: "आरती, कथा और मंत्र",
-      mr: "आरती, कथा आणि मंत्र",
-      ta: "ஆரத்தி, கதை & மந்த்ரங்கள்",
-      te: "ఆర్తులు, కథలు & మంత్రాలు",
-      bn: "আরতি, কথা ও মন্ত্র",
+      en: "Hindu Aartis, Kathas & Mantras",
+      hi: "हिंदू आरती, कथा और मंत्र",
+      mr: "हिंदू आरती, कथा आणि मंत्र",
+      ta: "இந்து ஆரத்தி, கதை & மந்திரங்கள்",
+      te: "హిందూ ఆర్తులు, కథలు & మంత్రాలు",
+      bn: "হিন্দু আরতি, কথা ও মন্ত্র",
     },
     subHeading: {
-      en: "Explore sacred verses for healing, devotion and peace",
-      hi: "चिकित्सा, भक्ति और शांति के लिए पवित्र श्लोकों का अन्वेषण करें",
-      mr: "उपचार, भक्ती आणि शांततेसाठी पवित्र ओव्या शोधा",
-      ta: "ஆரோக்கியம், பக்தி மற்றும் அமைதிக்கான தெய்வீக பாடல்கள்",
-      te: "ఆరోగ్యం, భక్తి మరియు శాంతికోసం పవిత్ర శ్లోకాలు",
-      bn: "আরোগ্য, ভক্তি ও শান্তির জন্য পবিত্র শ্লোক আবিষ্কার করুন",
+      en: "Read, listen and experience sacred prayers for devotion, peace and spiritual healing.",
+      hi: "भक्ति, शांति और आध्यात्मिक उपचार के लिए पवित्र प्रार्थनाएँ पढ़ें और अनुभव करें।",
+      mr: "भक्ती, शांतता आणि आध्यात्मिक उपचारासाठी पवित्र प्रार्थना वाचा आणि अनुभवा.",
+      ta: "பக்தி, அமைதி மற்றும் ஆன்மீக குணமடைவதற்கான புனித பாடல்கள்.",
+      te: "భక్తి, శాంతి మరియు ఆధ్యాత్మిక స్వస్థత కోసం పవిత్ర ప్రార్థనలు.",
+      bn: "ভক্তি, শান্তি ও আধ্যাত্মিক আরোগ্যের জন্য পবিত্র প্রার্থনা।",
     },
     readMore: {
       en: "Read More →",
@@ -70,12 +78,12 @@ export default function HomeAartis() {
       bn: "আরও পড়ুন →",
     },
     viewAll: {
-      en: "View All Aartis",
-      hi: "सभी आरती देखें",
-      mr: "सर्व आरती पाहा",
-      ta: "அனைத்து ஆரத்திகளையும் பார்க்கவும்",
-      te: "అన్ని ఆర్తులను చూడండి",
-      bn: "সব আরতি দেখুন",
+      en: "View All Aartis & Mantras",
+      hi: "सभी आरती और मंत्र देखें",
+      mr: "सर्व आरती आणि मंत्र पहा",
+      ta: "அனைத்து ஆரத்தி & மந்திரங்களைப் பார்க்கவும்",
+      te: "అన్ని ఆర్తులు & మంత్రాలను చూడండి",
+      bn: "সব আরতি ও মন্ত্র দেখুন",
     },
     type: {
       aarti: {
@@ -105,19 +113,24 @@ export default function HomeAartis() {
     },
   };
 
-  const t = (obj: Record<string, string>) => obj[lang] ?? obj["en"];
+  const t = (obj: Record<string, string>) => obj[lang] ?? obj.en;
 
   return (
-    <section className="py-20 bg-gradient-to-b from-orange-50 to-white">
-      {/* Header */}
+    <section
+      className="py-20 bg-gradient-to-b from-orange-50 to-white"
+      aria-label="Hindu Aartis Kathas and Mantras"
+    >
+      {/* SECTION HEADER */}
       <div className="text-center mb-14">
         <h2 className="text-4xl font-extrabold text-[#b35b00] drop-shadow-md">
           {t(text.heading)}
         </h2>
-        <p className="mt-3 text-gray-600 text-lg">{t(text.subHeading)}</p>
+        <p className="mt-3 text-gray-600 text-lg max-w-3xl mx-auto">
+          {t(text.subHeading)}
+        </p>
       </div>
 
-      {/* Cards */}
+      {/* CARDS */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6">
         {list.slice(0, 3).map((item) => {
           const title = item.title?.[lang] || item.title?.en || "Untitled";
@@ -126,58 +139,64 @@ export default function HomeAartis() {
             item.description?.en?.slice(0, 120) ||
             "";
 
-          const typeLabel = t(text.type[item.type as "aarti" | "katha" | "mantra"]);
+          const typeLabel =
+            t(text.type[item.type as "aarti" | "katha" | "mantra"]);
 
           return (
-            <Link
-              key={item._id}
-              to={`/aarti/${item._id}`}
-              className="group bg-white rounded-2xl overflow-hidden shadow-lg border border-orange-100 hover:shadow-[0_10px_30px_rgba(179,91,0,0.3)] hover:-translate-y-2 transition-all duration-500 relative"
-            >
-              {/* Type Badge */}
-              <div className="absolute top-4 left-4 bg-[#b35b00] text-white text-xs px-3 py-1 rounded-full shadow-md z-10">
-                {typeLabel}
-              </div>
-
-              {/* Thumbnail */}
-              <div className="h-72 overflow-hidden">
-                <img
-                  src={item.image}
-                  alt={title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
-                />
-              </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#8a4600] mb-2 leading-snug">
-                  {title}
-                </h3>
-
-                <p className="text-gray-700 text-sm leading-relaxed mb-6">
-                  {desc}...
-                </p>
-
-                <div className="text-[#b35b00] font-medium text-sm group-hover:underline">
-                  {t(text.readMore)}
+            <article key={item._id}>
+              <Link
+                to={`/aarti/${item._id}`}
+                className="group bg-white rounded-2xl overflow-hidden shadow-lg border border-orange-100
+                           hover:shadow-[0_10px_30px_rgba(179,91,0,0.3)]
+                           hover:-translate-y-2 transition-all duration-500 relative block"
+                aria-label={`${typeLabel}: ${title}`}
+              >
+                {/* TYPE BADGE */}
+                <div className="absolute top-4 left-4 bg-[#b35b00] text-white text-xs px-3 py-1 rounded-full shadow-md z-10">
+                  {typeLabel}
                 </div>
-              </div>
-            </Link>
+
+                {/* IMAGE */}
+                <div className="h-72 overflow-hidden">
+                  <img
+                    src={item.image || "/placeholder.jpg"}
+                    alt={`${title} ${typeLabel} - Hindu devotional content`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* CONTENT */}
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-[#8a4600] mb-2 leading-snug">
+                    {title}
+                  </h3>
+
+                  <p className="text-gray-700 text-sm leading-relaxed mb-6">
+                    {desc}…
+                  </p>
+
+                  <div className="text-[#b35b00] font-medium text-sm group-hover:underline">
+                    {t(text.readMore)}
+                  </div>
+                </div>
+              </Link>
+            </article>
           );
         })}
       </div>
 
-      {/* View All Button */}
+      {/* VIEW ALL CTA */}
       <div className="text-center mt-16">
         <Link
           to="/aarti"
-          className="relative inline-block group px-6 py-2 border border-[#b35b00] rounded-full text-[#b35b00] font-medium text-sm overflow-hidden transition-all duration-500 shadow-sm"
+          aria-label="View all Hindu Aartis Kathas and Mantras"
+          className="inline-block px-8 py-3 border border-[#b35b00] rounded-full
+                     text-[#b35b00] font-medium text-sm
+                     transition-all duration-500
+                     hover:bg-[#b35b00] hover:text-white shadow-sm"
         >
-          <span className="absolute left-0 top-0 h-full w-0 bg-[#b35b00] transition-all duration-700 group-hover:w-full"></span>
-
-          <span className="relative z-10 group-hover:text-white transition duration-500">
-            {t(text.viewAll)}
-          </span>
+          {t(text.viewAll)}
         </Link>
       </div>
     </section>

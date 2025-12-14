@@ -1,3 +1,4 @@
+// src/components/HomeDonations.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -17,16 +18,16 @@ export default function HomeDonations() {
 
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [lang, setLang] = useState(i18n.language || "en");
 
-  // 🔥 Re-render immediately when language changes
+  /* 🔥 Live language update */
   useEffect(() => {
     const handler = () => setLang(i18n.language);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
+  /* Fetch donations */
   useEffect(() => {
     axios
       .get(`${backendURL}/api/donations/home-list`)
@@ -35,37 +36,39 @@ export default function HomeDonations() {
       .finally(() => setLoading(false));
   }, [backendURL]);
 
-  if (loading)
+  if (loading) {
     return (
       <p className="text-center text-gray-600 py-10">
-        Loading donation causes...
+        Loading temple donation campaigns…
       </p>
     );
+  }
 
-  if (donations.length === 0)
+  if (donations.length === 0) {
     return (
       <p className="text-center text-gray-500 py-10">
-        No donation campaigns available.
+        No active temple donation campaigns available.
       </p>
     );
+  }
 
-  // 🌍 Multilanguage labels
+  /* 🌍 Multilanguage SEO text */
   const text = {
     heading: {
-      en: "Support Sacred Causes",
-      hi: "पवित्र कार्यों का समर्थन करें",
-      mr: "पवित्र कार्यांना समर्थन द्या",
-      ta: "புனித காரணிகளை ஆதரிக்கவும்",
-      te: "పవిత్ర కార్యక్రమాలను మద్దతుపరచండి",
-      bn: "পবিত্র কার্যসমূহকে সমর্থন করুন",
+      en: "Donate to Sacred Temples & Causes",
+      hi: "पवित्र मंदिरों और कार्यों के लिए दान करें",
+      mr: "पवित्र मंदिरे आणि कार्यांसाठी दान करा",
+      ta: "புனித கோவில்கள் மற்றும் காரணிகளுக்கு நன்கொடை அளிக்கவும்",
+      te: "పవిత్ర ఆలయాలు మరియు కార్యక్రమాలకు దానం చేయండి",
+      bn: "পবিত্র মন্দির ও কার্যক্রমে দান করুন",
     },
     subHeading: {
-      en: "Contribute to divine temple initiatives and Spiritual welfare",
-      hi: "दिव्य मंदिर पहल और आध्यात्मिक कल्याण में योगदान दें",
-      mr: "दैवी मंदिर उपक्रम आणि आध्यात्मिक कल्याणासाठी योगदान द्या",
-      ta: "தெய்வீக கோவில் முயற்சிகளுக்கும் ஆன்மீக நலத்திற்கும் பங்களிக்கவும்",
-      te: "దైవాలయ కార్యక్రమాలకు మరియు ఆధ్యాత్మిక సంక్షేమానికి సహకరించండి",
-      bn: "দেবালয় উদ্যোগ ও আধ্যাত্মিক কল্যাণে অবদান রাখুন",
+      en: "Support verified Hindu temple trusts, rituals, and spiritual welfare through Chadhava.",
+      hi: "सत्यापित हिंदू मंदिर ट्रस्ट, पूजा और आध्यात्मिक कल्याण के लिए चढ़ावा दें।",
+      mr: "प्रमाणित हिंदू मंदिर ट्रस्ट, पूजा आणि आध्यात्मिक कल्याणासाठी चढावा द्या.",
+      ta: "சரிபார்க்கப்பட்ட இந்து கோவில் அறக்கட்டளைகள் மற்றும் ஆன்மீக நலனுக்கு ஆதரவு அளிக்கவும்.",
+      te: "నిర్ధారిత హిందూ ఆలయ ట్రస్టులు మరియు ఆధ్యాత్మిక సంక్షేమానికి మద్దతు ఇవ్వండి.",
+      bn: "যাচাইকৃত হিন্দু মন্দির ট্রাস্ট ও আধ্যাত্মিক কল্যাণে সহায়তা করুন।",
     },
     verified: {
       en: "Verified Temple Trust",
@@ -76,101 +79,113 @@ export default function HomeDonations() {
       bn: "যাচাইকৃত মন্দির ট্রাস্ট",
     },
     donateNow: {
-      en: " Go Next",
-      hi: "अभी दान करें",
-      mr: "आता दान करा",
-      ta: "இப்போது நன்கொடையளிக்கவும்",
-      te: "ఇప్పుడే దానం చేయండి",
-      bn: "এখনই দান করুন",
+      en: "Proceed to Donate",
+      hi: "दान के लिए आगे बढ़ें",
+      mr: "दानासाठी पुढे जा",
+      ta: "நன்கொடைக்கு தொடரவும்",
+      te: "దానం కొనసాగించండి",
+      bn: "দান করতে এগিয়ে যান",
     },
     viewAll: {
-      en: "View All Chadhavas ",
-      hi: "सभी दान देखें",
-      mr: "सर्व दान पहा",
-      ta: "அனைத்து நன்கொடைகளையும் பார்க்கவும்",
-      te: "అన్ని దానాలను చూడండి",
-      bn: "সব দান দেখুন",
+      en: "View All Chadhava Donations",
+      hi: "सभी चढ़ावा दान देखें",
+      mr: "सर्व चढावा दान पहा",
+      ta: "அனைத்து சடங்கு நன்கொடைகளையும் பார்க்கவும்",
+      te: "అన్ని చడావా దానాలను చూడండి",
+      bn: "সব চড়াভা দান দেখুন",
     },
   };
 
-  const t = (obj: Record<string, string>) => obj[lang] ?? obj["en"];
+  const t = (obj: Record<string, string>) => obj[lang] ?? obj.en;
 
   return (
-    <section className="py-20 bg-gradient-to-b from-orange-50 to-white">
-      {/* Header */}
+    <section
+      className="py-20 bg-gradient-to-b from-orange-50 to-white"
+      aria-label="Temple Donations and Chadhava"
+    >
+      {/* HEADER */}
       <div className="text-center mb-14">
         <h2 className="text-4xl font-extrabold text-[#b35b00] drop-shadow-md">
           {t(text.heading)}
         </h2>
-        <p className="mt-3 text-gray-600 text-lg">{t(text.subHeading)}</p>
+        <p className="mt-3 text-gray-600 text-lg max-w-3xl mx-auto">
+          {t(text.subHeading)}
+        </p>
       </div>
 
-      {/* Cards */}
+      {/* DONATION CARDS */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6">
         {donations.slice(0, 3).map((d) => {
           const donationTitle =
             d.donationName?.[lang] || d.donationName?.en || "";
-          const temple = d.templeName?.[lang] || d.templeName?.en || "";
+          const temple =
+            d.templeName?.[lang] || d.templeName?.en || "";
           const short =
             d.shortDetails?.[lang]?.slice(0, 120) ||
             d.shortDetails?.en?.slice(0, 120) ||
             "";
 
           return (
-            <div
-              key={d._id}
-              className="group bg-white rounded-2xl overflow-hidden shadow-lg border border-orange-100 hover:shadow-[0_10px_40px_rgba(179,91,0,0.35)] hover:-translate-y-2 transition-all duration-500"
-            >
-              {/* Thumbnail */}
-              <div className="relative h-72 overflow-hidden">
-                <img
-                  src={d.thumbnail}
-                  alt={donationTitle}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
-                />
+            <article key={d._id}>
+              <div
+                className="group bg-white rounded-2xl overflow-hidden shadow-lg border border-orange-100
+                           hover:shadow-[0_10px_40px_rgba(179,91,0,0.35)]
+                           hover:-translate-y-2 transition-all duration-500"
+              >
+                {/* IMAGE */}
+                <div className="relative h-72 overflow-hidden">
+                  <img
+                    src={d.thumbnail}
+                    alt={`${donationTitle} donation for ${temple}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
+                    loading="lazy"
+                  />
 
-                <div className="absolute top-4 left-4 bg-[#006b3c] text-white text-xs px-3 py-1 rounded-full shadow-md tracking-wide">
-                  {t(text.verified)}
+                  <div className="absolute top-4 left-4 bg-[#006b3c] text-white text-xs px-3 py-1 rounded-full shadow-md tracking-wide">
+                    {t(text.verified)}
+                  </div>
+                </div>
+
+                {/* CONTENT */}
+                <div className="p-6">
+                  <p className="text-[#b35b00] font-semibold text-sm mb-1">
+                    {temple}
+                  </p>
+
+                  <h3 className="text-xl font-bold text-[#8a4600] mb-2 leading-snug">
+                    {donationTitle}
+                  </h3>
+
+                  <p className="text-gray-700 text-sm leading-relaxed mb-6">
+                    {short}…
+                  </p>
+
+                  <Link
+                    to={`/donations/${d._id}`}
+                    aria-label={`Donate to ${donationTitle}`}
+                    className="block text-center w-full bg-[#b35b00] hover:bg-[#8a4600]
+                               text-white font-medium py-2 rounded-lg shadow-md transition duration-300"
+                  >
+                    {t(text.donateNow)}
+                  </Link>
                 </div>
               </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <p className="text-[#b35b00] font-semibold text-sm mb-1">
-                  {temple}
-                </p>
-
-                <h3 className="text-xl font-bold text-[#8a4600] mb-2 leading-snug">
-                  {donationTitle}
-                </h3>
-
-                <p className="text-gray-700 text-sm leading-relaxed mb-6">
-                  {short}...
-                </p>
-
-                <Link
-                  to={`/donations/${d._id}`}
-                  className="block text-center w-full bg-[#b35b00] hover:bg-[#8a4600] text-white font-medium py-2 rounded-lg shadow-md transition duration-300"
-                >
-                  {t(text.donateNow)}
-                </Link>
-              </div>
-            </div>
+            </article>
           );
         })}
       </div>
 
-      {/* View All Button */}
+      {/* VIEW ALL CTA */}
       <div className="text-center mt-16">
         <Link
           to="/donations"
-          className="relative inline-block group px-6 py-2 border border-[#b35b00] rounded-full text-[#b35b00] font-medium text-sm overflow-hidden transition-all duration-500 shadow-sm"
+          aria-label="View all temple donation campaigns"
+          className="inline-block px-8 py-3 border border-[#b35b00] rounded-full
+                     text-[#b35b00] font-medium text-sm
+                     transition-all duration-500
+                     hover:bg-[#b35b00] hover:text-white shadow-sm"
         >
-          <span className="absolute left-0 top-0 h-full w-0 bg-[#b35b00] transition-all duration-700 group-hover:w-full"></span>
-
-          <span className="relative z-10 group-hover:text-white transition duration-500">
-            {t(text.viewAll)}
-          </span>
+          {t(text.viewAll)}
         </Link>
       </div>
     </section>
