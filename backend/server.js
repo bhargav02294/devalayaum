@@ -51,7 +51,7 @@ app.use("/api/temples", templeRoutes);
 app.use("/api/pujas", pujaRoutes);
 app.use("/api/aartis", aartiRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);   // ← add this line
+app.use("/api/user", userRoutes);   
 app.use("/api/payments", paymentRoutes);
 app.use("/api/product-payments", productPaymentRoutes);
 app.use("/api/puja-bookings", pujaBookingRoutes);

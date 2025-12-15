@@ -106,15 +106,16 @@ export default function DonationView() {
 
     try {
       const response = await axios.post(`${backendURL}/api/payments/create-phonepe-payment`, {
-        donationId: donation._id,
-        fullName,
-        mobile,
-        amount,
-      });
+  donationId: donation._id,
+  fullName,
+  mobile,
+  amount,
+});
 
-      if (response.data.success) {
-        window.location.href = response.data.url;
-      } else {
+if (response.data.success) {
+  window.location.href = response.data.redirectUrl;
+}
+else {
         setError(t({ en: "Payment failed.", hi: "भुगतान असफल हुआ।", mr: "पेमेंट अयशस्वी झाले." }));
       }
     } catch {
