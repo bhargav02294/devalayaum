@@ -41,9 +41,16 @@ router.post("/create-phonepe-payment", async (req, res) => {
   try {
     const { donationId, fullName, mobile, amount } = req.body;
 
+    console.log("========== PHONEPE CREATE PAYMENT ==========");
+    console.log("Amount (paise):", Number(amount) * 100);
+    console.log("Mobile:", mobile.replace(/\d(?=\d{4})/g, "*"));
+
     const accessToken = await getAccessToken();
 
+    console.log("Access Token Generated: YES");
+
     const merchantOrderId = "ORD" + Date.now();
+    console.log("Merchant Order ID:", merchantOrderId);
 
     const payload = {
       merchantOrderId,
@@ -51,25 +58,26 @@ router.post("/create-phonepe-payment", async (req, res) => {
       amount: Number(amount) * 100,
       redirectUrl: CALLBACK_URL,
       callbackUrl: CALLBACK_URL,
-      paymentInstrument: {
-        type: "PAY_PAGE"
-      }
+      paymentInstrument: { type: "PAY_PAGE" }
     };
+
+    console.log("PhonePe Payload:", payload);
+    console.log("Pay URL:", PAY_URL);
 
     const response = await axios.post(PAY_URL, payload, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json; charset=UTF-8"
+        "Content-Type": "application/json"
       }
     });
+
+    console.log("PhonePe Response:", response.data);
+    console.log("===========================================");
 
     return res.json({
       success: true,
       redirectUrl: response.data.data.instrumentResponse.redirectInfo.url,
-      merchantOrderId,
-      fullName,
-      mobile,
-      donationId
+      merchantOrderId
     });
 
   } catch (err) {
@@ -80,6 +88,7 @@ router.post("/create-phonepe-payment", async (req, res) => {
     });
   }
 });
+
 
 /* ---------------------------------------------------------
    3. Callback Handler + Save Donation
