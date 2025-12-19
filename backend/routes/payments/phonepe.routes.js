@@ -4,15 +4,16 @@ import DonationRecord from "../../models/DonationRecord.js";
 
 const router = express.Router();
 
-// ================= ENV =================
+/* ================= ENV ================= */
+
 const AUTH_URL =
   "https://api-preprod.phonepe.com/apis/pg-sandbox/v1/oauth/token";
 
-const PAY_URL = process.env.PHONEPE_PAY_URL; 
-// https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/pay
+const PAY_URL =
+  "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/pay";
 
-const STATUS_URL = process.env.PHONEPE_STATUS_URL;
-// https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/order
+const STATUS_URL =
+  "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/order";
 
 const CLIENT_ID = process.env.PHONEPE_CLIENT_ID;
 const CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET;
@@ -21,20 +22,20 @@ const CLIENT_VERSION = process.env.PHONEPE_CLIENT_VERSION || "1";
 const CALLBACK_URL =
   process.env.BACKEND_URL + "/api/payments/phonepe/callback";
 
-// =====================================================
-// 1. GET ACCESS TOKEN (PHONEPE V2 – SANDBOX)
-// =====================================================
+/* =====================================================
+   1. GET ACCESS TOKEN (V2 – SANDBOX)
+===================================================== */
 async function getAccessToken() {
+  console.log("========== PHONEPE AUTH REQUEST ==========");
+  console.log("AUTH URL:", AUTH_URL);
+  console.log("CLIENT ID:", CLIENT_ID);
+  console.log("=========================================");
+
   const formData = new URLSearchParams();
   formData.append("client_id", CLIENT_ID);
   formData.append("client_secret", CLIENT_SECRET);
   formData.append("client_version", CLIENT_VERSION);
   formData.append("grant_type", "client_credentials");
-
-  console.log("========== PHONEPE AUTH REQUEST ==========");
-  console.log("AUTH URL:", AUTH_URL);
-  console.log("CLIENT ID:", CLIENT_ID);
-  console.log("=========================================");
 
   const res = await axios.post(AUTH_URL, formData.toString(), {
     headers: {
@@ -42,14 +43,12 @@ async function getAccessToken() {
     },
   });
 
-  console.log("PHONEPE AUTH SUCCESS");
-
   return res.data.access_token;
 }
 
-// =====================================================
-// 2. CREATE PAYMENT (V2 CHECKOUT)
-// =====================================================
+/* =====================================================
+   2. CREATE PAYMENT
+===================================================== */
 router.post("/create-phonepe-payment", async (req, res) => {
   try {
     const { donationId, fullName, mobile, amount } = req.body;
@@ -60,6 +59,7 @@ router.post("/create-phonepe-payment", async (req, res) => {
     console.log("Mobile:", mobile.replace(/\d(?=\d{4})/g, "*"));
 
     const accessToken = await getAccessToken();
+    console.log("Access Token: RECEIVED");
 
     const merchantOrderId = "ORD" + Date.now();
     console.log("Merchant Order ID:", merchantOrderId);
@@ -68,9 +68,16 @@ router.post("/create-phonepe-payment", async (req, res) => {
       merchantOrderId,
       merchantUserId: mobile,
       amount: Number(amount) * 100,
-      redirectUrl: CALLBACK_URL,
+
+      // IMPORTANT: redirect = frontend page
+      redirectUrl: `${process.env.FRONTEND_ORIGIN}/order-success?orderId=${merchantOrderId}`,
+
+      // IMPORTANT: callback = backend
       callbackUrl: CALLBACK_URL,
-      paymentInstrument: { type: "PAY_PAGE" },
+
+      paymentInstrument: {
+        type: "PAY_PAGE",
+      },
     };
 
     console.log("PAY URL:", PAY_URL);
@@ -104,14 +111,23 @@ router.post("/create-phonepe-payment", async (req, res) => {
   }
 });
 
-// =====================================================
-// 3. CALLBACK + STATUS CHECK
-// =====================================================
+/* =====================================================
+   3. CALLBACK + STATUS CHECK
+===================================================== */
 router.post("/phonepe/callback", async (req, res) => {
   try {
-    const { merchantOrderId } = req.body;
-
     console.log("========== PHONEPE CALLBACK ==========");
+    console.log("RAW CALLBACK BODY:", req.body);
+
+    const merchantOrderId =
+      req.body?.merchantOrderId ||
+      req.body?.data?.merchantOrderId;
+
+    if (!merchantOrderId) {
+      console.error("MerchantOrderId not found in callback");
+      return res.status(400).json({ error: "Invalid callback" });
+    }
+
     console.log("Merchant Order ID:", merchantOrderId);
 
     const accessToken = await getAccessToken();
