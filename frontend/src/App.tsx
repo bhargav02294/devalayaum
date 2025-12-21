@@ -119,7 +119,10 @@ export default function App() {
 
         <Route path="/my-account" element={<><Navbar /><MyAccount /><Footer /></>} />
         <Route path="/profile" element={<><Navbar /><Profile /><Footer /></>} />
-        <Route path="/order-success" element={<><Navbar /><OrderSuccess /><Footer /></>} />
+<Route
+  path="/order-success"
+  element={<><Navbar /><OrderSuccess /><Footer /></>}
+/>
         <Route path="/donors" element={<><Navbar /><Donors /><Footer /></>} />
 
         {/* ================= PUJAS ================= */}

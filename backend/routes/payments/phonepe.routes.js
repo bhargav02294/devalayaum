@@ -68,22 +68,13 @@ router.post("/create-phonepe-payment", async (req, res) => {
     console.log("Merchant Order ID:", merchantOrderId);
 
     const payload = {
-  merchantId: MERCHANT_ID,
-  merchantOrderId,
-  merchantUserId: `USER_${mobile}`, // important
-  amount: Number(amount) * 100,
-
-  // ✅ TEMPORARY TEST (bypass whitelist issue)
-  redirectUrl: CALLBACK_URL,
-
-  // ✅ Always backend
-  callbackUrl: CALLBACK_URL,
-
-  paymentInstrument: {
-    type: "PAY_PAGE",
-  },
-};
-
+      merchantOrderId,
+      merchantUserId: `USER_${mobile}`,   // safe format
+      amount: Number(amount) * 100,
+      redirectUrl: `${process.env.FRONTEND_ORIGIN}/order-success?orderId=${merchantOrderId}`,
+      callbackUrl: `${process.env.BACKEND_URL}/api/payments/phonepe/callback`,
+      paymentInstrument: { type: "PAY_PAGE" }
+    };
 
     console.log("PAY URL:", PAY_URL);
     console.log("REQUEST PAYLOAD:", payload);
@@ -92,8 +83,8 @@ router.post("/create-phonepe-payment", async (req, res) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
-        "X-MERCHANT-ID": MERCHANT_ID,
-      },
+        "X-MERCHANT-ID": MERCHANT_ID
+      }
     });
 
     console.log("PHONEPE PAY RESPONSE:", response.data);
@@ -101,18 +92,19 @@ router.post("/create-phonepe-payment", async (req, res) => {
 
     return res.json({
       success: true,
-      redirectUrl:
-        response.data.data.instrumentResponse.redirectInfo.url,
-      merchantOrderId,
+      redirectUrl: response.data.data.instrumentResponse.redirectInfo.url,
+      merchantOrderId
     });
+
   } catch (err) {
     console.error("PHONEPE PAYMENT ERROR:", err.response?.data || err);
     return res.status(500).json({
       success: false,
-      error: err.response?.data,
+      error: err.response?.data
     });
   }
 });
+
 
 /* =====================================================
    3. CALLBACK + STATUS CHECK
