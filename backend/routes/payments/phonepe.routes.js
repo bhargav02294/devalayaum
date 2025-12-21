@@ -68,18 +68,22 @@ router.post("/create-phonepe-payment", async (req, res) => {
     console.log("Merchant Order ID:", merchantOrderId);
 
     const payload = {
-      merchantId: MERCHANT_ID,
-      merchantOrderId,
-      merchantUserId: mobile,
-      amount: Number(amount) * 100,
+  merchantId: MERCHANT_ID,
+  merchantOrderId,
+  merchantUserId: `USER_${mobile}`, // important
+  amount: Number(amount) * 100,
 
-      redirectUrl: `${process.env.FRONTEND_ORIGIN}/order-success?orderId=${merchantOrderId}`,
-      callbackUrl: CALLBACK_URL,
+  // ✅ TEMPORARY TEST (bypass whitelist issue)
+  redirectUrl: CALLBACK_URL,
 
-      paymentInstrument: {
-        type: "PAY_PAGE",
-      },
-    };
+  // ✅ Always backend
+  callbackUrl: CALLBACK_URL,
+
+  paymentInstrument: {
+    type: "PAY_PAGE",
+  },
+};
+
 
     console.log("PAY URL:", PAY_URL);
     console.log("REQUEST PAYLOAD:", payload);
