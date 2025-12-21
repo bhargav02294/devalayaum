@@ -19,11 +19,13 @@ const CLIENT_ID = process.env.PHONEPE_CLIENT_ID;
 const CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET;
 const CLIENT_VERSION = process.env.PHONEPE_CLIENT_VERSION || "1";
 
+const MERCHANT_ID = process.env.PHONEPE_MERCHANT_ID;
+
 const CALLBACK_URL =
   process.env.BACKEND_URL + "/api/payments/phonepe/callback";
 
 /* =====================================================
-   1. GET ACCESS TOKEN (V2 – SANDBOX)
+   1. GET ACCESS TOKEN (SANDBOX – V2)
 ===================================================== */
 async function getAccessToken() {
   console.log("========== PHONEPE AUTH REQUEST ==========");
@@ -47,14 +49,15 @@ async function getAccessToken() {
 }
 
 /* =====================================================
-   2. CREATE PAYMENT
+   2. CREATE PAYMENT (V2 CHECKOUT)
 ===================================================== */
 router.post("/create-phonepe-payment", async (req, res) => {
   try {
-    const { donationId, fullName, mobile, amount } = req.body;
+    const { donationId, mobile, amount } = req.body;
 
     console.log("========== PHONEPE CREATE PAYMENT ==========");
     console.log("Donation ID:", donationId);
+    console.log("Merchant ID:", MERCHANT_ID);
     console.log("Amount (paise):", Number(amount) * 100);
     console.log("Mobile:", mobile.replace(/\d(?=\d{4})/g, "*"));
 
@@ -65,14 +68,12 @@ router.post("/create-phonepe-payment", async (req, res) => {
     console.log("Merchant Order ID:", merchantOrderId);
 
     const payload = {
+      merchantId: MERCHANT_ID,
       merchantOrderId,
       merchantUserId: mobile,
       amount: Number(amount) * 100,
 
-      // IMPORTANT: redirect = frontend page
       redirectUrl: `${process.env.FRONTEND_ORIGIN}/order-success?orderId=${merchantOrderId}`,
-
-      // IMPORTANT: callback = backend
       callbackUrl: CALLBACK_URL,
 
       paymentInstrument: {
@@ -87,6 +88,7 @@ router.post("/create-phonepe-payment", async (req, res) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
+        "X-MERCHANT-ID": MERCHANT_ID,
       },
     });
 
@@ -100,13 +102,10 @@ router.post("/create-phonepe-payment", async (req, res) => {
       merchantOrderId,
     });
   } catch (err) {
-    console.error(
-      "PHONEPE PAYMENT ERROR:",
-      err.response?.data || err
-    );
+    console.error("PHONEPE PAYMENT ERROR:", err.response?.data || err);
     return res.status(500).json({
       success: false,
-      error: err.response?.data || "Payment Error",
+      error: err.response?.data,
     });
   }
 });
@@ -137,6 +136,7 @@ router.post("/phonepe/callback", async (req, res) => {
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          "X-MERCHANT-ID": MERCHANT_ID,
         },
       }
     );
