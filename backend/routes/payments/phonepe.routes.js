@@ -55,6 +55,13 @@ router.post("/create-phonepe-payment", async (req, res) => {
   try {
     const { donationId, mobile, amount } = req.body;
 
+    if (Number(amount) < 2) {
+      return res.status(400).json({
+        success: false,
+        error: "Minimum donation amount is ₹2"
+      });
+    }
+
     console.log("========== PHONEPE CREATE PAYMENT ==========");
     console.log("Donation ID:", donationId);
     console.log("Merchant ID:", MERCHANT_ID);
@@ -69,7 +76,7 @@ router.post("/create-phonepe-payment", async (req, res) => {
 
     const payload = {
       merchantOrderId,
-      merchantUserId: `USER_${mobile}`,   // safe format
+      merchantUserId: mobile,   // ✅ FIXED
       amount: Number(amount) * 100,
       redirectUrl: `${process.env.FRONTEND_ORIGIN}/order-success?orderId=${merchantOrderId}`,
       callbackUrl: `${process.env.BACKEND_URL}/api/payments/phonepe/callback`,
@@ -104,6 +111,7 @@ router.post("/create-phonepe-payment", async (req, res) => {
     });
   }
 });
+
 
 
 /* =====================================================

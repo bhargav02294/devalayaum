@@ -139,14 +139,14 @@ export default function DonationView() {
         })
       );
 
-    if (!amount || Number(amount) < 1)
-      return setError(
-        t({
-          en: "Enter a valid donation amount.",
-          hi: "मान्य दान राशि दर्ज करें।",
-          mr: "वैध देणगी रक्कम भरा.",
-        })
-      );
+    if (!amount || Number(amount) < 2)
+  return setError(
+    t({
+      en: "Minimum donation amount is ₹2.",
+      hi: "न्यूनतम दान राशि ₹2 है।",
+      mr: "किमान देणगी ₹2 आहे.",
+    })
+  );
 
     try {
       console.log("========== DONATION PAYMENT START ==========");
