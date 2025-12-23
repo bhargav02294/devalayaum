@@ -4,15 +4,15 @@ import DonationRecord from "../../models/DonationRecord.js";
 
 const router = express.Router();
 
-/* ================= ENV ================= */
+/* ================= PRODUCTION ENV ================= */
 const AUTH_URL =
-  "https://api-preprod.phonepe.com/apis/pg-sandbox/v1/oauth/token";
+  "https://api.phonepe.com/apis/identity-manager/v1/oauth/token";
 
 const PAY_URL =
-  "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/pay";
+  "https://api.phonepe.com/apis/pg/checkout/v2/pay";
 
 const STATUS_URL =
-  "https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/order";
+  "https://api.phonepe.com/apis/pg/checkout/v2/order";
 
 const CLIENT_ID = process.env.PHONEPE_CLIENT_ID;
 const CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET;
@@ -22,18 +22,13 @@ const FRONTEND_REDIRECT =
   `${process.env.FRONTEND_ORIGIN}/order-success`;
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
-  console.error("❌ PHONEPE ENV VARIABLES MISSING");
+  console.error("❌ PHONEPE PRODUCTION ENV VARIABLES MISSING");
 }
 
 /* =====================================================
-   1. GET ACCESS TOKEN (SANDBOX – V2)
+   1. GET ACCESS TOKEN (PRODUCTION)
 ===================================================== */
 async function getAccessToken() {
-  console.log("========== PHONEPE AUTH REQUEST ==========");
-  console.log("AUTH URL:", AUTH_URL);
-  console.log("CLIENT ID:", CLIENT_ID);
-  console.log("=========================================");
-
   const formData = new URLSearchParams();
   formData.append("client_id", CLIENT_ID);
   formData.append("client_secret", CLIENT_SECRET);
@@ -54,7 +49,7 @@ async function getAccessToken() {
 }
 
 /* =====================================================
-   2. CREATE PAYMENT — PG_CHECKOUT (LATEST)
+   2. CREATE PAYMENT — LIVE PG_CHECKOUT
 ===================================================== */
 router.post("/create-phonepe-payment", async (req, res) => {
   try {
@@ -67,15 +62,9 @@ router.post("/create-phonepe-payment", async (req, res) => {
       });
     }
 
-    console.log("========== PHONEPE CREATE PAYMENT ==========");
-    console.log("Donation ID:", donationId);
-    console.log("Amount (paise):", Number(amount) * 100);
-
     const accessToken = await getAccessToken();
-    console.log("Access Token: RECEIVED");
 
     const merchantOrderId = `MO-${Date.now()}`;
-    console.log("Merchant Order ID:", merchantOrderId);
 
     const payload = {
       merchantOrderId,
@@ -97,9 +86,6 @@ router.post("/create-phonepe-payment", async (req, res) => {
       },
     };
 
-    console.log("PAY URL:", PAY_URL);
-    console.log("REQUEST PAYLOAD:", JSON.stringify(payload, null, 2));
-
     const response = await axios.post(PAY_URL, payload, {
       headers: {
         "Content-Type": "application/json",
@@ -109,32 +95,25 @@ router.post("/create-phonepe-payment", async (req, res) => {
 
     const phonepeData = response.data;
 
-    console.log("PHONEPE RAW RESPONSE:", phonepeData);
-    console.log("==========================================");
+    if (phonepeData?.redirectUrl && phonepeData?.orderId) {
+      return res.json({
+        success: true,
+        redirectUrl: phonepeData.redirectUrl,
+        merchantOrderId,
+        phonepeOrderId: phonepeData.orderId,
+        state: phonepeData.state,
+      });
+    }
 
-    // ✅ SAFE SUCCESS HANDLING
-    // ✅ PG_CHECKOUT SUCCESS HANDLING
-if (phonepeData?.redirectUrl && phonepeData?.orderId) {
-  return res.json({
-    success: true,
-    redirectUrl: phonepeData.redirectUrl,
-    merchantOrderId,
-    phonepeOrderId: phonepeData.orderId,
-    state: phonepeData.state,
-  });
-}
-
-// genuine failure
-return res.status(400).json({
-  success: false,
-  error: phonepeData,
-});
-
+    return res.status(400).json({
+      success: false,
+      error: phonepeData,
+    });
 
   } catch (err) {
     console.error(
       "PHONEPE PAYMENT ERROR:",
-      err.response?.data || err.message || err
+      err.response?.data || err.message
     );
 
     return res.status(500).json({
@@ -147,17 +126,12 @@ return res.status(400).json({
 });
 
 /* =====================================================
-   3. OPTIONAL: CALLBACK / STATUS (NOT REQUIRED FOR REDIRECT FLOW)
+   3. CALLBACK (USED LATER FOR WEBHOOK)
 ===================================================== */
 router.post("/phonepe/callback", async (req, res) => {
-  try {
-    console.log("========== PHONEPE CALLBACK ==========");
-    console.log("CALLBACK BODY:", req.body);
-    return res.json({ message: "OK" });
-  } catch (err) {
-    console.error("CALLBACK ERROR:", err);
-    return res.status(500).json({ error: "Callback Error" });
-  }
+  console.log("PHONEPE CALLBACK RECEIVED");
+  console.log(req.body);
+  return res.json({ message: "OK" });
 });
 
 export default router;
