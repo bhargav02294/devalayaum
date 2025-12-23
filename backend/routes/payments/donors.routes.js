@@ -11,6 +11,7 @@ router.get("/donors", async (req, res) => {
 
     res.json(donors);
   } catch (err) {
+    console.error("DONORS FETCH ERROR:", err);
     res.status(500).json({ error: "Failed to fetch donors" });
   }
 });
