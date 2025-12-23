@@ -20,6 +20,8 @@ import llmRoutes from "./routes/llmRoutes.js";
 import phonepeRoutes from "./routes/payments/phonepe.routes.js";
 
 import donorsRoutes from "./routes/payments/donors.routes.js";
+import pujaPaymentRoutes from "./routes/pujaPaymentRoutes.js";
+
 
 
 dotenv.config();
@@ -61,6 +63,7 @@ app.use("/api/llm", llmRoutes);
 app.use("/api/payments", phonepeRoutes);
 app.use("/api/payments", donorsRoutes);
 
+app.use("/api/puja-payments", pujaPaymentRoutes);
 
 
 // connect mongodb

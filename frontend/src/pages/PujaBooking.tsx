@@ -2,7 +2,7 @@
 // FULL MULTILANGUAGE VERSION — CLEAN & ESLINT SAFE
 
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
@@ -70,7 +70,6 @@ function getMemberValue(member: Member, field: keyof Member): string {
 export default function PujaBooking() {
   const { id, pkgKey } = useParams<{ id: string; pkgKey: string }>();
   const backendURL = import.meta.env.VITE_API_URL;
-  const navigate = useNavigate();
 
   /* LIVE MULTILANGUAGE SUPPORT */
   const [lang, setLang] = useState(i18n.language);
@@ -164,33 +163,43 @@ export default function PujaBooking() {
      SUBMIT BOOKING
   -------------------------------------------------- */
   const handleSubmit = async (evt: React.FormEvent) => {
-    evt.preventDefault();
-    setError("");
+  evt.preventDefault();
+  setError("");
 
-    if (!validate()) return;
+  if (!validate()) return;
+  setSubmitting(true);
 
-    setSubmitting(true);
+  try {
+    const bookingRes = await axios.post(
+      `${backendURL}/api/puja-bookings`,
+      {
+        pujaId: id,
+        packageKey: pkg!.key,
+        members,
+        notes,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-    try {
-      await axios.post(
-        `${backendURL}/api/puja-bookings`,
-        {
-          pujaId: id,
-          packageKey: pkg!.key,
-          members,
-          notes,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    const bookingId = bookingRes.data.booking._id;
 
-      alert("🙏 Booking saved successfully. We will contact you soon.");
-      navigate("/my-account");
-    } catch (err) {
-      setError(getErrorMessage(err));
-    } finally {
-      setSubmitting(false);
+    const payRes = await axios.post(
+      `${backendURL}/api/puja-payments/create`,
+      { bookingId }
+    );
+
+    if (payRes.data.redirectUrl) {
+      window.location.href = payRes.data.redirectUrl;
+    } else {
+      setError("Payment could not be initiated");
     }
-  };
+  } catch (err) {
+    setError(getErrorMessage(err));
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   /* --------------------------------------------------
      UI
