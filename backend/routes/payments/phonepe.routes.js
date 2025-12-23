@@ -113,23 +113,23 @@ router.post("/create-phonepe-payment", async (req, res) => {
     console.log("==========================================");
 
     // ✅ SAFE SUCCESS HANDLING
-    if (
-      phonepeData?.success === true &&
-      phonepeData?.data?.instrumentResponse?.redirectInfo?.url
-    ) {
-      return res.json({
-        success: true,
-        redirectUrl:
-          phonepeData.data.instrumentResponse.redirectInfo.url,
-        merchantOrderId,
-      });
-    }
+    // ✅ PG_CHECKOUT SUCCESS HANDLING
+if (phonepeData?.redirectUrl && phonepeData?.orderId) {
+  return res.json({
+    success: true,
+    redirectUrl: phonepeData.redirectUrl,
+    merchantOrderId,
+    phonepeOrderId: phonepeData.orderId,
+    state: phonepeData.state,
+  });
+}
 
-    // ❌ PhonePe returned error but backend must not crash
-    return res.status(400).json({
-      success: false,
-      error: phonepeData,
-    });
+// genuine failure
+return res.status(400).json({
+  success: false,
+  error: phonepeData,
+});
+
 
   } catch (err) {
     console.error(
