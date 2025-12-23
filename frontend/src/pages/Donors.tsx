@@ -32,20 +32,7 @@ export default function Donors() {
 
   const t = (o?: Record<string, string>) => o?.[lang] || o?.en || "";
 
-  /* ------------------------------------------------
-     ✅ STEP 1: VERIFY PAYMENT IF orderId EXISTS
-     (Safe: runs once, idempotent, production-required)
-  -------------------------------------------------- */
-  useEffect(() => {
-    const orderId = new URLSearchParams(window.location.search).get("orderId");
-    if (!orderId) return;
-
-    axios
-      .get(`${backendURL}/api/payments/verify?orderId=${orderId}`)
-      .catch(() => {
-        // silent fail (verification may already be done)
-      });
-  }, [backendURL]);
+  
 
   /* ------------------------------------------------
      ✅ STEP 2: FETCH VERIFIED DONORS
