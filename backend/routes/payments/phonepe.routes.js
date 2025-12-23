@@ -154,4 +154,61 @@ router.post("/phonepe/callback", async (req, res) => {
   }
 });
 
+
+
+router.get("/verify", async (req, res) => {
+  try {
+    const { orderId } = req.query;
+    if (!orderId) {
+      return res.status(400).json({ error: "orderId missing" });
+    }
+
+    const accessToken = await getAccessToken();
+
+    const statusRes = await axios.get(
+      `${STATUS_URL}/${orderId}/status`,
+      {
+        headers: {
+          Authorization: `O-Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const data = statusRes.data;
+
+    if (data.state !== "COMPLETED") {
+      return res.json({ success: false, state: data.state });
+    }
+
+    const payment = await DonationPayment.findOne({ orderId });
+    if (!payment || payment.status === "paid") {
+      return res.json({ success: true });
+    }
+
+    payment.status = "paid";
+    await payment.save();
+
+    const donation = await Donation.findById(payment.donationId);
+
+    await DonationRecord.create({
+      fullName: payment.fullName,
+      mobile: payment.mobile,
+      amount: payment.amount,
+      templeName: donation.templeName?.en || "",
+      donationName: donation.donationName?.en || "",
+      paymentId: data.orderId,
+      verified: true,
+    });
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error("VERIFY ERROR:", err.response?.data || err);
+    res.status(500).json({ error: "Verification failed" });
+  }
+});
+
+
+
+
 export default router;
