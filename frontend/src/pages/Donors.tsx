@@ -98,6 +98,10 @@ export default function Donors() {
                 <p className="text-xl font-bold text-orange-700 font-[Marcellus]">
                   ₹{d.amount}
                 </p>
+                <p className="text-xs text-gray-500">
+                   {new Date(d.createdAt).toLocaleDateString()}
+                </p>
+
               </li>
             ))}
           </ul>

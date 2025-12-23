@@ -19,6 +19,7 @@ import ocrRoutes from "./routes/ocrRoutes.js";
 import llmRoutes from "./routes/llmRoutes.js";
 import phonepeRoutes from "./routes/payments/phonepe.routes.js";
 
+import donorsRoutes from "./routes/payments/donors.routes.js";
 
 
 dotenv.config();
@@ -58,6 +59,7 @@ app.use("/api/puja-bookings", pujaBookingRoutes);
 app.use("/api/ocr", ocrRoutes);
 app.use("/api/llm", llmRoutes);
 app.use("/api/payments", phonepeRoutes);
+app.use("/api/payments", donorsRoutes);
 
 
 

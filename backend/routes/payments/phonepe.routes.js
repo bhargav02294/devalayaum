@@ -1,6 +1,8 @@
 import express from "express";
 import axios from "axios";
 import DonationRecord from "../../models/DonationRecord.js";
+import DonationPayment from "../../models/DonationPayment.js";
+import Donation from "../../models/Donation.js";
 
 const router = express.Router();
 
@@ -53,35 +55,40 @@ async function getAccessToken() {
 ===================================================== */
 router.post("/create-phonepe-payment", async (req, res) => {
   try {
-    const { donationId, amount } = req.body;
+    const { donationId, fullName, mobile, amount } = req.body;
 
-    if (!donationId || !amount) {
+    if (!donationId || !fullName || !amount) {
       return res.status(400).json({
         success: false,
         error: "Invalid request payload",
       });
     }
 
-    const accessToken = await getAccessToken();
+    const donation = await Donation.findById(donationId);
+    if (!donation) {
+      return res.status(404).json({ success: false, error: "Donation not found" });
+    }
 
+    const accessToken = await getAccessToken();
     const merchantOrderId = `MO-${Date.now()}`;
+
+    // ✅ Create payment record (CREATED)
+    await DonationPayment.create({
+      donationId,
+      fullName,
+      mobile,
+      amount,
+      orderId: merchantOrderId,
+      status: "created",
+    });
 
     const payload = {
       merchantOrderId,
       amount: Number(amount) * 100,
-
-      metaInfo: {
-        udf1: donationId,
-        udf2: "DONATION",
-        udf3: "DEVALAYAUM",
-        udf4: "",
-        udf5: "",
-      },
-
       paymentFlow: {
         type: "PG_CHECKOUT",
         merchantUrls: {
-          redirectUrl: `${FRONTEND_REDIRECT}?orderId=${merchantOrderId}`,
+          redirectUrl: `${process.env.FRONTEND_ORIGIN}/order-success?orderId=${merchantOrderId}`,
         },
       },
     };
@@ -93,45 +100,58 @@ router.post("/create-phonepe-payment", async (req, res) => {
       },
     });
 
-    const phonepeData = response.data;
-
-    if (phonepeData?.redirectUrl && phonepeData?.orderId) {
+    if (response.data?.redirectUrl) {
       return res.json({
         success: true,
-        redirectUrl: phonepeData.redirectUrl,
+        redirectUrl: response.data.redirectUrl,
         merchantOrderId,
-        phonepeOrderId: phonepeData.orderId,
-        state: phonepeData.state,
       });
     }
 
-    return res.status(400).json({
-      success: false,
-      error: phonepeData,
-    });
-
+    return res.status(400).json({ success: false });
   } catch (err) {
-    console.error(
-      "PHONEPE PAYMENT ERROR:",
-      err.response?.data || err.message
-    );
-
-    return res.status(500).json({
-      success: false,
-      error: err.response?.data || {
-        message: "Internal Server Error",
-      },
-    });
+    console.error("PAYMENT ERROR:", err.response?.data || err);
+    res.status(500).json({ success: false });
   }
 });
+
 
 /* =====================================================
    3. CALLBACK (USED LATER FOR WEBHOOK)
 ===================================================== */
 router.post("/phonepe/callback", async (req, res) => {
-  console.log("PHONEPE CALLBACK RECEIVED");
-  console.log(req.body);
-  return res.json({ message: "OK" });
+  try {
+    const { merchantOrderId, state, paymentId } = req.body;
+
+    if (state !== "COMPLETED") {
+      return res.json({ received: true });
+    }
+
+    const payment = await DonationPayment.findOne({ orderId: merchantOrderId });
+    if (!payment) return res.json({ received: true });
+
+    payment.status = "paid";
+    payment.paymentId = paymentId;
+    await payment.save();
+
+    const donation = await Donation.findById(payment.donationId);
+
+    // ✅ Save donor record (used by Donors page)
+    await DonationRecord.create({
+      fullName: payment.fullName,
+      mobile: payment.mobile,
+      amount: payment.amount,
+      templeName: donation.templeName?.en || "",
+      donationName: donation.donationName?.en || "",
+      paymentId,
+      verified: true,
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("CALLBACK ERROR:", err);
+    res.status(500).json({ error: "Callback failed" });
+  }
 });
 
 export default router;
