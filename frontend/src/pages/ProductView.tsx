@@ -4,43 +4,6 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import i18n from "../i18n";
 
-/* ---------------- RAZORPAY TYPES ---------------- */
-interface RazorpayResponse {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-}
-interface RazorpayOptions {
-  key: string;
-  amount: number;
-  currency: string;
-  name?: string;
-  description?: string;
-  order_id: string;
-  handler: (response: RazorpayResponse) => void;
-  prefill?: { name?: string; contact?: string; email?: string };
-  theme?: { color?: string };
-}
-interface RazorpayInstance {
-  open: () => void;
-}
-
-/* Load Razorpay Script */
-const loadRazorpayScript = (): Promise<boolean> =>
-  new Promise((resolve) => {
-    const exists = document.querySelector(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-    );
-    if (exists) return resolve(true);
-
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-
 /* ---------------- PRODUCT INTERFACE ---------------- */
 interface Product {
   _id: string;
@@ -123,74 +86,31 @@ export default function ProductView() {
 
   /* ---------------- HANDLE BUY NOW ---------------- */
   const handleBuy = async () => {
-    const token = localStorage.getItem("USER_TOKEN");
-    const userId = localStorage.getItem("USER_ID");
+  const token = localStorage.getItem("USER_TOKEN");
+  const userId = localStorage.getItem("USER_ID");
 
-    if (!token || !userId) {
-      alert(
-        t({
-          en: "Please login first to buy this product.",
-          hi: "कृपया इस उत्पाद को खरीदने के लिए पहले लॉगिन करें।",
-          mr: "कृपया हा उत्पादन खरेदी करण्यासाठी प्रथम लॉगिन करा.",
-        })
-      );
-      navigate("/login");
-      return;
+  if (!token || !userId) {
+    alert("Please login first");
+    navigate("/login");
+    return;
+  }
+
+  try {
+    const res = await axios.post(
+      `${backendURL}/api/product-payments/create-order`,
+      { productId: product._id, userId }
+    );
+
+    if (res.data.redirectUrl) {
+      window.location.href = res.data.redirectUrl;
+    } else {
+      alert("Payment initiation failed");
     }
+  } catch {
+    alert("Unable to start payment");
+  }
+};
 
-    const loaded = await loadRazorpayScript();
-    if (!loaded) {
-      alert("Razorpay failed to load.");
-      return;
-    }
-
-    try {
-      const amount = product.discountPrice || product.price;
-
-      const res = await axios.post(`${backendURL}/api/product-payments/create-order`, {
-        productId: product._id,
-        userId,
-        amount,
-      });
-
-      const { orderId, amount: finalAmount, currency } = res.data;
-
-      const options: RazorpayOptions = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: finalAmount,
-        currency,
-        name: "Devalayaum Store",
-        description: t(product.name),
-        order_id: orderId,
-
-        handler: async (resp: RazorpayResponse) => {
-          try {
-            await axios.post(`${backendURL}/api/product-payments/verify`, {
-              orderId: resp.razorpay_order_id,
-              paymentId: resp.razorpay_payment_id,
-              signature: resp.razorpay_signature,
-            });
-            alert("🙏 Payment Successful!");
-            navigate("/order-success");
-          } catch {
-            alert("Payment verified but something went wrong.");
-          }
-        },
-
-        prefill: { email: localStorage.getItem("auth_email") || "" },
-        theme: { color: "#c46a1e" },
-      };
-
-      const ctor = (window as unknown as { Razorpay?: new (o: RazorpayOptions) => RazorpayInstance })
-        .Razorpay;
-
-      if (!ctor) return alert("Razorpay SDK not available.");
-
-      new ctor(options).open();
-    } catch {
-      alert("Payment could not be initiated.");
-    }
-  };
 
   const glow = "shadow-[0_6px_20px_rgba(200,130,50,0.20)]";
 
