@@ -20,7 +20,6 @@ export default function Navbar() {
     setToken(Boolean(localStorage.getItem("USER_TOKEN")));
   }, []);
 
-  // Close language dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (langRef.current && !langRef.current.contains(e.target as Node)) {
@@ -60,15 +59,21 @@ export default function Navbar() {
     <nav
       className="fixed top-0 left-0 w-full bg-white/95 backdrop-blur z-50 shadow-md border-b border-orange-200/40 h-[65px] flex items-center"
       role="navigation"
-      aria-label="Primary Navigation"
+      aria-label="Main navigation for Devalayaum online temple, puja and donation platform"
     >
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-6">
 
-        {/* LOGO */}
-        <Link to="/" className="flex items-center gap-3" onClick={closeMenu}>
+        {/* LOGO — SEO IMPORTANT */}
+        <Link
+          to="/"
+          className="flex items-center gap-3"
+          onClick={closeMenu}
+          aria-label="Devalayaum Home – Online Temple Pujas and Donations in India"
+          title="Devalayaum | Book Online Pujas, Offer Chadhava & Temple Donations"
+        >
           <img
             src={logo}
-            alt="Devalayaum – Online Temple, Puja, Chadhava & Spiritual Services"
+            alt="Devalayaum logo – Online temple puja, chadhava and spiritual services platform"
             className="w-12 h-12 rounded-full shadow-md"
           />
           <span className="text-xl font-bold bg-gradient-to-r from-orange-700 to-yellow-500 bg-clip-text text-transparent font-[Marcellus]">
@@ -78,14 +83,15 @@ export default function Navbar() {
 
         {/* DESKTOP MENU */}
         <div className="hidden md:flex items-center gap-10 text-gray-800 font-[Poppins] ml-10">
-          <Link to="/" className="hover:text-orange-700">{t(menuText.home)}</Link>
-          <Link to="/temples" className="hover:text-orange-700">{t(menuText.temples)}</Link>
-          <Link to="/pujas" className="hover:text-orange-700">{t(menuText.pujas)}</Link>
-          <Link to="/donations" className="hover:text-orange-700">{t(menuText.donations)}</Link>
-          <Link to="/products" className="hover:text-orange-700">{t(menuText.products)}</Link>
-          <Link to="/aarti" className="hover:text-orange-700">{t(menuText.aarti)}</Link>
-          <Link to="/donors" className="hover:text-orange-700">{t(menuText.donors)}</Link>
+          <Link to="/" title="Online Temple Pujas & Donations Home" className="hover:text-orange-700">{t(menuText.home)}</Link>
+          <Link to="/temples" title="Explore Hindu Temples for Online Puja" className="hover:text-orange-700">{t(menuText.temples)}</Link>
+          <Link to="/pujas" title="Book Online Pujas and Rituals" className="hover:text-orange-700">{t(menuText.pujas)}</Link>
+          <Link to="/donations" title="Offer Chadhava & Temple Donations Online" className="hover:text-orange-700">{t(menuText.donations)}</Link>
+          <Link to="/products" title="Buy Spiritual and Temple Products Online" className="hover:text-orange-700">{t(menuText.products)}</Link>
+          <Link to="/aarti" title="Watch and Participate in Online Aarti" className="hover:text-orange-700">{t(menuText.aarti)}</Link>
+          <Link to="/donors" title="Recent Devotees Who Donated Online" className="hover:text-orange-700">{t(menuText.donors)}</Link>
         </div>
+
 
         {/* RIGHT SIDE */}
         <div className="flex items-center gap-6">
