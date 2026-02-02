@@ -83,15 +83,17 @@ router.post("/create-phonepe-payment", async (req, res) => {
     });
 
     const payload = {
-      merchantOrderId,
-      amount: Number(amount) * 100,
-      paymentFlow: {
-        type: "PG_CHECKOUT",
-        merchantUrls: {
-          redirectUrl: `${process.env.FRONTEND_ORIGIN}/order-success?orderId=${merchantOrderId}`,
-        },
-      },
-    };
+  merchantOrderId,
+  amount: Number(amount) * 100,
+  paymentFlow: {
+    type: "PG_CHECKOUT",
+    merchantUrls: {
+      redirectUrl: `${process.env.FRONTEND_ORIGIN}/order-success?orderId=${merchantOrderId}`,
+      callbackUrl: `${process.env.BACKEND_URL}/api/payments/phonepe/callback`
+    },
+  },
+};
+
 
     const response = await axios.post(PAY_URL, payload, {
       headers: {
@@ -121,31 +123,45 @@ router.post("/create-phonepe-payment", async (req, res) => {
 ===================================================== */
 router.post("/phonepe/callback", async (req, res) => {
   try {
-    const { merchantOrderId, state, paymentId } = req.body;
+    console.log("📩 PhonePe Callback:", req.body);
 
-    if (state !== "COMPLETED") {
-      return res.json({ received: true });
-    }
+    const { merchantOrderId, state, paymentDetails } = req.body;
+
+    if (!merchantOrderId) return res.json({ received: true });
 
     const payment = await DonationPayment.findOne({ orderId: merchantOrderId });
     if (!payment) return res.json({ received: true });
 
+    if (state !== "COMPLETED") {
+      payment.status = "failed";
+      await payment.save();
+      return res.json({ received: true });
+    }
+
+    // Prevent duplicate processing
+    if (payment.status === "paid") return res.json({ received: true });
+
     payment.status = "paid";
-    payment.paymentId = paymentId;
+    payment.paymentId = paymentDetails?.transactionId || "phonepe";
     await payment.save();
 
     const donation = await Donation.findById(payment.donationId);
 
-    // ✅ Save donor record (used by Donors page)
-    await DonationRecord.create({
-      fullName: payment.fullName,
-      mobile: payment.mobile,
-      amount: payment.amount,
-      templeName: donation.templeName?.en || "",
-      donationName: donation.donationName?.en || "",
-      paymentId,
-      verified: true,
-    });
+    // Avoid duplicate donor entry
+    const existing = await DonationRecord.findOne({ paymentId: payment.paymentId });
+    if (!existing) {
+      await DonationRecord.create({
+        fullName: payment.fullName,
+        mobile: payment.mobile,
+        amount: payment.amount,
+        templeName: donation?.templeName?.en || "",
+        donationName: donation?.donationName?.en || "",
+        paymentId: payment.paymentId,
+        verified: true,
+      });
+    }
+
+    console.log("✅ Payment marked paid & donor saved:", merchantOrderId);
 
     res.json({ success: true });
   } catch (err) {
@@ -190,15 +206,19 @@ router.get("/verify", async (req, res) => {
 
     const donation = await Donation.findById(payment.donationId);
 
-    await DonationRecord.create({
-      fullName: payment.fullName,
-      mobile: payment.mobile,
-      amount: payment.amount,
-      templeName: donation.templeName?.en || "",
-      donationName: donation.donationName?.en || "",
-      paymentId: data.orderId,
-      verified: true,
-    });
+    const existing = await DonationRecord.findOne({ paymentId: data.orderId });
+if (!existing) {
+  await DonationRecord.create({
+    fullName: payment.fullName,
+    mobile: payment.mobile,
+    amount: payment.amount,
+    templeName: donation.templeName?.en || "",
+    donationName: donation.donationName?.en || "",
+    paymentId: data.orderId,
+    verified: true,
+  });
+}
+
 
     res.json({ success: true });
 
