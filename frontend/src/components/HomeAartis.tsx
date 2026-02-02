@@ -19,14 +19,12 @@ export default function HomeAartis() {
   const [list, setList] = useState<Aarti[]>([]);
   const [loading, setLoading] = useState(true);
 
-  /* 🔥 Live language update */
   useEffect(() => {
     const handler = () => setLang(i18n.language);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
-  /* Fetch aartis */
   useEffect(() => {
     axios
       .get(`${backendURL}/api/aartis/home-list`)
@@ -38,7 +36,7 @@ export default function HomeAartis() {
   if (loading) {
     return (
       <p className="text-center py-10 text-gray-500">
-        Loading devotional content…
+        Loading devotional Aartis, Kathas and Mantras…
       </p>
     );
   }
@@ -46,12 +44,11 @@ export default function HomeAartis() {
   if (list.length === 0) {
     return (
       <p className="text-center py-10 text-gray-500">
-        No Aartis, Kathas or Mantras available.
+        No Hindu Aartis, Kathas or Mantras available.
       </p>
     );
   }
 
-  /* 🌍 Multilanguage SEO text */
   const text = {
     heading: {
       en: "Hindu Aartis, Kathas & Mantras",
@@ -62,12 +59,12 @@ export default function HomeAartis() {
       bn: "হিন্দু আরতি, কথা ও মন্ত্র",
     },
     subHeading: {
-      en: "Read, listen and experience sacred prayers for devotion, peace and spiritual healing.",
-      hi: "भक्ति, शांति और आध्यात्मिक उपचार के लिए पवित्र प्रार्थनाएँ पढ़ें और अनुभव करें।",
-      mr: "भक्ती, शांतता आणि आध्यात्मिक उपचारासाठी पवित्र प्रार्थना वाचा आणि अनुभवा.",
-      ta: "பக்தி, அமைதி மற்றும் ஆன்மீக குணமடைவதற்கான புனித பாடல்கள்.",
-      te: "భక్తి, శాంతి మరియు ఆధ్యాత్మిక స్వస్థత కోసం పవిత్ర ప్రార్థనలు.",
-      bn: "ভক্তি, শান্তি ও আধ্যাত্মিক আরোগ্যের জন্য পবিত্র প্রার্থনা।",
+      en: "Read, listen and experience sacred Hindu prayers, devotional aartis, spiritual kathas and powerful mantras for peace, devotion and inner healing.",
+      hi: "भक्ति, शांति और आध्यात्मिक उपचार के लिए पवित्र आरती, कथा और मंत्र पढ़ें और अनुभव करें।",
+      mr: "भक्ती, शांतता आणि आध्यात्मिक उपचारासाठी पवित्र आरती, कथा आणि मंत्र वाचा आणि अनुभवा.",
+      ta: "பக்தி, அமைதி மற்றும் ஆன்மீக குணமடைவதற்கான புனித ஆரத்தி, கதைகள் மற்றும் மந்திரங்கள்.",
+      te: "భక్తి, శాంతి మరియు ఆధ్యాత్మిక స్వస్థత కోసం పవిత్ర ఆర్తులు, కథలు మరియు మంత్రాలు.",
+      bn: "ভক্তি, শান্তি ও আধ্যাত্মিক আরোগ্যের জন্য পবিত্র আরতি, কথা ও মন্ত্র।",
     },
     readMore: {
       en: "Read More →",
@@ -78,7 +75,7 @@ export default function HomeAartis() {
       bn: "আরও পড়ুন →",
     },
     viewAll: {
-      en: "View All Aartis & Mantras",
+      en: "View All Hindu Aartis & Mantras",
       hi: "सभी आरती और मंत्र देखें",
       mr: "सर्व आरती आणि मंत्र पहा",
       ta: "அனைத்து ஆரத்தி & மந்திரங்களைப் பார்க்கவும்",
@@ -86,30 +83,9 @@ export default function HomeAartis() {
       bn: "সব আরতি ও মন্ত্র দেখুন",
     },
     type: {
-      aarti: {
-        en: "Aarti",
-        hi: "आरती",
-        mr: "आरती",
-        ta: "ஆரத்தி",
-        te: "ఆర్తి",
-        bn: "আরতি",
-      },
-      katha: {
-        en: "Katha",
-        hi: "कथा",
-        mr: "कथा",
-        ta: "கதை",
-        te: "కథ",
-        bn: "কথা",
-      },
-      mantra: {
-        en: "Mantra",
-        hi: "मंत्र",
-        mr: "मंत्र",
-        ta: "மந்திரம்",
-        te: "మంత్రం",
-        bn: "মন্ত্র",
-      },
+      aarti: { en: "Aarti", hi: "आरती", mr: "आरती", ta: "ஆரத்தி", te: "ఆర్తి", bn: "আরতি" },
+      katha: { en: "Katha", hi: "कथा", mr: "कथा", ta: "கதை", te: "కథ", bn: "কথা" },
+      mantra: { en: "Mantra", hi: "मंत्र", mr: "मंत्र", ta: "மந்திரம்", te: "మంత్రం", bn: "মন্ত্র" },
     },
   };
 
@@ -118,17 +94,17 @@ export default function HomeAartis() {
   return (
     <section
       className="py-20 bg-gradient-to-b from-orange-50 to-white"
-      aria-label="Hindu Aartis Kathas and Mantras"
+      aria-label="Hindu devotional Aartis, spiritual Kathas and sacred Mantras"
     >
       {/* SECTION HEADER */}
-      <div className="text-center mb-14">
+      <header className="text-center mb-14">
         <h2 className="text-4xl font-extrabold text-[#b35b00] drop-shadow-md">
           {t(text.heading)}
         </h2>
         <p className="mt-3 text-gray-600 text-lg max-w-3xl mx-auto">
           {t(text.subHeading)}
         </p>
-      </div>
+      </header>
 
       {/* CARDS */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6">
@@ -146,27 +122,25 @@ export default function HomeAartis() {
             <article key={item._id}>
               <Link
                 to={`/aarti/${item._id}`}
+                title={`${title} ${typeLabel} – Read full Hindu devotional content`}
                 className="group bg-white rounded-2xl overflow-hidden shadow-lg border border-orange-100
                            hover:shadow-[0_10px_30px_rgba(179,91,0,0.3)]
                            hover:-translate-y-2 transition-all duration-500 relative block"
-                aria-label={`${typeLabel}: ${title}`}
+                aria-label={`${typeLabel}: ${title} – Hindu devotional prayer`}
               >
-                {/* TYPE BADGE */}
                 <div className="absolute top-4 left-4 bg-[#b35b00] text-white text-xs px-3 py-1 rounded-full shadow-md z-10">
                   {typeLabel}
                 </div>
 
-                {/* IMAGE */}
                 <div className="h-72 overflow-hidden">
                   <img
                     src={item.image || "/placeholder.jpg"}
-                    alt={`${title} ${typeLabel} - Hindu devotional content`}
+                    alt={`${title} ${typeLabel} Hindu devotional prayer image`}
                     className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
                     loading="lazy"
                   />
                 </div>
 
-                {/* CONTENT */}
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-[#8a4600] mb-2 leading-snug">
                     {title}
@@ -190,6 +164,7 @@ export default function HomeAartis() {
       <div className="text-center mt-16">
         <Link
           to="/aarti"
+          title="Browse all Hindu Aartis, Kathas and Mantras"
           aria-label="View all Hindu Aartis Kathas and Mantras"
           className="inline-block px-8 py-3 border border-[#b35b00] rounded-full
                      text-[#b35b00] font-medium text-sm

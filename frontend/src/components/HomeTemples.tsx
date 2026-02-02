@@ -19,7 +19,6 @@ export default function HomeTemples() {
   const [loading, setLoading] = useState(true);
   const [lang, setLang] = useState(i18n.language || "en");
 
-  /* 🔥 realtime language update */
   useEffect(() => {
     const handler = () => setLang(i18n.language);
     i18n.on("languageChanged", handler);
@@ -28,7 +27,6 @@ export default function HomeTemples() {
 
   const t = (obj?: Record<string, string>) => obj?.[lang] || obj?.en || "";
 
-  /* 🌍 Multilanguage SEO text */
   const text = {
     heading: {
       en: "Sacred Hindu Temples of India",
@@ -39,12 +37,12 @@ export default function HomeTemples() {
       bn: "ভারতের পবিত্র হিন্দু মন্দিরসমূহ",
     },
     subheading: {
-      en: "Explore ancient Hindu temples known for divine energy, spiritual heritage and sacred history.",
-      hi: "दिव्य ऊर्जा, आध्यात्मिक विरासत और पवित्र इतिहास के लिए प्रसिद्ध प्राचीन हिंदू मंदिरों की खोज करें।",
-      mr: "दैवी ऊर्जा, आध्यात्मिक वारसा आणि पवित्र इतिहासासाठी ओळखली जाणारी प्राचीन हिंदू मंदिरे पाहा.",
-      ta: "தெய்வீக சக்தி, ஆன்மீக பாரம்பரியம் மற்றும் புனித வரலாற்றிற்காக புகழ்பெற்ற இந்து கோயில்களை ஆராயுங்கள்.",
-      te: "దైవశక్తి, ఆధ్యాత్మిక వారసత్వం మరియు పవిత్ర చరిత్రకు ప్రసిద్ధమైన హిందూ ఆలయాలను అన్వేషించండి.",
-      bn: "দৈব শক্তি, আধ্যাত্মিক ঐতিহ্য ও পবিত্র ইতিহাসের জন্য বিখ্যাত প্রাচীন হিন্দু মন্দিরগুলি অন্বেষণ করুন।",
+      en: "Explore ancient Hindu temples, sacred pilgrimage sites and spiritual heritage destinations across India.",
+      hi: "भारत भर के प्राचीन हिंदू मंदिरों और पवित्र तीर्थ स्थलों की खोज करें।",
+      mr: "भारतभरातील प्राचीन हिंदू मंदिरे आणि पवित्र तीर्थस्थळे पाहा.",
+      ta: "இந்தியா முழுவதிலுள்ள புனித இந்து கோயில்கள் மற்றும் யாத்திரை தலங்களை ஆராயுங்கள்.",
+      te: "భారతదేశంలోని పవిత్ర హిందూ ఆలయాలు మరియు యాత్రా స్థలాలను అన్వేషించండి.",
+      bn: "ভারতজুড়ে পবিত্র হিন্দু মন্দির ও তীর্থস্থান অন্বেষণ করুন।",
     },
     templeLabel: {
       en: "Temple",
@@ -74,7 +72,6 @@ export default function HomeTemples() {
 
   const tt = (obj: Record<string, string>) => obj[lang] || obj.en;
 
-  /* Fetch temples */
   useEffect(() => {
     axios
       .get(`${backendURL}/api/temples/home-list`)
@@ -86,7 +83,7 @@ export default function HomeTemples() {
   if (loading) {
     return (
       <div className="text-center py-20 text-xl font-medium text-gray-600">
-        Loading sacred temples…
+        Loading sacred Hindu temples of India…
       </div>
     );
   }
@@ -94,19 +91,17 @@ export default function HomeTemples() {
   return (
     <section
       className="py-24 bg-gradient-to-b from-[#fff7ee] to-[#ffffff]"
-      aria-label="Sacred Hindu Temples of India"
+      aria-label="Famous and sacred Hindu temples across India"
     >
-      {/* SECTION HEADING */}
-      <div className="text-center mb-16">
+      <header className="text-center mb-16">
         <h2 className="text-5xl font-bold text-[#b35b00] tracking-wide">
           {tt(text.heading)}
         </h2>
         <p className="mt-3 text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
           {tt(text.subheading)}
         </p>
-      </div>
+      </header>
 
-      {/* TEMPLE CARDS */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6">
         {temples.slice(0, 3).map((temple) => {
           const templeName = t(temple.name);
@@ -119,27 +114,25 @@ export default function HomeTemples() {
               className="cursor-pointer rounded-3xl overflow-hidden bg-white shadow-lg hover:shadow-2xl
                          border border-[#e8d7c0] transition transform hover:-translate-y-2
                          hover:scale-[1.02] duration-300"
-              aria-label={`Temple card: ${templeName}`}
+              aria-label={`Explore ${templeName} temple in ${templeLocation}`}
             >
-              {/* IMAGE */}
               <div className="relative w-full h-72 overflow-hidden">
                 <img
                   src={temple.images?.[0] || "/placeholder.jpg"}
-                  alt={`${templeName} temple in ${templeLocation}`}
+                  alt={`${templeName} Hindu temple located in ${templeLocation}`}
                   className="w-full h-full object-cover transition duration-700 ease-in-out"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               </div>
 
-              {/* INFO */}
               <div className="p-6">
                 <h3 className="text-2xl font-semibold text-[#bf6000] mb-2 leading-snug">
                   {templeName}
                 </h3>
 
                 <p className="text-gray-700 text-sm leading-relaxed">
-                  {templeLocation || "Location not available"}
+                  {templeLocation || "Sacred temple location in India"}
                 </p>
 
                 <div className="mt-6 border-t border-gray-200 pt-4 flex justify-between text-sm">
@@ -157,7 +150,6 @@ export default function HomeTemples() {
         })}
       </div>
 
-      {/* VIEW ALL CTA */}
       <div className="text-center mt-16">
         <button
           onClick={() => navigate("/temples")}
@@ -165,7 +157,7 @@ export default function HomeTemples() {
                      border border-[#b35b00] rounded-full
                      transition-all duration-500 ease-out
                      hover:text-white hover:bg-[#b35b00]"
-          aria-label="View all Hindu temples"
+          aria-label="Browse all sacred Hindu temples in India"
         >
           {tt(text.viewAll)}
         </button>

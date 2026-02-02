@@ -19,14 +19,12 @@ export default function HomePujas() {
   const [loading, setLoading] = useState(true);
   const [lang, setLang] = useState(i18n.language || "en");
 
-  /* 🔥 Live language update */
   useEffect(() => {
     const handler = () => setLang(i18n.language);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
-  /* Fetch pujas */
   useEffect(() => {
     axios
       .get(`${backendURL}/api/pujas/home-list`)
@@ -38,7 +36,7 @@ export default function HomePujas() {
   if (loading) {
     return (
       <p className="text-center text-gray-600 py-10">
-        Loading pujas…
+        Loading authentic Hindu puja services…
       </p>
     );
   }
@@ -46,12 +44,11 @@ export default function HomePujas() {
   if (pujas.length === 0) {
     return (
       <p className="text-center text-gray-500 py-10">
-        No pujas available at the moment.
+        No Hindu pujas available at the moment.
       </p>
     );
   }
 
-  /* 🌍 Multilanguage SEO text */
   const text = {
     heading: {
       en: "Book Popular Hindu Pujas Online",
@@ -62,7 +59,7 @@ export default function HomePujas() {
       bn: "জনপ্রিয় হিন্দু পূজা অনলাইনে বুক করুন",
     },
     subHeading: {
-      en: "Experience authentic Vedic pujas performed with devotion by experienced priests.",
+      en: "Experience authentic Vedic pujas performed with devotion by experienced Hindu priests for peace, prosperity and spiritual wellbeing.",
       hi: "अनुभवी पुजारियों द्वारा भक्ति से की गई प्रामाणिक वैदिक पूजा का अनुभव करें।",
       mr: "अनुभवी पुजार्‍यांकडून भक्तीपूर्वक केल्या जाणाऱ्या वैदिक पूजांचा अनुभव घ्या.",
       ta: "அனுபவமுள்ள பூசாரிகளால் பக்தியுடன் நடத்தப்படும் வைதிக பூஜைகளை அனுபவிக்கவும்.",
@@ -78,7 +75,7 @@ export default function HomePujas() {
       bn: "এখনই পূজা বুক করুন",
     },
     viewAll: {
-      en: "View All Pujas",
+      en: "View All Online Pujas",
       hi: "सभी पूजा देखें",
       mr: "सर्व पूजा पहा",
       ta: "அனைத்து பூஜைகளையும் பார்க்க",
@@ -92,19 +89,17 @@ export default function HomePujas() {
   return (
     <section
       className="py-20 bg-gradient-to-b from-white to-orange-50"
-      aria-label="Online Puja Booking"
+      aria-label="Online Hindu puja booking and Vedic ritual services"
     >
-      {/* HEADER */}
-      <div className="text-center mb-12">
+      <header className="text-center mb-12">
         <h2 className="text-4xl font-extrabold text-[#b35b00] drop-shadow-md">
           {t(text.heading)}
         </h2>
         <p className="mt-3 text-gray-600 text-lg max-w-3xl mx-auto">
           {t(text.subHeading)}
         </p>
-      </div>
+      </header>
 
-      {/* PUJA CARDS */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-6">
         {pujas.slice(0, 3).map((puja) => {
           const name = puja.name?.[lang] || puja.name?.en || "Puja";
@@ -120,12 +115,11 @@ export default function HomePujas() {
                            hover:shadow-[0_10px_30px_rgba(179,91,0,0.3)]
                            transition-all duration-500"
               >
-                {/* IMAGE */}
                 <div className="relative h-72 overflow-hidden">
                   {puja.images?.[0] ? (
                     <img
                       src={puja.images[0]}
-                      alt={`${name} puja booking`}
+                      alt={`${name} online Hindu puja service performed by priests`}
                       className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
                       loading="lazy"
                     />
@@ -135,25 +129,22 @@ export default function HomePujas() {
                     </div>
                   )}
 
-                  {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-70"></div>
 
-                  {/* Puja Name */}
                   <h3 className="absolute bottom-4 left-4 text-white text-2xl font-bold drop-shadow-lg">
                     {name}
                   </h3>
                 </div>
 
-                {/* CONTENT */}
                 <div className="p-6">
                   <p className="text-gray-700 text-base leading-relaxed mb-6">
                     {desc}…
                   </p>
 
-                  {/* CTA */}
                   <Link
                     to={`/pujas/${puja._id}`}
-                    aria-label={`Book ${name} puja`}
+                    title={`Book ${name} puja online with Vedic rituals`}
+                    aria-label={`Book ${name} puja online`}
                     className="block w-full text-center bg-[#b35b00] hover:bg-[#8f4500]
                                text-white py-2 rounded-lg text-base shadow-md transition"
                   >
@@ -166,10 +157,10 @@ export default function HomePujas() {
         })}
       </div>
 
-      {/* VIEW ALL */}
       <div className="text-center mt-14">
         <Link
           to="/pujas"
+          title="Browse all available Hindu pujas online"
           aria-label="View all pujas"
           className="inline-block px-8 py-3 border border-[#b35b00] rounded-full
                      text-[#b35b00] font-semibold text-sm

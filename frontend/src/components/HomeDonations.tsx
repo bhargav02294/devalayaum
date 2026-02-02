@@ -20,14 +20,12 @@ export default function HomeDonations() {
   const [loading, setLoading] = useState(true);
   const [lang, setLang] = useState(i18n.language || "en");
 
-  /* 🔥 Live language update */
   useEffect(() => {
     const handler = () => setLang(i18n.language);
     i18n.on("languageChanged", handler);
     return () => i18n.off("languageChanged", handler);
   }, []);
 
-  /* Fetch donations */
   useEffect(() => {
     axios
       .get(`${backendURL}/api/donations/home-list`)
@@ -39,7 +37,7 @@ export default function HomeDonations() {
   if (loading) {
     return (
       <p className="text-center text-gray-600 py-10">
-        Loading temple donation campaigns…
+        Loading verified Hindu temple donation campaigns…
       </p>
     );
   }
@@ -47,28 +45,27 @@ export default function HomeDonations() {
   if (donations.length === 0) {
     return (
       <p className="text-center text-gray-500 py-10">
-        No active temple donation campaigns available.
+        No active Hindu temple donation campaigns available.
       </p>
     );
   }
 
-  /* 🌍 Multilanguage SEO text */
   const text = {
     heading: {
-      en: "Donate to Sacred Temples & Causes",
-      hi: "पवित्र मंदिरों और कार्यों के लिए दान करें",
-      mr: "पवित्र मंदिरे आणि कार्यांसाठी दान करा",
-      ta: "புனித கோவில்கள் மற்றும் காரணிகளுக்கு நன்கொடை அளிக்கவும்",
-      te: "పవిత్ర ఆలయాలు మరియు కార్యక్రమాలకు దానం చేయండి",
-      bn: "পবিত্র মন্দির ও কার্যক্রমে দান করুন",
+      en: "Donate to Sacred Temples & Spiritual Causes",
+      hi: "पवित्र मंदिरों और आध्यात्मिक कार्यों के लिए दान करें",
+      mr: "पवित्र मंदिरे आणि आध्यात्मिक कार्यांसाठी दान करा",
+      ta: "புனித கோவில்கள் மற்றும் ஆன்மீக காரணிகளுக்கு நன்கொடை அளிக்கவும்",
+      te: "పవిత్ర ఆలయాలు మరియు ఆధ్యాత్మిక కార్యక్రమాలకు దానం చేయండి",
+      bn: "পবিত্র মন্দির ও আধ্যাত্মিক কার্যক্রমে দান করুন",
     },
     subHeading: {
-      en: "Support verified Hindu temple trusts, rituals, and spiritual welfare through Chadhava.",
-      hi: "सत्यापित हिंदू मंदिर ट्रस्ट, पूजा और आध्यात्मिक कल्याण के लिए चढ़ावा दें।",
-      mr: "प्रमाणित हिंदू मंदिर ट्रस्ट, पूजा आणि आध्यात्मिक कल्याणासाठी चढावा द्या.",
-      ta: "சரிபார்க்கப்பட்ட இந்து கோவில் அறக்கட்டளைகள் மற்றும் ஆன்மீக நலனுக்கு ஆதரவு அளிக்கவும்.",
-      te: "నిర్ధారిత హిందూ ఆలయ ట్రస్టులు మరియు ఆధ్యాత్మిక సంక్షేమానికి మద్దతు ఇవ్వండి.",
-      bn: "যাচাইকৃত হিন্দু মন্দির ট্রাস্ট ও আধ্যাত্মিক কল্যাণে সহায়তা করুন।",
+      en: "Support verified Hindu temple trusts, rituals, annadanam and spiritual welfare services through secure online Chadhava and donations.",
+      hi: "सत्यापित हिंदू मंदिर ट्रस्ट, पूजा, अन्नदान और आध्यात्मिक सेवा कार्यों के लिए सुरक्षित ऑनलाइन चढ़ावा दें।",
+      mr: "प्रमाणित हिंदू मंदिर ट्रस्ट, पूजा, अन्नदान आणि आध्यात्मिक सेवा कार्यांसाठी सुरक्षित ऑनलाइन चढावा द्या.",
+      ta: "சரிபார்க்கப்பட்ட இந்து கோவில் அறக்கட்டளைகள் மற்றும் ஆன்மீக சேவைகளுக்கு ஆதரவு அளிக்கவும்.",
+      te: "నిర్ధారిత హిందూ ఆలయ ట్రస్టులు మరియు ఆధ్యాత్మిక సేవలకు మద్దతు ఇవ్వండి.",
+      bn: "যাচাইকৃত হিন্দু মন্দির ট্রাস্ট ও আধ্যাত্মিক সেবায় সহায়তা করুন।",
     },
     verified: {
       en: "Verified Temple Trust",
@@ -87,10 +84,10 @@ export default function HomeDonations() {
       bn: "দান করতে এগিয়ে যান",
     },
     viewAll: {
-      en: "View All Chadhava Donations",
+      en: "View All Temple Chadhava Donations",
       hi: "सभी चढ़ावा दान देखें",
       mr: "सर्व चढावा दान पहा",
-      ta: "அனைத்து சடங்கு நன்கொடைகளையும் பார்க்கவும்",
+      ta: "அனைத்து கோவில் நன்கொடைகளையும் பார்க்கவும்",
       te: "అన్ని చడావా దానాలను చూడండి",
       bn: "সব চড়াভা দান দেখুন",
     },
@@ -101,19 +98,17 @@ export default function HomeDonations() {
   return (
     <section
       className="py-20 bg-gradient-to-b from-orange-50 to-white"
-      aria-label="Temple Donations and Chadhava"
+      aria-label="Online Hindu temple donations, Chadhava and spiritual support"
     >
-      {/* HEADER */}
-      <div className="text-center mb-14">
+      <header className="text-center mb-14">
         <h2 className="text-4xl font-extrabold text-[#b35b00] drop-shadow-md">
           {t(text.heading)}
         </h2>
         <p className="mt-3 text-gray-600 text-lg max-w-3xl mx-auto">
           {t(text.subHeading)}
         </p>
-      </div>
+      </header>
 
-      {/* DONATION CARDS */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 px-6">
         {donations.slice(0, 3).map((d) => {
           const donationTitle =
@@ -132,11 +127,10 @@ export default function HomeDonations() {
                            hover:shadow-[0_10px_40px_rgba(179,91,0,0.35)]
                            hover:-translate-y-2 transition-all duration-500"
               >
-                {/* IMAGE */}
                 <div className="relative h-72 overflow-hidden">
                   <img
                     src={d.thumbnail}
-                    alt={`${donationTitle} donation for ${temple}`}
+                    alt={`${donationTitle} online temple donation for ${temple}`}
                     className="w-full h-full object-cover group-hover:scale-110 transition duration-[900ms]"
                     loading="lazy"
                   />
@@ -146,7 +140,6 @@ export default function HomeDonations() {
                   </div>
                 </div>
 
-                {/* CONTENT */}
                 <div className="p-6">
                   <p className="text-[#b35b00] font-semibold text-sm mb-1">
                     {temple}
@@ -162,7 +155,8 @@ export default function HomeDonations() {
 
                   <Link
                     to={`/donations/${d._id}`}
-                    aria-label={`Donate to ${donationTitle}`}
+                    title={`Donate online to ${donationTitle} at ${temple}`}
+                    aria-label={`Donate to ${donationTitle} temple campaign`}
                     className="block text-center w-full bg-[#b35b00] hover:bg-[#8a4600]
                                text-white font-medium py-2 rounded-lg shadow-md transition duration-300"
                   >
@@ -175,10 +169,10 @@ export default function HomeDonations() {
         })}
       </div>
 
-      {/* VIEW ALL CTA */}
       <div className="text-center mt-16">
         <Link
           to="/donations"
+          title="Browse all online temple donation and Chadhava campaigns"
           aria-label="View all temple donation campaigns"
           className="inline-block px-8 py-3 border border-[#b35b00] rounded-full
                      text-[#b35b00] font-medium text-sm
